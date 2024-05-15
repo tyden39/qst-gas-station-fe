@@ -1,13 +1,13 @@
 import { User } from "lucide-react"
-import { useStore } from "../zustand/store"
+import { Link, useLocation } from "react-router-dom"
+import menu from "routers/menu"
+import PATH from "routers/path"
 import {
   Breadcrumb,
-  BreadcrumbEllipsis,
   BreadcrumbItem,
   BreadcrumbLink,
   BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
+  BreadcrumbSeparator
 } from "./ui/breadcrumb"
 import { Button } from "./ui/button"
 import {
@@ -20,35 +20,24 @@ import {
 } from "./ui/dropdown-menu"
 
 export default function Header() {
+  const { pathname } = useLocation()
+  const menuItem = menu.find((item) => item.path === pathname)
+
   return (
     <header className="w-full h-fit flex justify-between items-center px-4 py-2 border-b">
       <Breadcrumb>
         <BreadcrumbList>
           <BreadcrumbItem>
-            <BreadcrumbLink href="/">Home</BreadcrumbLink>
+            <BreadcrumbLink asChild>
+              <Link to={PATH.HOME}>Trang chủ</Link>
+            </BreadcrumbLink>
           </BreadcrumbItem>
           <BreadcrumbSeparator />
-          <BreadcrumbItem>
-            <DropdownMenu>
-              <DropdownMenuTrigger className="flex items-center gap-1">
-                <BreadcrumbEllipsis className="h-4 w-4" />
-                <span className="sr-only">Toggle menu</span>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="start">
-                <DropdownMenuItem>Documentation</DropdownMenuItem>
-                <DropdownMenuItem>Themes</DropdownMenuItem>
-                <DropdownMenuItem>GitHub</DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </BreadcrumbItem>
-          <BreadcrumbSeparator />
-          <BreadcrumbItem>
-            <BreadcrumbLink href="/docs/components">Components</BreadcrumbLink>
-          </BreadcrumbItem>
-          <BreadcrumbSeparator />
-          <BreadcrumbItem>
-            <BreadcrumbPage>Breadcrumb</BreadcrumbPage>
-          </BreadcrumbItem>
+          {menuItem && (
+            <BreadcrumbItem>
+              {menuItem.name}
+            </BreadcrumbItem>
+          )}
         </BreadcrumbList>
       </Breadcrumb>
 
@@ -62,13 +51,6 @@ export default function Header() {
             size="icon"
             className="overflow-hidden rounded-full"
           >
-            {/* <src
-              src="/placeholder-user.jpg"
-              width={36}
-              height={36}
-              alt="Avatar"
-              className="overflow-hidden rounded-full"
-            /> */}
             <User />
           </Button>
         </DropdownMenuTrigger>

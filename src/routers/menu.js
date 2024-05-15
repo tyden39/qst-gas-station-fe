@@ -1,0 +1,10 @@
+import { BugPlay, File, Fuel } from "lucide-react"
+import PATH from "./path"
+
+const menu = [
+  { id: 0, name: "Trạm bơm", path: PATH.FUEL, icon: Fuel },
+  { id: 1, name: "Trạm bơm (debug)", path: PATH.FUEL_DEBUG, icon: BugPlay },
+  { id: 2, name: "Trạm bơm (file)", path: PATH.FUEL_FILES, icon: File },
+]
+
+export default menu

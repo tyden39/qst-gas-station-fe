@@ -1,18 +1,22 @@
 import { TooltipTrigger } from "@radix-ui/react-tooltip"
 import { cn } from "lib/utils"
-import { Fuel, Home } from "lucide-react"
-import { useStore } from "../zustand/store"
+import { Home } from "lucide-react"
 import { Button } from "./ui/button"
 import { Tooltip, TooltipContent } from "./ui/tooltip"
-
-const menu = [
-  { id: 0, name: "Trạm bơm", path: "/fuel", icon: Fuel },
-  { id: 1, name: "Trạm bơm (debug)", path: "/fuel", icon: Fuel },
-  { id: 2, name: "Trạm bơm (file)", path: "/fuel", icon: Fuel },
-]
+import { Link, useLocation, useNavigate } from "react-router-dom"
+import menu from "routers/menu"
+import { useAppNavigation } from "zustands/useAppNavigation"
 
 const Sidebar = () => {
-  const collapsed = useStore((state) => state.collapsed)
+  const [collapsed, setActivedMenu] = useAppNavigation((state) => [state.collapsed, state.setActivedMenu])
+  const { pathname } = useLocation()
+  const navigation = useNavigate()
+
+  const handleNavigate = (item) => {
+    if (pathname === item.path) return
+    navigation(item.path)
+    setActivedMenu(item)
+  }
 
   return (
     <nav
@@ -25,26 +29,26 @@ const Sidebar = () => {
         <span className="leading-10 text-3xl">Gas Station</span>
       </div>
       <div className="p-2 space-y-2">
-        {menu.map((item) => 
+        {menu.map((item) =>
           collapsed ? (
-            <Tooltip>
+            <Tooltip key={`collapsed-menu-${item.id}`}>
               <TooltipTrigger asChild>
-                <a
-                  href={item.path}
+                <Link
+                  to={item.path}
                   className="flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:text-foreground md:h-8 md:w-8"
                 >
                   <Home className="h-5 w-5" />
                   <span className="sr-only">{item.name}</span>
-                </a>
+                </Link>
               </TooltipTrigger>
               <TooltipContent side="right">{item.name}</TooltipContent>
             </Tooltip>
           ) : (
             <Button
-              className={cn(
-                "w-full justify-start",
-                "dark:bg-muted dark:text-white dark:hover:bg-muted dark:hover:text-white"
-              )}
+              key={`menu-${item.id}`}
+              className={cn("w-full justify-start")}
+              variant={pathname === item.path ? "secondary" : "ghost"}
+              onClick={() => handleNavigate(item)}
             >
               <item.icon className="mr-2 h-4 w-4" />
               <span>{item.name}</span>
