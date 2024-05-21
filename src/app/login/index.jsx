@@ -3,7 +3,6 @@ import { Button } from "components/ui/button"
 import {
   Card,
   CardContent,
-  CardFooter,
   CardHeader,
   CardTitle
 } from "components/ui/card"
@@ -39,9 +38,9 @@ export default function LoginPage() {
     },
   })
 
-  function onSubmit(values) {
-    console.log(values)
-    if (login()) navigation(PATH.HOME)
+  async function onSubmit(values) {
+    const isLoginSuccess = await login(values)
+    if (isLoginSuccess) navigation(PATH.HOME)
   }
 
   return (
@@ -80,14 +79,14 @@ export default function LoginPage() {
                   </FormItem>
                 )}
               />
+              <div>
+                <Button type="submit" className="w-full mt-4" onClick={form.handleSubmit(onSubmit)} >
+                  Submit
+                </Button>
+              </div>
             </form>
           </Form>
         </CardContent>
-        <CardFooter className="flex justify-between mt-4">
-          <Button type="submit" className="w-full" onClick={form.handleSubmit(onSubmit)} >
-            Submit
-          </Button>
-        </CardFooter>
       </Card>
     </div>
   )

@@ -1,21 +1,28 @@
+import { useEffect } from "react"
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom"
-import Layout from "./layout"
 import PrivateRoute from "routers/PrivateRouter"
-import LoginPage from "./login"
-import { privateRoutes } from "routers/routes"
+import { AUTH_CONFIG } from "routers/config"
 import PATH from "routers/path"
 import { getPermissionPage } from "routers/permission"
+import { privateRoutes } from "routers/routes"
 import useAuth from "zustands/useAuth"
+import Layout from "./layout"
+import LoginPage from "./login"
 
 export default function App() {
-  const user = useAuth(auth => auth.user)
+  const user = JSON.parse(localStorage.getItem(AUTH_CONFIG.USER_STORAGE_NAME))
+  const [userGlobal, setUser] = useAuth(auth => [auth.user, auth.setUser, auth.loading])
+
+  useEffect(() => {
+    if (!userGlobal && user) setUser(user)
+  }, [setUser, user, userGlobal])
+
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/login" element={<LoginPage />} />
+        <Route path={PATH.LOGIN} element={user ? <Navigate to={PATH.HOME} /> : <LoginPage />} />
         <Route element={<Layout />}>
           <Route element={<PrivateRoute />}>
-            <Route path="/" element={<Navigate to={PATH.FUEL} />} />
             {privateRoutes.map((route, index) => {
               const Page = getPermissionPage(route, user)
               return (
@@ -27,8 +34,4 @@ export default function App() {
       </Routes>
     </BrowserRouter>
   )
-}
-
-function AuthRoute({ path, element, children }) {
-  return <Route {...{ path, element }}>{children}</Route>
 }

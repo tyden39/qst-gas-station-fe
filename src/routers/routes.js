@@ -8,6 +8,7 @@ import NoConnection from "app/no-connection"
 import NoPermission from "app/no-permission"
 
 const privateRoutes = [
+  { path: PATH.HOME, component: FuelPage },
   { path: PATH.FUEL, component: FuelPage },
   { path: PATH.FUEL_DEBUG, component: FuelDebugPage },
   { path: PATH.FUEL_FILES, component: FuelFilesPage },
