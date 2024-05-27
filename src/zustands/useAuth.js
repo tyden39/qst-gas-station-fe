@@ -1,11 +1,12 @@
 import axiosInstance from "api/axiosInstance"
-import { API_PATH } from "api/paths"
+import { API_PATHS } from "constants/api-paths"
 import { AUTH_CONFIG } from "routers/config"
 import { create } from "zustand"
 
 const handleLogin = async (set, formData) => {
+  set({loading: true})
   try {
-    const response = await axiosInstance.post(API_PATH.LOGIN, formData)
+    const response = await axiosInstance.post(API_PATHS.LOGIN, formData)
 
     const {user, tokens} = response.data.data
 
@@ -13,28 +14,29 @@ const handleLogin = async (set, formData) => {
     localStorage.setItem(AUTH_CONFIG.USER_STORAGE_NAME, JSON.stringify({ username: user.username, isAdmin: true }))
 
     set({ user: { username: user.username, isAdmin: true } })
-    return true
+
+    return response.data
   } catch (error) {
-    // console.log(error)
-    return false
+    return error.response.data
+  } finally {
+    set({loading: false, user: null})
   }
 }
 
 const handleLogout = async (set) => {
-  try {
-    set({loading: true})
+  set({loading: true})
 
-    await axiosInstance.post(API_PATH.LOGOUT)
+  try {
+    await axiosInstance.post(API_PATHS.LOGOUT)
     
     localStorage.removeItem(AUTH_CONFIG.ACCESS_TOKEN_STORAGE_NAME)
     localStorage.removeItem(AUTH_CONFIG.USER_STORAGE_NAME)
 
-    set({loading: false, user: null})
-
     return true
   } catch (error) {
-    set({loading: false})
     return false
+  } finally {
+    set({loading: false})
   }
 }
 

@@ -1,0 +1,54 @@
+import axiosInstance from "api/axiosInstance"
+import { convertToQueryString } from "lib/utils"
+import FileSaver from 'file-saver';
+import { API_PATHS } from "constants/api-paths";
+
+export const fetchInvoices = async (filter, pageMeta) => {
+  try {
+    const startDate = filter.billDate?.from
+    const endDate = filter.billDate?.to
+    const newFilter = { ...filter }
+    delete newFilter.billDate
+
+    const { pageSize } = pageMeta
+    const page = pageMeta.currentPage
+
+    const params = { startDate, endDate, ...newFilter, page, pageSize }
+    const queries = convertToQueryString(params)
+
+    const response = await axiosInstance.get(
+      `${API_PATHS.INVOICE_LIST}${queries ? `?${queries}` : ""}`
+    )
+
+    const { data, meta } = response.data.data
+    return { data, meta }
+  } catch (error) {}
+}
+
+export const handleExport = async (filter, pageMeta) => {
+  try {
+    const startDate = filter.billDate?.from
+    const endDate = filter.billDate?.to
+    const newFilter = { ...filter }
+    delete newFilter.billDate
+
+    const { pageSize } = pageMeta
+    const page = pageMeta.currentPage
+
+    const params = { startDate, endDate, ...newFilter, page, pageSize }
+    const queries = convertToQueryString(params)
+
+    const response = await axiosInstance({
+      url: `${API_PATHS.INVOICE_EXPORT_EXCEL}${queries ? `?${queries}` : ""}`,
+      method: 'GET',
+      responseType: 'blob',
+      headers: {
+        'Content-Type': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+      }
+    })
+    if (response.status === 200) 
+      FileSaver.saveAs(new Blob([response.data]), 'invoices.xlsx')
+  } catch (error) {
+    console.log(error)
+  }
+}

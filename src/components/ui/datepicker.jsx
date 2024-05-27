@@ -1,17 +1,15 @@
-"use client"
-
-import * as React from "react"
-import { addDays, format } from "date-fns"
+import { format } from "date-fns"
 import { Calendar as CalendarIcon } from "lucide-react"
+import * as React from "react"
 
-import { cn } from "lib/utils"
-import { Button } from "components/ui/button"
+import EllipsisTooltip from "components/EllipsisTooltip"
+import { buttonVariants } from "components/ui/button"
 import { Calendar } from "components/ui/calendar"
 import { Popover, PopoverContent, PopoverTrigger } from "components/ui/popover"
+import { cn } from "lib/utils"
 import { Label } from "./label"
-import EllipsisTooltip from "components/EllipsisTooltip"
 
-export function DatePickerWithRange({ className, onChangeValue, defaultValue, name }) {
+export function DatePickerWithRange({ className, onChangeValue, defaultValue, name, label }) {
   const [date, setDate] = React.useState(defaultValue)
 
   const onSelect = (value) => {
@@ -22,14 +20,14 @@ export function DatePickerWithRange({ className, onChangeValue, defaultValue, na
   return (
     <Popover>
       <PopoverTrigger className={className} asChild>
-        <Button
-          variant={"outline"}
+        <div
           className={cn(
+            buttonVariants({ variant: "outline" }),
             "text-left font-normal gap-2",
             !date && "text-muted-foreground"
           )}
         >
-          <Label className="hover:cursor-pointer">Logger Time:</Label>
+          <Label className="hover:cursor-pointer">{label}</Label>
           <EllipsisTooltip className="flex-1">
             {date?.from ? (
               date.to ? (
@@ -45,7 +43,7 @@ export function DatePickerWithRange({ className, onChangeValue, defaultValue, na
             )}
           </EllipsisTooltip>
           <CalendarIcon className="h-4 w-4" />
-        </Button>
+        </div>
       </PopoverTrigger>
       <PopoverContent className="w-auto p-0" align="start">
         <Calendar

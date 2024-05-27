@@ -6,12 +6,17 @@ import { FuelDebugPage } from "app/fuel-debug"
 import NotFound from "app/404"
 import NoConnection from "app/no-connection"
 import NoPermission from "app/no-permission"
+import { UserPage } from "app/users"
+import UserCreatePage from "app/users/create"
 
 const privateRoutes = [
   { path: PATH.HOME, component: FuelPage },
   { path: PATH.FUEL, component: FuelPage },
   { path: PATH.FUEL_DEBUG, component: FuelDebugPage },
   { path: PATH.FUEL_FILES, component: FuelFilesPage },
+  { path: PATH.USER, component: UserPage },
+  { path: PATH.USER_CREATE, component: UserCreatePage },
+  { path: PATH.USER_EDIT, component: UserCreatePage },
 ]
 
 const publicRoutes = [

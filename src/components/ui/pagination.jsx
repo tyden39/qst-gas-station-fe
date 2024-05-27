@@ -4,7 +4,7 @@ import * as React from "react";
 import { Button } from "components/ui/button";
 import { cn } from "lib/utils";
 
-const Pagination = ({
+const ShadCNPagination = ({
   className,
   ...props
 }) => (
@@ -14,7 +14,7 @@ const Pagination = ({
     className={cn("mx-auto flex w-full justify-center", className)}
     {...props} />
 )
-Pagination.displayName = "Pagination"
+ShadCNPagination.displayName = "Pagination"
 
 const PaginationContent = React.forwardRef(({ className, ...props }, ref) => (
   <ul
@@ -55,7 +55,6 @@ const PaginationPrevious = ({
     className={cn("gap-1 px-2.5 w-fit", className)}
     {...props}>
     <ChevronLeft className="h-4 w-4" />
-    <span>Previous</span>
   </PaginationLink>
 )
 PaginationPrevious.displayName = "PaginationPrevious"
@@ -69,7 +68,6 @@ const PaginationNext = ({
     size="default"
     className={cn("gap-1 px-2.5 w-fit", className)}
     {...props}>
-    <span>Next</span>
     <ChevronRight className="h-4 w-4" />
   </PaginationLink>
 )
@@ -90,7 +88,7 @@ const PaginationEllipsis = ({
 PaginationEllipsis.displayName = "PaginationEllipsis"
 
 export {
-  Pagination,
+  ShadCNPagination,
   PaginationContent,
   PaginationEllipsis,
   PaginationItem,
