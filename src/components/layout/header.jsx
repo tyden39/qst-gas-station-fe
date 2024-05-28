@@ -1,4 +1,4 @@
-import { ChevronDown } from "lucide-react"
+import { ChevronDown, Loader2, Search } from "lucide-react"
 
 import { Button } from "components/ui/button"
 import {
@@ -19,7 +19,7 @@ export default function PageHeader({
   applyFilter,
   loading,
   canSubmit,
-  searchInputPlaceholder
+  searchInputPlaceholder,
 }) {
   const [showMoreFilter, setShowMoreFilter] = useState(false)
   const debounceRef = useRef(null)
@@ -44,24 +44,37 @@ export default function PageHeader({
     <div className="mb-2 mt-4 flex flex-col gap-2">
       <div className="flex items-center">
         <div className="flex gap-2">
-          <Input
-            name="keyword"
-            placeholder={searchInputPlaceholder}
-            value={filter.keyword ?? ""}
-            onChange={handleChangeKeyword}
-            className="w-[260px]"
-          />
+          <div className="relative">
+            <Search size={16} className="absolute top-3 left-2 text-gray-500" />
+            <Input
+              name="keyword"
+              placeholder={searchInputPlaceholder}
+              value={filter.keyword ?? ""}
+              onChange={handleChangeKeyword}
+              className="w-[260px] pl-7"
+            />
+          </div>
           <Button onClick={() => setShowMoreFilter((prev) => !prev)}>
             Bộ lọc khác
           </Button>
           {showMoreFilter && (
-            <Button disabled={loading || !canSubmit} onClick={() => applyFilter()}>Áp dụng</Button>
+            <Button
+              disabled={loading || !canSubmit}
+              onClick={() => applyFilter()}
+              className="w-24"
+            >
+              {loading ? (
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              ) : (
+                "Áp dụng"
+              )}
+            </Button>
           )}
         </div>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="outline" className="ml-auto">
-              Columns <ChevronDown className="ml-2 h-4 w-4" />
+              Ẩn/Hiện <ChevronDown className="ml-2 h-4 w-4" />
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
@@ -78,7 +91,7 @@ export default function PageHeader({
                       column.toggleVisibility(!!value)
                     }
                   >
-                    {column.id}
+                    {column.columnDef.header()}
                   </DropdownMenuCheckboxItem>
                 )
               })}

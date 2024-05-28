@@ -1,7 +1,7 @@
 import PagePaginationCapacity from "./capacity"
 import PagePaginationNavigation from "./navigation"
 
-export default function PagePagination({ table, meta, setMeta }) {
+export default function PagePagination({ meta, setMeta }) {
   return (
     <div className="flex items-center justify-end space-x-2 py-4">
       <div className="flex-1 text-sm text-muted-foreground">

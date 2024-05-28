@@ -16,7 +16,6 @@ import {
   FormMessage,
 } from "components/ui/form"
 import { Input } from "components/ui/input"
-import { useToast } from "components/ui/use-toast"
 import { Loader2 } from "lucide-react"
 import { useState } from "react"
 import { useForm } from "react-hook-form"
@@ -31,7 +30,6 @@ const formSchema = z.object({
 })
 
 export default function LoginPage() {
-  const { toast } = useToast()
   const [login, loading] = useAuth((auth) => [auth.login, auth.loading])
   const navigation = useNavigate()
 

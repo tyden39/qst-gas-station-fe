@@ -9,12 +9,28 @@ import {
 import PageHeader from "components/layout/header"
 import PagePagination from "components/pagination"
 import PageTable from "components/table"
-import { useCallback, useEffect, useState } from "react"
+import { Button, buttonVariants } from "components/ui/button"
+import { Checkbox } from "components/ui/checkbox"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "components/ui/dropdown-menu"
+import { cn } from "lib/utils"
+import { MoreHorizontal } from "lucide-react"
+import moment from "moment"
+import { useCallback, useEffect, useMemo, useState } from "react"
+import { Link } from "react-router-dom"
+import PATH from "routers/path"
 import { useAppNavigation } from "zustands/useAppNavigation"
-import { fetchInvoices, handleExport } from "../../api/invoiceApi"
+import useInvoice from "zustands/useInvoice"
+import { fetchInvoices } from "../../api/invoiceApi"
+import DeleteRow from "./components/DeleteRow"
+import ExportInvoice from "./components/ExportInvoice"
+import { BILL_TYPES } from "./constant"
 import InvoiceFilter from "./filter"
-import { columns, initColumnVisibility, initFilter, initMeta } from "./initial"
-import { Button } from "components/ui/button"
+import { initColumnVisibility, initFilter, initMeta } from "./initial"
 
 export function FuelPage() {
   const activedMenu = useAppNavigation((state) => state.activedMenu)
@@ -27,6 +43,11 @@ export function FuelPage() {
   const canSubmit = JSON.stringify(filter) !== JSON.stringify(initFilter)
   const [columnFilters, setColumnFilters] = useState([])
   const [columnVisibility, setColumnVisibility] = useState(initColumnVisibility)
+  const [selected, setSelected] = useInvoice((state) => [
+    state.selected,
+    state.setSelected,
+  ])
+  const [currentPageSelected, setCurrentPageSelected] = useState([])
 
   const [rowSelection, setRowSelection] = useState({})
 
@@ -45,10 +66,246 @@ export function FuelPage() {
   )
 
   useEffect(() => {
+    if (
+      data.length > 0 &&
+      currentPageSelected.length > 0 &&
+      !data.map((item) => item.id).includes(currentPageSelected[0])
+    ) {
+      setCurrentPageSelected([])
+    }
+  }, [data, currentPageSelected])
+
+  useEffect(() => {
     applyFilter()
     table.setPageSize(meta.pageSize)
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [meta.currentPage, meta.pageSize])
+
+  const columns = useMemo(
+    () => [
+      {
+        accessorKey: "order",
+        header: () => <div className="text-center">STT</div>,
+        cell: ({ row }) => {
+          const { currentPage, pageSize, totalItems } = meta
+          const startItem = totalItems - (currentPage - 1) * pageSize
+
+          return <div className="text-center">{startItem - row.index}</div>
+        },
+        disableSortBy: true,
+      },
+      {
+        accessorKey: "select",
+        header: () => (
+          <Checkbox
+            checked={
+              selected.length > 0 &&
+              (selected.length === meta.totalItems || "indeterminate")
+            }
+            onCheckedChange={() => {
+              const value =
+                selected.length > 0 &&
+                (selected.length === meta.totalItems || "indeterminate")
+              let newSelected = []
+              if (value === "indeterminate") {
+                if ((currentPageSelected.length ?? 0) < meta.pageSize) {
+                  newSelected = selected.filter(
+                    (item) => !data.map((i) => i.id).includes(item)
+                  )
+                  newSelected = [...newSelected, ...data.map((item) => item.id)]
+                  setCurrentPageSelected(data.map((item) => item.id))
+                } else {
+                  newSelected = selected.filter(
+                    (item) => !data.map((i) => i.id).includes(item)
+                  )
+                  setCurrentPageSelected([])
+                }
+              } else if (value) {
+                newSelected = selected.filter(
+                  (item) => !data.map((i) => i.id).includes(item)
+                )
+                setCurrentPageSelected([])
+              } else {
+                setCurrentPageSelected(data.map((item) => item.id))
+                newSelected = [...selected, ...data.map((item) => item.id)]
+              }
+              setSelected(newSelected)
+            }}
+            aria-label="Select all"
+          />
+        ),
+        cell: ({ row }) => {
+          const rowValue = row.original
+
+          return (
+            <Checkbox
+              checked={selected.includes(rowValue.id)}
+              onCheckedChange={(value) => {
+                setSelected(
+                  value
+                    ? [...selected, rowValue.id]
+                    : selected.filter((item) => item !== rowValue.id)
+                )
+                setCurrentPageSelected((prev) =>
+                  value
+                    ? [...prev, rowValue.id]
+                    : prev.filter((item) => item !== rowValue.id)
+                )
+              }}
+              aria-label="Select row"
+            />
+          )
+        },
+        enableSorting: false,
+        enableHiding: false,
+      },
+      {
+        accessorKey: "Check_Key",
+        header: () => <div className="text-center capitalize">Mã kiểm tra</div>,
+        cell: ({ row }) => (
+          <div className="text-center">{row.getValue("Check_Key")}</div>
+        ),
+      },
+      {
+        accessorKey: "Logger_ID",
+        header: () => <div className="text-center capitalize">Mã logger</div>,
+        cell: ({ row }) => (
+          <div className="text-center">{row.getValue("Logger_ID")}</div>
+        ),
+      },
+      {
+        accessorKey: "Logger_Time",
+        header: () => (
+          <div className="text-center capitalize">Thời gian ghi log</div>
+        ),
+        cell: ({ row }) => {
+          const formatted = moment(row.getValue("Logger_Time")).format(
+            "DD-MM-YYYY HH:mm:ss"
+          )
+          return <div className="text-center">{formatted}</div>
+        },
+      },
+      {
+        accessorKey: "Pump_ID",
+        header: () => <div className="text-center capitalize">Mã vòi bơm</div>,
+        cell: ({ row }) => (
+          <div className="text-center">{row.getValue("Pump_ID")}</div>
+        ),
+      },
+      {
+        accessorKey: "Bill_No",
+        header: () => <div className="capitalize text-center">Mã hóa đơn</div>,
+        cell: ({ row }) => <div className="text-center">{row.getValue("Bill_No")}</div>,
+      },
+      {
+        accessorKey: "Bill_Type",
+        header: () => <div className="capitalize text-center">Loại hóa đơn</div>,
+        cell: ({ row }) => <div className="text-center">{BILL_TYPES.find(item => item.value === row.getValue("Bill_Type")).label || ''}</div>,
+      },
+      {
+        accessorKey: "Fuel_Type",
+        header: () => (
+          <div className="text-center capitalize">Loại nhiên liệu</div>
+        ),
+        cell: ({ row }) => (
+          <div className="text-center">{row.getValue("Fuel_Type")}</div>
+        ),
+      },
+      {
+        accessorKey: "Start_Time",
+        header: () => (
+          <div className="text-center capitalize">Thời gian bắt đầu bơm</div>
+        ),
+        cell: ({ row }) => {
+          const formatted = moment(row.getValue("Start_Time")).format(
+            "DD-MM-YYYY HH:mm:ss"
+          )
+          return <div className="text-center">{formatted}</div>
+        },
+      },
+      {
+        accessorKey: "End_Time",
+        header: () => (
+          <div className="text-center capitalize">Thời gian kết thúc bơm</div>
+        ),
+        cell: ({ row }) => {
+          const formatted = moment(row.getValue("End_Time")).format(
+            "DD-MM-YYYY HH:mm:ss"
+          )
+          return <div className="text-center">{formatted}</div>
+        },
+      },
+      {
+        accessorKey: "Unit_Price",
+        header: () => <div className="text-right capitalize">Giá</div>,
+        cell: ({ row }) => {
+          const amount = parseFloat(row.getValue("Unit_Price"))
+
+          // Format the amount as a dollar amount
+          const formatted = new Intl.NumberFormat("vi-VN", {
+            style: "currency",
+            currency: "VND",
+          }).format(amount)
+
+          return <div className="text-right font-medium">{formatted}</div>
+        },
+      },
+      {
+        accessorKey: "Quantity",
+        header: () => <div className="text-right capitalize">Số lượng</div>,
+        cell: ({ row }) => {
+          const quantity = parseFloat(row.getValue("Quantity"))
+
+          return <div className="text-right font-medium">{quantity}</div>
+        },
+      },
+      {
+        accessorKey: "Total_Price",
+        header: () => <div className="text-right capitalize">Tổng tiền</div>,
+        cell: ({ row }) => {
+          const value = parseFloat(row.getValue("Total_Price"))
+
+          const formatted = new Intl.NumberFormat("vi-VN", {
+            style: "currency",
+            currency: "VND",
+          }).format(value)
+
+          return <div className="text-right font-medium">{formatted}</div>
+        },
+      },
+      {
+        id: "actions",
+        enableHiding: false,
+        cell: ({ row }) => {
+          const rowValue = row.original
+          return (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" className="h-8 w-8 p-0">
+                  <span className="sr-only">Open menu</span>
+                  <MoreHorizontal className="h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem asChild>
+                  <Link
+                    to={PATH.USER_EDIT.replace(":id", rowValue.id)}
+                    className="cursor-pointer"
+                  >
+                    Chỉnh sửa
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <DeleteRow id={rowValue.Check_Key} />
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          )
+        },
+      },
+    ],
+    [meta, selected, setSelected, data, currentPageSelected.length]
+  )
 
   const table = useReactTable({
     data,
@@ -78,10 +335,28 @@ export function FuelPage() {
     <div className="w-full">
       <div className="flex justify-between items-center">
         <h1 className="text-4xl leading-normal">{activedMenu.name}</h1>
-        <div><Button onClick={() => handleExport(filter, meta)}>Xuất Excel</Button></div>
+        <div className="space-x-2">
+          <ExportInvoice {...{filter, meta, selected}} />
+          <Link
+            className={cn(buttonVariants({ variant: "outline" }))}
+            to={PATH.FUEL_CREATE}
+          >
+            Tạo Hóa Đơn
+          </Link>
+        </div>
       </div>
 
-      <PageHeader {...{ table, filter, onFieldChange, applyFilter, loading, canSubmit, searchInputPlaceholder: 'Tìm kiếm theo Bill No' }}>
+      <PageHeader
+        {...{
+          table,
+          filter,
+          onFieldChange,
+          applyFilter,
+          loading,
+          canSubmit,
+          searchInputPlaceholder: "Tìm kiếm theo Mã Kiểm Tra",
+        }}
+      >
         <InvoiceFilter {...{ onFieldChange }} />
       </PageHeader>
       <PageTable {...{ table }} />

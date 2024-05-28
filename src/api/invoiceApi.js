@@ -25,8 +25,9 @@ export const fetchInvoices = async (filter, pageMeta) => {
   } catch (error) {}
 }
 
-export const handleExport = async (filter, pageMeta) => {
+export const handleExport = async (filter, pageMeta, selected) => {
   try {
+    const ids = selected
     const startDate = filter.billDate?.from
     const endDate = filter.billDate?.to
     const newFilter = { ...filter }
@@ -35,7 +36,7 @@ export const handleExport = async (filter, pageMeta) => {
     const { pageSize } = pageMeta
     const page = pageMeta.currentPage
 
-    const params = { startDate, endDate, ...newFilter, page, pageSize }
+    const params = { startDate, endDate, ...newFilter, page, pageSize, ids }
     const queries = convertToQueryString(params)
 
     const response = await axiosInstance({
@@ -50,5 +51,6 @@ export const handleExport = async (filter, pageMeta) => {
       FileSaver.saveAs(new Blob([response.data]), 'invoices.xlsx')
   } catch (error) {
     console.log(error)
+    return 'Xuất excel thất bại'
   }
 }
