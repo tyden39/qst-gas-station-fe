@@ -1,4 +1,3 @@
-import { PopoverArrow } from "@radix-ui/react-popover"
 import { Button } from "components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "components/ui/card"
 import {
@@ -9,9 +8,11 @@ import {
   FormMessage,
 } from "components/ui/form"
 import { Input } from "components/ui/input"
-import { Popover, PopoverContent, PopoverTrigger } from "components/ui/popover"
+import { useState } from "react"
 
 export default function AccountInfo({ form, isEdit }) {
+  const [isChangePassword, setIsChangePassword] = useState(false)
+
   return (
     <Card className="w-full">
       <CardHeader>
@@ -34,16 +35,15 @@ export default function AccountInfo({ form, isEdit }) {
               </FormItem>
             )}
           />
-          {isEdit ? (
-            <Popover>
-              <PopoverTrigger asChild>
-                <Button>Change password</Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-80" side="top">
-                Tính năng đang phát triển
-                <PopoverArrow className="fill-white" />
-              </PopoverContent>
-            </Popover>
+          {isEdit && !isChangePassword ? (
+            <Button
+              onClick={(event) => {
+                event.preventDefault()
+                setIsChangePassword(true)
+              }}
+            >
+              Đổi mật khẩu
+            </Button>
           ) : (
             <>
               <FormField
@@ -84,6 +84,16 @@ export default function AccountInfo({ form, isEdit }) {
                   </FormItem>
                 )}
               />
+              {isEdit && (
+                <Button
+                  onClick={(event) => {
+                    event.preventDefault()
+                    setIsChangePassword(false)
+                  }}
+                >
+                  Hủy đổi mật khẩu
+                </Button>
+              )}
             </>
           )}
         </div>

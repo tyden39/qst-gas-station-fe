@@ -10,7 +10,7 @@ import PageHeader from "components/layout/header"
 import PagePagination from "components/pagination"
 import PageTable from "components/table"
 import { buttonVariants } from "components/ui/button"
-import { Checkbox } from "components/ui/checkbox"
+import { Skeleton } from "components/ui/skeleton"
 import { cn } from "lib/utils"
 import { useCallback, useEffect, useMemo, useState } from "react"
 import { Link } from "react-router-dom"
@@ -18,7 +18,6 @@ import PATH from "routers/path"
 import { useAppNavigation } from "zustands/useAppNavigation"
 import { fetchUsers } from "../../api/userApi"
 import RowActions from "./components/RowActions"
-import InvoiceFilter from "./filter"
 import { initColumnVisibility, initFilter, initMeta } from "./initial"
 
 export function UserPage() {
@@ -27,9 +26,10 @@ export function UserPage() {
   const [meta, setMeta] = useState(initMeta)
 
   const [filter, setFilter] = useState(initFilter)
+  const [activedFilter, setActivedFilter] = useState(initFilter)
   const [sorting, setSorting] = useState([])
   const [loading, setLoading] = useState(false)
-  const canSubmit = JSON.stringify(filter) !== JSON.stringify(initFilter)
+  const canSubmit = JSON.stringify(filter) !== JSON.stringify(activedFilter)
   const [columnFilters, setColumnFilters] = useState([])
   const [columnVisibility, setColumnVisibility] = useState(initColumnVisibility)
 
@@ -42,6 +42,7 @@ export function UserPage() {
         .then(({ data, meta }) => {
           setMeta(meta)
           setData(data)
+          setActivedFilter(filter)
         })
         .catch((error) => console.log(error))
         .finally(() => setLoading(false))
@@ -52,28 +53,15 @@ export function UserPage() {
   const columns = useMemo(
     () => [
       {
-        id: "select",
-        header: ({ table }) => (
-          <Checkbox
-            checked={
-              table.getIsAllPageRowsSelected() ||
-              (table.getIsSomePageRowsSelected() && "indeterminate")
-            }
-            onCheckedChange={(value) =>
-              table.toggleAllPageRowsSelected(!!value)
-            }
-            aria-label="Select all"
-          />
-        ),
-        cell: ({ row }) => (
-          <Checkbox
-            checked={row.getIsSelected()}
-            onCheckedChange={(value) => row.toggleSelected(!!value)}
-            aria-label="Select row"
-          />
-        ),
-        enableSorting: false,
-        enableHiding: false,
+        accessorKey: "order",
+        header: () => <div className="text-center">STT</div>,
+        cell: ({ row }) => {
+          const { currentPage, pageSize, totalItems } = meta
+          const startItem = totalItems - (currentPage - 1) * pageSize
+
+          return <div className="text-center">{startItem - row.index}</div>
+        },
+        disableSortBy: true,
       },
       {
         accessorKey: "username",
@@ -132,7 +120,16 @@ export function UserPage() {
         accessorKey: "status",
         header: () => <div className="text-center">Trạng thái</div>,
         cell: ({ row }) => (
-          <div className="text-center">{row.getValue("status")}</div>
+          <div
+            className={cn(
+              "text-center font-bold",
+              row.getValue("status") === "active"
+                ? "text-green-500"
+                : "text-gray-500"
+            )}
+          >
+            {row.getValue("status") === "active" ? "Hoạt động" : "Vô hiệu"}
+          </div>
         ),
       },
       {
@@ -142,12 +139,27 @@ export function UserPage() {
           const rowValue = row.original
 
           return (
-            <RowActions id={rowValue.id} name={rowValue.username} applyFilter={applyFilter} />
+            <RowActions
+              id={rowValue.id}
+              name={rowValue.username}
+              applyFilter={applyFilter}
+            />
           )
         },
       },
     ],
-    [applyFilter]
+    [applyFilter, meta]
+  )
+
+  const tableColumns = useMemo(
+    () =>
+      loading
+        ? columns.map((column) => ({
+            ...column,
+            cell: <Skeleton className={"h-4 w-full"} />,
+          }))
+        : columns,
+    [loading, columns]
   )
 
   useEffect(() => {
@@ -158,7 +170,7 @@ export function UserPage() {
 
   const table = useReactTable({
     data,
-    columns,
+    columns: tableColumns,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
     getCoreRowModel: getCoreRowModel(),
@@ -200,7 +212,7 @@ export function UserPage() {
           searchInputPlaceholder: "Tìm kiếm",
         }}
       >
-        <InvoiceFilter {...{ onFieldChange }} />
+        {/* <InvoiceFilter {...{ onFieldChange }} /> */}
       </PageHeader>
       <PageTable {...{ table }} />
       <PagePagination {...{ table, meta, setMeta, applyFilter }} />

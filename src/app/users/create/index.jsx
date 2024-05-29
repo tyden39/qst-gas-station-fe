@@ -6,7 +6,7 @@ import { Form } from "components/ui/form"
 import { cn } from "lib/utils"
 import { ChevronLeft } from "lucide-react"
 import { useEffect } from "react"
-import { useForm } from "react-hook-form"
+import { useForm, Form as RouterForm } from "react-hook-form"
 import { Link, useLocation, useNavigate, useParams } from "react-router-dom"
 import { z } from "zod"
 import AccountInfo from "./AccountInfo"
@@ -55,6 +55,12 @@ export default function UserCreatePage() {
     },
   })
 
+  // const blocker = useBlocker(
+  //   ({ currentLocation, nextLocation }) =>
+  //     form.formState.isDirty &&
+  //     currentLocation.pathname !== nextLocation.pathname
+  // );
+
   function onSubmit(values) {
     if (isEdit) {
       const resUser = editUser(params.id, values)
@@ -99,7 +105,7 @@ export default function UserCreatePage() {
       </div>
 
       <Form {...form}>
-        <form
+        <RouterForm
           className="grid grid-cols-3 gap-8"
           onSubmit={form.handleSubmit(onSubmit)}
           autoComplete="off"
@@ -118,7 +124,18 @@ export default function UserCreatePage() {
             </Button>
             <Button>{isEdit ? "Lưu" : "Tạo mới"}</Button>
           </Card>
-        </form>
+      {/* {blocker.state === "blocked" ? (
+        <div>
+          <p>Are you sure you want to leave?</p>
+          <button onClick={() => blocker.proceed()}>
+            Proceed
+          </button>
+          <button onClick={() => blocker.reset()}>
+            Cancel
+          </button>
+        </div>
+      ) : null} */}
+        </RouterForm>
       </Form>
     </div>
   )

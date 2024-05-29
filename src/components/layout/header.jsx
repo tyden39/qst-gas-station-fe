@@ -54,9 +54,9 @@ export default function PageHeader({
               className="w-[260px] pl-7"
             />
           </div>
-          <Button onClick={() => setShowMoreFilter((prev) => !prev)}>
+          {children && <Button onClick={() => setShowMoreFilter((prev) => !prev)}>
             Bộ lọc khác
-          </Button>
+          </Button>}
           {showMoreFilter && (
             <Button
               disabled={loading || !canSubmit}
