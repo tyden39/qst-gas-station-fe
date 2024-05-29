@@ -21,7 +21,7 @@ const Sidebar = () => {
   return (
     <nav
       className={cn(
-        "h-screen overflow-y-scroll border-r transition-all",
+        "min-h-screen overflow-y-scroll border-r transition-all bg-white",
         collapsed ? "w-12" : "w-64"
       )}
     >

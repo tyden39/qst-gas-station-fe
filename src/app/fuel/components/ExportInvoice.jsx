@@ -14,6 +14,7 @@ import { BILL_TYPES, FUEL_TYPE, PUMP_ID } from "../constant"
 import { useState } from "react"
 import { Loader2 } from "lucide-react"
 import { useToast } from "components/ui/use-toast"
+import { TOAST } from "components/ui/toast"
 
 export default function ExportInvoice({ filter, meta, selected }) {
   const {toast} = useToast()
@@ -27,8 +28,12 @@ export default function ExportInvoice({ filter, meta, selected }) {
     const errMessage = await handleExport(filter, meta, selected)
 
     if (errMessage) toast({
-      variant: 'destructive',
+      variant: TOAST.DESTRUCTIVE,
       description: "Xuất excel thất bại!"
+    })
+    else toast({
+      variant: TOAST.DESTRUCTIVE,
+      description: "Xuất excel thành công!"
     })
 
     setOpen(false)

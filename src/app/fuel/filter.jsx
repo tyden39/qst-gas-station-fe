@@ -1,4 +1,4 @@
-import { FormSelect } from "components/FormSelect"
+import { FilterSelect } from "components/FilterSelect"
 import { DatePickerWithRange } from "components/ui/datepicker"
 import { BILL_TYPES, FUEL_TYPE, PUMP_ID } from "./constant"
 import { initFilter } from "./initial"
@@ -8,27 +8,27 @@ export default function InvoiceFilter({ onFieldChange }) {
     <>
       <DatePickerWithRange
         name={"billDate"}
-        label='Logger Time:'
+        label='Thời gian ghi log:'
         defaultValue={initFilter.billDate}
         onChangeValue={onFieldChange}
       />
-      <FormSelect
+      <FilterSelect
         name="billType"
         defaultValue={initFilter.billType}
-        label={"Bill Type:"}
+        label={"Loại hóa đơn:"}
         onValueChange={onFieldChange}
         selectList={BILL_TYPES}
       />
-      <FormSelect
+      <FilterSelect
         name="fuelType"
-        label={"Fuel Type:"}
+        label={"Loại nhiên liệu:"}
         defaultValue={initFilter.fuelType}
         onValueChange={onFieldChange}
         selectList={FUEL_TYPE}
       />
-      <FormSelect
+      <FilterSelect
         name="pumpId"
-        label={"Pump ID:"}
+        label={"Mã vòi bơm:"}
         defaultValue={initFilter.pumpId}
         onValueChange={onFieldChange}
         selectList={PUMP_ID}

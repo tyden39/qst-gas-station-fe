@@ -9,7 +9,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "components/ui/popover"
 import { cn } from "lib/utils"
 import { Label } from "./label"
 
-export function DatePickerWithRange({ className, onChangeValue, defaultValue, name, label }) {
+export function DatePickerWithRange({ className, onChangeValue, defaultValue, name, label, placeholder }) {
   const [date, setDate] = React.useState(defaultValue)
 
   const onSelect = (value) => {
@@ -32,14 +32,14 @@ export function DatePickerWithRange({ className, onChangeValue, defaultValue, na
             {date?.from ? (
               date.to ? (
                 <>
-                  {format(date.from, "LLL dd, y")} -{" "}
-                  {format(date.to, "LLL dd, y")}
+                  {format(date.from, "dd-MM-yyyy hh:mm:ss")} -{" "}
+                  {format(date.to, "dd-MM-yyyy hh:mm:ss")}
                 </>
               ) : (
-                format(date.from, "LLL dd, y")
+                format(date.from, "dd-MM-yyyy hh:mm:ss")
               )
             ) : (
-              <span>Pick a date</span>
+              <span>{placeholder}</span>
             )}
           </EllipsisTooltip>
           <CalendarIcon className="h-4 w-4" />

@@ -18,10 +18,10 @@ const handleLogin = async (set, formData) => {
     )
     localStorage.setItem(
       AUTH_CONFIG.USER_STORAGE_NAME,
-      JSON.stringify({ username: user.username, isAdmin: true })
+      JSON.stringify({ ...user, isAdmin: true })
     )
 
-    set({ user: { username: user.username, isAdmin: true } })
+    set({ user: { ...user, isAdmin: true } })
 
     return response.data
   } catch (error) {
@@ -58,7 +58,7 @@ const handleLogout = async (set) => {
 const useAuth = create((set, get) => ({
   user: null,
   isAdmin: false,
-  setUser: (user) => set({ user: { username: user?.username, isAdmin: true } }),
+  setUser: (user) => set({ user: { ...user, isAdmin: true } }),
   login: async (formData) => handleLogin(set, formData),
   logout: () => handleLogout(set),
 }))

@@ -3,6 +3,18 @@ import { convertToQueryString } from "lib/utils"
 import FileSaver from 'file-saver';
 import { API_PATHS } from "constants/api-paths";
 
+export const fetchOneInvoice = async (id) => {
+  try {
+    const response = await axiosInstance.get(
+      `${API_PATHS.INVOICE_FETCH_ONE}/${id}`
+    )
+
+    return response
+  } catch (error) {
+    return error.response
+  }
+}
+
 export const fetchInvoices = async (filter, pageMeta) => {
   try {
     const startDate = filter.billDate?.from
@@ -52,5 +64,40 @@ export const handleExport = async (filter, pageMeta, selected) => {
   } catch (error) {
     console.log(error)
     return 'Xuất excel thất bại'
+  }
+}
+
+export const deleteInvoice = async (id) => {
+  try {
+    const response = await axiosInstance.delete(
+      `${API_PATHS.INVOICE_DELETE}/${id}`
+    )
+    return response.status
+  } catch (error) {
+    console.log(error)
+  }
+}
+
+export const createInvoice = async (formData) => {
+  try {
+    const response = await axiosInstance.post(
+      `${API_PATHS.INVOICE_CREATE}`,
+      formData
+    )
+    return response
+  } catch (error) {
+    return error.response
+  }
+}
+
+export const editInvoice = async (id, formData) => {
+  try {
+    const response = await axiosInstance.post(
+      `${API_PATHS.INVOICE_EDIT}/${id}`,
+      formData
+    )
+    return response
+  } catch (error) {
+    return error.response
   }
 }

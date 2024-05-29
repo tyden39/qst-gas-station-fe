@@ -1,67 +1,44 @@
 import { User } from "lucide-react"
-import { Link, useLocation } from "react-router-dom"
-import menu from "routers/menu"
-import PATH from "routers/path"
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbSeparator
-} from "./ui/breadcrumb"
+import useAuth from "zustands/useAuth"
 import { Button } from "./ui/button"
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu"
-import useAuth from "zustands/useAuth"
+import { Link } from "react-router-dom"
+import PATH from "routers/path"
 
 export default function Header() {
-  const [user, logout] = useAuth(state => [state.user, state.logout])
-  const { pathname } = useLocation()
-  const menuItem = menu.find((item) => item.path === pathname)
+  const [user, logout] = useAuth((state) => [state.user, state.logout])
 
   return (
-    <header className="w-full h-fit flex justify-between items-center px-4 py-2 border-b">
-      <Breadcrumb>
-        <BreadcrumbList>
-          <BreadcrumbItem>
-            <BreadcrumbLink asChild>
-              <Link to={PATH.HOME}>Trang chủ</Link>
-            </BreadcrumbLink>
-          </BreadcrumbItem>
-          <BreadcrumbSeparator />
-          {menuItem && (
-            <BreadcrumbItem>
-              {menuItem.name}
-            </BreadcrumbItem>
-          )}
-        </BreadcrumbList>
-      </Breadcrumb>
-
+    <header className="w-full h-fit flex justify-end items-center px-4 py-2 border-b bg-white">
       {/* chọn cty */}
       {/* chọn chi nhánh */}
+      {/* chọn cửa hàng */}
 
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button
-            variant="outline"
-            size="icon"
-            className="overflow-hidden rounded-full"
-          >
-            <User />
-          </Button>
+          <div className="flex items-center gap-2 cursor-pointer">
+            <span className="hover:underline">{user?.username}</span>
+            <Button
+              variant="outline"
+              size="icon"
+              className="overflow-hidden rounded-full"
+            >
+              <User />
+            </Button>
+          </div>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
-          <DropdownMenuLabel>{user?.username}</DropdownMenuLabel>
+          <DropdownMenuItem className="cursor-pointer" asChild>
+            <Link to={PATH.PROFILES}>Hồ sơ</Link>
+          </DropdownMenuItem>
           <DropdownMenuSeparator />
-          <DropdownMenuItem>Profiles</DropdownMenuItem>
-          <DropdownMenuSeparator />
-          <DropdownMenuItem onClick={logout}>Logout</DropdownMenuItem>
+          <DropdownMenuItem className="cursor-pointer" onClick={logout}>Đăng xuất</DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
     </header>

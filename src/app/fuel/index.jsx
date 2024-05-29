@@ -9,16 +9,10 @@ import {
 import PageHeader from "components/layout/header"
 import PagePagination from "components/pagination"
 import PageTable from "components/table"
-import { Button, buttonVariants } from "components/ui/button"
+import { buttonVariants } from "components/ui/button"
 import { Checkbox } from "components/ui/checkbox"
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "components/ui/dropdown-menu"
+import { Skeleton } from "components/ui/skeleton"
 import { cn } from "lib/utils"
-import { MoreHorizontal } from "lucide-react"
 import moment from "moment"
 import { useCallback, useEffect, useMemo, useState } from "react"
 import { Link } from "react-router-dom"
@@ -26,8 +20,8 @@ import PATH from "routers/path"
 import { useAppNavigation } from "zustands/useAppNavigation"
 import useInvoice from "zustands/useInvoice"
 import { fetchInvoices } from "../../api/invoiceApi"
-import DeleteRow from "./components/DeleteRow"
 import ExportInvoice from "./components/ExportInvoice"
+import RowActions from "./components/RowActions"
 import { BILL_TYPES } from "./constant"
 import InvoiceFilter from "./filter"
 import { initColumnVisibility, initFilter, initMeta } from "./initial"
@@ -38,9 +32,10 @@ export function FuelPage() {
   const [meta, setMeta] = useState(initMeta)
 
   const [filter, setFilter] = useState(initFilter)
+  const [activedFilter, setActivedFilter] = useState(initFilter)
   const [sorting, setSorting] = useState([])
   const [loading, setLoading] = useState(false)
-  const canSubmit = JSON.stringify(filter) !== JSON.stringify(initFilter)
+  const canSubmit = JSON.stringify(filter) !== JSON.stringify(activedFilter)
   const [columnFilters, setColumnFilters] = useState([])
   const [columnVisibility, setColumnVisibility] = useState(initColumnVisibility)
   const [selected, setSelected] = useInvoice((state) => [
@@ -58,6 +53,7 @@ export function FuelPage() {
         .then(({ data, meta }) => {
           setMeta(meta)
           setData(data)
+          setActivedFilter(filter)
         })
         .catch((error) => console.log(error))
         .finally(() => setLoading(false))
@@ -195,12 +191,21 @@ export function FuelPage() {
       {
         accessorKey: "Bill_No",
         header: () => <div className="capitalize text-center">Mã hóa đơn</div>,
-        cell: ({ row }) => <div className="text-center">{row.getValue("Bill_No")}</div>,
+        cell: ({ row }) => (
+          <div className="text-center">{row.getValue("Bill_No")}</div>
+        ),
       },
       {
         accessorKey: "Bill_Type",
-        header: () => <div className="capitalize text-center">Loại hóa đơn</div>,
-        cell: ({ row }) => <div className="text-center">{BILL_TYPES.find(item => item.value === row.getValue("Bill_Type")).label || ''}</div>,
+        header: () => (
+          <div className="capitalize text-center">Loại hóa đơn</div>
+        ),
+        cell: ({ row }) => (
+          <div className="text-center">
+            {BILL_TYPES.find((item) => item.value === row.getValue("Bill_Type"))
+              .label || ""}
+          </div>
+        ),
       },
       {
         accessorKey: "Fuel_Type",
@@ -279,37 +284,28 @@ export function FuelPage() {
         cell: ({ row }) => {
           const rowValue = row.original
           return (
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="h-8 w-8 p-0">
-                  <span className="sr-only">Open menu</span>
-                  <MoreHorizontal className="h-4 w-4" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuItem asChild>
-                  <Link
-                    to={PATH.USER_EDIT.replace(":id", rowValue.id)}
-                    className="cursor-pointer"
-                  >
-                    Chỉnh sửa
-                  </Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                  <DeleteRow id={rowValue.Check_Key} />
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+            <RowActions id={rowValue.id} checkKey={rowValue.Check_Key} applyFilter={applyFilter} />
           )
         },
       },
     ],
-    [meta, selected, setSelected, data, currentPageSelected.length]
+    [meta, selected, setSelected, data, currentPageSelected.length, applyFilter]
   )
+  
+  const tableColumns = useMemo(
+    () =>
+      loading
+        ? columns.map((column) => ({
+            ...column,
+            cell: <Skeleton className={"h-4 w-full"} />,
+          }))
+        : columns,
+    [loading, columns]
+  );
 
   const table = useReactTable({
     data,
-    columns,
+    columns: tableColumns,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
     getCoreRowModel: getCoreRowModel(),
@@ -327,8 +323,7 @@ export function FuelPage() {
   })
 
   const onFieldChange = useCallback(
-    (value, name) => setFilter((prev) => ({ ...prev, [name]: value })),
-    []
+    (value, name) => setFilter((prev) => ({ ...prev, [name]: value })), []
   )
 
   return (
@@ -336,7 +331,7 @@ export function FuelPage() {
       <div className="flex justify-between items-center">
         <h1 className="text-4xl leading-normal">{activedMenu.name}</h1>
         <div className="space-x-2">
-          <ExportInvoice {...{filter, meta, selected}} />
+          <ExportInvoice {...{ filter, meta, selected }} />
           <Link
             className={cn(buttonVariants({ variant: "outline" }))}
             to={PATH.FUEL_CREATE}
@@ -350,6 +345,7 @@ export function FuelPage() {
         {...{
           table,
           filter,
+          activedFilter,
           onFieldChange,
           applyFilter,
           loading,

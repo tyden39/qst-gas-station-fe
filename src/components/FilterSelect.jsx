@@ -11,7 +11,7 @@ import { useState } from "react"
 import EllipsisTooltip from "./EllipsisTooltip"
 import { Label } from "./ui/label"
 
-export function FormSelect({
+export function FilterSelect({
   name,
   label,
   value,

@@ -9,6 +9,7 @@ const PATH = {
   USER: '/users',
   USER_CREATE: '/users/create',
   USER_EDIT: '/users/edit/:id',
+  PROFILES: '/profiles',
 }
 
 export default PATH
