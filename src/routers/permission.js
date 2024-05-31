@@ -1,8 +1,9 @@
 import NoPermission from "app/no-permission";
 
 export const getPermissionPage = (route, user) => {
-  if(+user?.isAdmin) return route.component
-  return route?.prefix === 'publish' ? route.component : NoPermission
+  return route.component
+  // if(+user?.isAdmin) return route.component
+  // return route?.prefix === 'publish' ? route.component : NoPermission
 }
 
 // export const checkPermission = (prefix, action, user) => {
