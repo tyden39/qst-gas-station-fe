@@ -7,10 +7,10 @@ import PATH from './path'
 
 export default function PrivateRoute({children, ...rest}) {
   const user = JSON.parse(localStorage.getItem(AUTH_CONFIG.USER_STORAGE_NAME))
-
-  return (
-    user ? <Outlet/> : <Navigate to={{
-      pathname: PATH.LOGIN,
-    }}/>
-  )
+  return <Outlet />
+  // return (
+  //   user ? <Outlet/> : <Navigate to={{
+  //     pathname: PATH.LOGIN,
+  //   }}/>
+  // )
 }
