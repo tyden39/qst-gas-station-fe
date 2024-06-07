@@ -1,4 +1,4 @@
-import { deleteInvoice } from "api/invoiceApi"
+import { deleteInvoice } from "actions/fuelActions"
 import { Button } from "components/ui/button"
 import {
   Dialog,
@@ -56,7 +56,7 @@ const RowActions = ({ id, checkKey, applyFilter }) => {
     <Dialog {...{ open, onOpenChange }}>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button variant="ghost" className="h-8 w-8 p-0">
+          <Button variant="ghost" className="h-8 w-full p-0">
             <span className="sr-only">Open menu</span>
             <MoreHorizontal className="h-4 w-4" />
           </Button>
@@ -64,7 +64,7 @@ const RowActions = ({ id, checkKey, applyFilter }) => {
         <DropdownMenuContent align="end">
           <DropdownMenuItem asChild>
             <Link
-              to={PATH.FUEL_EDIT.replace(":checkKey", checkKey)}
+              to={PATH.FUEL_EDIT.replace(":id", checkKey)}
               className="cursor-pointer"
             >
               Chỉnh sửa

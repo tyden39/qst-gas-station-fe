@@ -13,4 +13,25 @@ export const API_PATHS = {
   USER_EDIT: '/user/edit',
   USER_DELETE: '/user/delete',
   USER_FETCH_ONE: '/user',
+
+  STORE_LIST: '/store/list',
+  STORE_SIMPLE_LIST: '/store/simple-list',
+  STORE_CREATE: '/store/create',
+  STORE_EDIT: '/store/edit',
+  STORE_DELETE: '/store/delete',
+  STORE_FETCH_ONE: '/store',
+
+  BRANCH_LIST: '/branch/list',
+  BRANCH_SIMPLE_LIST: '/branch/simple-list',
+  BRANCH_CREATE: '/branch/create',
+  BRANCH_EDIT: '/branch/edit',
+  BRANCH_DELETE: '/branch/delete',
+  BRANCH_FETCH_ONE: '/branch',
+
+  COMPANY_LIST: '/company/list',
+  COMPANY_SIMPLE_LIST: '/company/simple-list',
+  COMPANY_CREATE: '/company/create',
+  COMPANY_EDIT: '/company/edit',
+  COMPANY_DELETE: '/company/delete',
+  COMPANY_FETCH_ONE: '/company',
 }

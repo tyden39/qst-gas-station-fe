@@ -1,4 +1,4 @@
-import axiosInstance from "api/axiosInstance"
+import axiosInstance from "actions/axiosInstance"
 import axios from "axios"
 import { API_PATHS } from "constants/api-paths"
 import { convertToQueryString } from "lib/utils"

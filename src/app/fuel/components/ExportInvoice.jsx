@@ -1,4 +1,4 @@
-import { handleExport } from "api/invoiceApi"
+import { handleExport } from "actions/fuelActions"
 import { Button } from "components/ui/button"
 import {
   Dialog,

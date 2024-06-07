@@ -1,4 +1,4 @@
-import axiosInstance from "api/axiosInstance"
+import axiosInstance from "actions/axiosInstance"
 import { convertToQueryString } from "lib/utils"
 import FileSaver from 'file-saver';
 import { API_PATHS } from "constants/api-paths";

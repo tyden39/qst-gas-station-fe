@@ -10,18 +10,38 @@ import { UserPage } from "app/users"
 import UserCreatePage from "app/users/create"
 import FuelCreatePage from "app/fuel/create"
 import ProfilesPage from "app/profiles"
+import { CompanyPage } from "app/companies"
+import CompanyCreatePage from "app/companies/create"
+import { BranchPage } from "app/branches"
+import BranchCreatePage from "app/branches/create"
+import { StorePage } from "app/stores"
+import StoreCreatePage from "app/stores/create"
 
 const privateRoutes = [
   { path: PATH.HOME, component: FuelPage },
+  { path: PATH.PROFILES, component: ProfilesPage },
+
   { path: PATH.FUEL, component: FuelPage },
   { path: PATH.FUEL_CREATE, component: FuelCreatePage },
   { path: PATH.FUEL_EDIT, component: FuelCreatePage },
   { path: PATH.FUEL_DEBUG, component: FuelDebugPage },
   { path: PATH.FUEL_FILES, component: FuelFilesPage },
+
   { path: PATH.USER, component: UserPage },
   { path: PATH.USER_CREATE, component: UserCreatePage },
   { path: PATH.USER_EDIT, component: UserCreatePage },
-  { path: PATH.PROFILES, component: ProfilesPage },
+
+  { path: PATH.COMPANY, component: CompanyPage },
+  { path: PATH.COMPANY_CREATE, component: CompanyCreatePage },
+  { path: PATH.COMPANY_EDIT, component: CompanyCreatePage },
+
+  { path: PATH.BRANCH, component: BranchPage },
+  { path: PATH.BRANCH_CREATE, component: BranchCreatePage },
+  { path: PATH.BRANCH_EDIT, component: BranchCreatePage },
+
+  { path: PATH.STORE, component: StorePage },
+  { path: PATH.STORE_CREATE, component: StoreCreatePage },
+  { path: PATH.STORE_EDIT, component: StoreCreatePage },
 ]
 
 const publicRoutes = [

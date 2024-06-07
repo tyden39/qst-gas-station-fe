@@ -1,3 +1,4 @@
+import { TooltipArrow } from "@radix-ui/react-tooltip"
 import {
   Card,
   CardContent,
@@ -13,6 +14,9 @@ import {
   FormMessage,
 } from "components/ui/form"
 import { RadioGroup, RadioGroupItem } from "components/ui/radio-group"
+import { Tooltip, TooltipContent, TooltipTrigger } from "components/ui/tooltip"
+import { USER_ROLES } from "constants/user-roles"
+import { CircleHelp } from "lucide-react"
 
 export default function UserRoles({ form }) {
   return (
@@ -30,39 +34,25 @@ export default function UserRoles({ form }) {
               <FormControl>
                 <RadioGroup
                   onValueChange={field.onChange}
-                  defaultValue={field.value}
-                  className="grid grid-cols-3 w-full items-center gap-8"
+                  value={field.value}
+                  className="grid grid-cols-1 w-full items-center gap-8"
                 >
-                  <FormItem className="flex items-center space-x-2 space-y-0">
-                    <FormControl>
-                      <RadioGroupItem value="admin" />
-                    </FormControl>
-                    <FormLabel>Quản lý website</FormLabel>
-                  </FormItem>
-                  <FormItem className="flex items-center space-x-2 space-y-0">
-                    <FormControl>
-                      <RadioGroupItem value="admin-branch" />
-                    </FormControl>
-                    <FormLabel>Quản lý chi nhánh</FormLabel>
-                  </FormItem>
-                  <FormItem className="flex items-center space-x-2 space-y-0">
-                    <FormControl>
-                      <RadioGroupItem value="admin-store" />
-                    </FormControl>
-                    <FormLabel>Quản lý cửa hàng</FormLabel>
-                  </FormItem>
-                  <FormItem className="flex items-center space-x-2 space-y-0">
-                    <FormControl>
-                      <RadioGroupItem value="edit-store" />
-                    </FormControl>
-                    <FormLabel>Chỉnh sửa cửa hàng</FormLabel>
-                  </FormItem>
-                  <FormItem className="flex items-center space-x-2 space-y-0">
-                    <FormControl>
-                      <RadioGroupItem value="view-store" />
-                    </FormControl>
-                    <FormLabel>Xem cửa hàng</FormLabel>
-                  </FormItem>
+                  {USER_ROLES.map((item) => (
+                    <FormItem className="flex items-center space-x-2 space-y-0">
+                      <FormControl>
+                        <RadioGroupItem value={item.value} />
+                      </FormControl>
+                      <FormLabel>{item.label}</FormLabel>
+                      <Tooltip delayDuration={300}>
+                        <TooltipTrigger asChild>
+                          <CircleHelp size={16} className="cursor-pointer" />
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>{item.description}</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </FormItem>
+                  ))}
                 </RadioGroup>
               </FormControl>
               <FormMessage />

@@ -1,11 +1,11 @@
 import { zodResolver } from "@hookform/resolvers/zod"
-import { createUser, editUser, fetchOneUser } from "api/userApi"
+import { createUser, editUser, fetchOneUser } from "actions/userApi"
 import { Button } from "components/ui/button"
 import { Card } from "components/ui/card"
 import { Form } from "components/ui/form"
 import { cn } from "lib/utils"
 import { ChevronLeft } from "lucide-react"
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 import { useForm, Form as RouterForm } from "react-hook-form"
 import { Link, useLocation, useNavigate, useParams } from "react-router-dom"
 import { z } from "zod"
@@ -13,6 +13,7 @@ import AccountInfo from "./AccountInfo"
 import UserInfo from "./UserInfo"
 import UserRoles from "./UserRoles"
 import { useToast } from "components/ui/use-toast"
+import { USER_ROLES } from "constants/user-roles"
 
 const newSchema = z
   .object({
@@ -25,20 +26,36 @@ const newSchema = z
     lastName: z.string({ required_error: "Họ không được để trống" }),
     email: z.string().optional().nullable(),
     phone: z.string().optional().nullable(),
-    roles: z.string(),
+    roles: z.string({ required_error: "Vai trò người dùng không được để trống" }),
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: "Mật khẩu không khớp",
     path: ["confirmPassword"],
   })
 
-const editSchema = z.object({
-  firstName: z.string({ required_error: "Tên không được để trống" }),
-  lastName: z.string({ required_error: "Họ không được để trống" }),
-  email: z.string().optional().nullable(),
-  phone: z.string().optional().nullable(),
-  roles: z.string(),
-})
+  const editSchema = z.object({
+    firstName: z.string({ required_error: "Tên không được để trống" }),
+    lastName: z.string({ required_error: "Họ không được để trống" }),
+    email: z.string().optional().nullable(),
+    phone: z.string().optional().nullable(),
+    roles: z.string({ required_error: "Vai trò người dùng không được để trống" }),
+  })
+
+  const editSchemaWithPassword = z.object({
+    firstName: z.string({ required_error: "Tên không được để trống" }),
+    lastName: z.string({ required_error: "Họ không được để trống" }),
+    email: z.string().optional().nullable(),
+    phone: z.string().optional().nullable(),
+    roles: z.string({ required_error: "Vai trò người dùng không được để trống" }),
+    password: z.string({ required_error: "Mật khẩu không được để trống" }),
+    confirmPassword: z.string({
+      required_error: "Nhập lại mật khẩu không được để trống",
+    }),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Mật khẩu không khớp",
+    path: ["confirmPassword"],
+  })
 
 export default function UserCreatePage() {
   const {toast} = useToast()
@@ -47,11 +64,13 @@ export default function UserCreatePage() {
   const params = useParams()
 
   const isEdit = location.pathname.includes("edit")
+  const [loading, setLoading] = useState(false)
+  const [isChangePassword, setIsChangePassword] = useState(false)
 
   const form = useForm({
-    resolver: zodResolver(isEdit ? editSchema : newSchema),
+    resolver: zodResolver(isEdit ? isChangePassword ? editSchemaWithPassword : editSchema : newSchema),
     defaultValues: {
-      roles: "admin",
+      roles: USER_ROLES[0].value,
     },
   })
 
@@ -62,6 +81,7 @@ export default function UserCreatePage() {
   // );
 
   function onSubmit(values) {
+    setLoading(true)
     if (isEdit) {
       const resUser = editUser(params.id, values)
       if (resUser.error) console.log(resUser.errorMessage)
@@ -74,6 +94,7 @@ export default function UserCreatePage() {
       if (newUser.error) console.log(newUser.errorMessage)
       else navigation(-1)
     }
+    setLoading(false)
   }
 
   useEffect(() => {
@@ -115,14 +136,17 @@ export default function UserCreatePage() {
             <UserRoles {...{ form }} />
           </div>
           <div className="">
-            <AccountInfo {...{ form, isEdit }} />
+            <AccountInfo {...{ form, isEdit, isChangePassword, setIsChangePassword }} />
           </div>
 
           <Card className="col-span-2 p-4 space-x-4 text-right">
-            <Button variant="outline" onClick={() => navigation(-1)}>
+            <Button disabled={loading} variant="outline" onClick={(event) => {
+              event.preventDefault()
+              navigation(-1)
+            }}>
               Hủy
             </Button>
-            <Button>{isEdit ? "Lưu" : "Tạo mới"}</Button>
+            <Button disabled={loading}>{isEdit ? "Lưu" : "Tạo mới"}</Button>
           </Card>
       {/* {blocker.state === "blocked" ? (
         <div>

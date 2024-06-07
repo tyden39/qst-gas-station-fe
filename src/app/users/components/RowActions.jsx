@@ -1,4 +1,4 @@
-import { deleteUser } from "api/userApi"
+import { deleteUser } from "actions/userApi"
 import { Button } from "components/ui/button"
 import {
   Dialog,

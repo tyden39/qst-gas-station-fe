@@ -6,9 +6,13 @@ import { Tooltip, TooltipContent } from "./ui/tooltip"
 import { Link, useLocation, useNavigate } from "react-router-dom"
 import menu from "routers/menu"
 import { useAppNavigation } from "zustands/useAppNavigation"
+import useAuth from "zustands/useAuth"
+import PATH from "routers/path"
+import { USER_ROLE } from "constants/user-roles"
 
 const Sidebar = () => {
   const [collapsed, setActivedMenu] = useAppNavigation((state) => [state.collapsed, state.setActivedMenu])
+  const user = useAuth(state => state.user)
   const { pathname } = useLocation()
   const navigation = useNavigate()
 
@@ -29,7 +33,7 @@ const Sidebar = () => {
         <span className="leading-10 text-3xl">Gas Station</span>
       </div>
       <div className="p-2 space-y-2">
-        {menu.map((item) =>
+        {menu.filter(item => user?.roles === USER_ROLE.READ_ONLY_STORE ? !item.path.includes(PATH.USER) : true).map((item) =>
           collapsed ? (
             <Tooltip key={`collapsed-menu-${item.id}`}>
               <TooltipTrigger asChild>

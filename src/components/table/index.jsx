@@ -19,7 +19,7 @@ export default function PageTable({ table }) {
             <TableRow key={headerGroup.id}>
               {headerGroup.headers.map((header) => {
                 return (
-                  <TableHead key={header.id}>
+                  <TableHead key={header.id} style={{width: header.getSize()}}>
                     {header.isPlaceholder
                       ? null
                       : flexRender(
@@ -52,7 +52,7 @@ export default function PageTable({ table }) {
                 colSpan={columns.length}
                 className="w-full h-24 text-center"
               >
-                Không tìm thấy hóa đơn.
+                Không tìm thấy dữ liệu.
               </TableCell>
             </TableRow>
           )}

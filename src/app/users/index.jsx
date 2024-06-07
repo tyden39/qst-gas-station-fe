@@ -16,9 +16,10 @@ import { useCallback, useEffect, useMemo, useState } from "react"
 import { Link } from "react-router-dom"
 import PATH from "routers/path"
 import { useAppNavigation } from "zustands/useAppNavigation"
-import { fetchUsers } from "../../api/userApi"
+import { fetchUsers } from "../../actions/userApi"
 import RowActions from "./components/RowActions"
 import { initColumnVisibility, initFilter, initMeta } from "./initial"
+import { USER_ROLES } from "constants/user-roles"
 
 export function UserPage() {
   const activedMenu = useAppNavigation((state) => state.activedMenu)
@@ -97,7 +98,7 @@ export function UserPage() {
         accessorKey: "roles",
         header: () => <div className="text-center">Vai trò người dùng</div>,
         cell: ({ row }) => {
-          return <div className="text-center">{row.getValue("roles")}</div>
+          return <div className="text-center">{USER_ROLES.find(item => item.value === row.getValue("roles"))?.label}</div>
         },
       },
       {
@@ -133,6 +134,20 @@ export function UserPage() {
         ),
       },
       {
+        accessorKey: "branchName",
+        header: () => <div className="text-center">Chi Nhánh</div>,
+        cell: ({ row }) => (
+          <div className="text-center">{row.getValue("branchName")}</div>
+        ),
+      },
+      {
+        accessorKey: "companyName",
+        header: () => <div className="text-center">Công Ty</div>,
+        cell: ({ row }) => {
+          return <div className="text-center">{row.getValue("companyName")}</div>
+        },
+      },
+      {
         id: "actions",
         enableHiding: false,
         cell: ({ row }) => {
@@ -162,6 +177,8 @@ export function UserPage() {
     [loading, columns]
   )
 
+  const tableData = useMemo(() => (loading ? Array(meta.pageSize) : data), [data, loading, meta.pageSize])
+
   useEffect(() => {
     applyFilter()
     table.setPageSize(meta.pageSize)
@@ -169,7 +186,7 @@ export function UserPage() {
   }, [meta.currentPage, meta.pageSize])
 
   const table = useReactTable({
-    data,
+    data: tableData,
     columns: tableColumns,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,

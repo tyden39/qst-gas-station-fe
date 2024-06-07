@@ -23,4 +23,7 @@ export const initColumnVisibility = {
   Bill_Type: false,
   Start_Time: false,
   End_Time: false,
+  storeName: false,
+  branchName: false,
+  companyName: false,
 }

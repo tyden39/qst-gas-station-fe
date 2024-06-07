@@ -8,10 +8,8 @@ import {
   FormMessage,
 } from "components/ui/form"
 import { Input } from "components/ui/input"
-import { useState } from "react"
 
-export default function AccountInfo({ form, isEdit }) {
-  const [isChangePassword, setIsChangePassword] = useState(false)
+export default function AccountInfo({ form, isEdit, isChangePassword, setIsChangePassword }) {
 
   return (
     <Card className="w-full">

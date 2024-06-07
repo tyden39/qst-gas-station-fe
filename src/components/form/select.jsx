@@ -12,6 +12,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "components/ui/select"
+import { PackageOpen } from "lucide-react"
 
 export default function FormSelect({
   form,
@@ -34,19 +35,26 @@ export default function FormSelect({
               </SelectTrigger>
             </FormControl>
             <SelectContent>
-              {list.map((item) =>
-                item.label ? (
-                  <SelectItem
-                    key={`${item.label}-${item.id}`}
-                    value={item.value}
-                  >
-                    {item.label}
-                  </SelectItem>
-                ) : (
-                  <SelectItem key={`${item}`} value={item}>
-                    {item}
-                  </SelectItem>
+              {list.length > 0 ? (
+                list.map((item) =>
+                  item.label ? (
+                    <SelectItem
+                      key={`${item.label}-${item.id}`}
+                      value={item.value}
+                    >
+                      {item.label}
+                    </SelectItem>
+                  ) : (
+                    <SelectItem key={`${item}`} value={item}>
+                      {item}
+                    </SelectItem>
+                  )
                 )
+              ) : (
+                <div className="text-gray-500 h-32 w-full flex flex-col justify-center items-center">
+                  <PackageOpen size={50} />
+                  Không tìm thấy dữ liệu
+                </div>
               )}
             </SelectContent>
           </Select>

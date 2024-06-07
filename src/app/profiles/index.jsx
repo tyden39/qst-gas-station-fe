@@ -1,5 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod"
-import { editUser, fetchOneUser } from "api/userApi"
+import { editUser, fetchOneUser } from "actions/userApi"
 import { Button } from "components/ui/button"
 import { Card } from "components/ui/card"
 import { Form } from "components/ui/form"
@@ -33,7 +33,7 @@ export default function ProfilesPage() {
   async function onSubmit(values) {
     const response = await editUser(authUser.id, values)
     if (response.status === 200) {
-      form.reset(response.data)
+      form.reset(response.data, {keepDirtyValues: true})
       toast({
         variant: 'success',
         description: "Lưu thông tin thành công!"

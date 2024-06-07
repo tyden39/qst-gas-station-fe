@@ -1,19 +1,13 @@
-import NoPermission from "app/no-permission";
+import NoPermission from "app/no-permission"
+import PATH from "./path"
 
 export const getPermissionPage = (route, user) => {
+  if (
+    user?.roles === "004" &&
+    (route.path.includes(PATH.FUEL_CREATE) ||
+      route.path.includes(PATH.FUEL_EDIT) ||
+      route.path.includes(PATH.USER))
+  )
+    return NoPermission
   return route.component
-  // if(+user?.isAdmin) return route.component
-  // return route?.prefix === 'publish' ? route.component : NoPermission
 }
-
-// export const checkPermission = (prefix, action, user) => {
-//   const { permissions } = user
-//   if(+user?.is_admin === 1) return true
-
-//   const subBranch = permissions?.filter(item => item?.feature_code === prefix)
-
-//   if(subBranch?.length > 0) {
-//     return !!subBranch?.find(it => +JSON.parse(it.actions_permission)[action] === 1)
-//   }
-//   return true
-// }

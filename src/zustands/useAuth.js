@@ -1,7 +1,9 @@
-import axiosInstance from "api/axiosInstance"
+import axiosInstance from "actions/axiosInstance"
 import axios from "axios"
 import { API_PATHS } from "constants/api-paths"
+import { USER_ROLE } from "constants/user-roles"
 import { AUTH_CONFIG } from "routers/config"
+import PATH from "routers/path"
 import { create } from "zustand"
 
 const handleLogin = async (set, formData) => {
@@ -55,12 +57,21 @@ const handleLogout = async (set) => {
   }
 }
 
+const handleGetPermisson = (get, path, role) => {
+  const user = get().user
+  if (user?.roles === USER_ROLE.READ_ONLY_STORE && role === 'edit' && path.includes(PATH.FUEL)) {
+    return false
+  }
+  return true
+}
+
 const useAuth = create((set, get) => ({
   user: null,
   isAdmin: false,
   setUser: (user) => set({ user: { ...user, isAdmin: true } }),
   login: async (formData) => handleLogin(set, formData),
   logout: () => handleLogout(set),
+  getPermission: (path, role) => handleGetPermisson(get, path, role),
 }))
 
 export default useAuth

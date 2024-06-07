@@ -19,14 +19,17 @@ import { Link } from "react-router-dom"
 import PATH from "routers/path"
 import { useAppNavigation } from "zustands/useAppNavigation"
 import useInvoice from "zustands/useInvoice"
-import { fetchInvoices } from "../../api/invoiceApi"
+import { fetchInvoices } from "../../actions/fuelActions"
 import ExportInvoice from "./components/ExportInvoice"
 import RowActions from "./components/RowActions"
 import { BILL_TYPES } from "./constant"
 import InvoiceFilter from "./filter"
 import { initColumnVisibility, initFilter, initMeta } from "./initial"
+import useAuth from "zustands/useAuth"
 
 export function FuelPage() {
+  const getPermission = useAuth((state) => state.getPermission)
+  const allowEdit = getPermission(PATH.FUEL, "edit")
   const activedMenu = useAppNavigation((state) => state.activedMenu)
   const [data, setData] = useState([])
   const [meta, setMeta] = useState(initMeta)
@@ -78,233 +81,293 @@ export function FuelPage() {
   }, [meta.currentPage, meta.pageSize])
 
   const columns = useMemo(
-    () => [
-      {
-        accessorKey: "order",
-        header: () => <div className="text-center">STT</div>,
-        cell: ({ row }) => {
-          const { currentPage, pageSize, totalItems } = meta
-          const startItem = totalItems - (currentPage - 1) * pageSize
+    () =>
+      [
+        {
+          accessorKey: "order",
+          size: 50,
+          header: () => <div className="text-center">STT</div>,
+          cell: ({ row }) => {
+            const { currentPage, pageSize, totalItems } = meta
+            const startItem = totalItems - (currentPage - 1) * pageSize
 
-          return <div className="text-center">{startItem - row.index}</div>
+            return <div className="text-center">{startItem - row.index}</div>
+          },
+          disableSortBy: true,
         },
-        disableSortBy: true,
-      },
-      {
-        accessorKey: "select",
-        header: () => (
-          <Checkbox
-            checked={
-              selected.length > 0 &&
-              (selected.length === meta.totalItems || "indeterminate")
-            }
-            onCheckedChange={() => {
-              const value =
-                selected.length > 0 &&
-                (selected.length === meta.totalItems || "indeterminate")
-              let newSelected = []
-              if (value === "indeterminate") {
-                if ((currentPageSelected.length ?? 0) < meta.pageSize) {
-                  newSelected = selected.filter(
-                    (item) => !data.map((i) => i.id).includes(item)
-                  )
-                  newSelected = [...newSelected, ...data.map((item) => item.id)]
-                  setCurrentPageSelected(data.map((item) => item.id))
-                } else {
-                  newSelected = selected.filter(
-                    (item) => !data.map((i) => i.id).includes(item)
-                  )
-                  setCurrentPageSelected([])
+        {
+          accessorKey: "select",
+          size: 50,
+          header: () => (
+            <div className="text-center">
+              <Checkbox
+                checked={
+                  selected.length > 0 &&
+                  (selected.length === meta.totalItems || "indeterminate")
                 }
-              } else if (value) {
-                newSelected = selected.filter(
-                  (item) => !data.map((i) => i.id).includes(item)
-                )
-                setCurrentPageSelected([])
-              } else {
-                setCurrentPageSelected(data.map((item) => item.id))
-                newSelected = [...selected, ...data.map((item) => item.id)]
-              }
-              setSelected(newSelected)
-            }}
-            aria-label="Select all"
-          />
-        ),
-        cell: ({ row }) => {
-          const rowValue = row.original
+                onCheckedChange={() => {
+                  const value =
+                    selected.length > 0 &&
+                    (selected.length === meta.totalItems || "indeterminate")
+                  let newSelected = []
+                  if (value === "indeterminate") {
+                    if ((currentPageSelected.length ?? 0) < meta.pageSize) {
+                      newSelected = selected.filter(
+                        (item) => !data.map((i) => i.id).includes(item)
+                      )
+                      newSelected = [
+                        ...newSelected,
+                        ...data.map((item) => item.id),
+                      ]
+                      setCurrentPageSelected(data.map((item) => item.id))
+                    } else {
+                      newSelected = selected.filter(
+                        (item) => !data.map((i) => i.id).includes(item)
+                      )
+                      setCurrentPageSelected([])
+                    }
+                  } else if (value) {
+                    newSelected = selected.filter(
+                      (item) => !data.map((i) => i.id).includes(item)
+                    )
+                    setCurrentPageSelected([])
+                  } else {
+                    setCurrentPageSelected(data.map((item) => item.id))
+                    newSelected = [...selected, ...data.map((item) => item.id)]
+                  }
+                  setSelected(newSelected)
+                }}
+                aria-label="Select all"
+              />
+            </div>
+          ),
+          cell: ({ row }) => {
+            const rowValue = row.original
 
-          return (
-            <Checkbox
-              checked={selected.includes(rowValue.id)}
-              onCheckedChange={(value) => {
-                setSelected(
-                  value
-                    ? [...selected, rowValue.id]
-                    : selected.filter((item) => item !== rowValue.id)
-                )
-                setCurrentPageSelected((prev) =>
-                  value
-                    ? [...prev, rowValue.id]
-                    : prev.filter((item) => item !== rowValue.id)
-                )
-              }}
-              aria-label="Select row"
-            />
-          )
+            return (
+              <div className="text-center">
+                <Checkbox
+                  checked={selected.includes(rowValue.id)}
+                  onCheckedChange={(value) => {
+                    setSelected(
+                      value
+                        ? [...selected, rowValue.id]
+                        : selected.filter((item) => item !== rowValue.id)
+                    )
+                    setCurrentPageSelected((prev) =>
+                      value
+                        ? [...prev, rowValue.id]
+                        : prev.filter((item) => item !== rowValue.id)
+                    )
+                  }}
+                  aria-label="Select row"
+                />
+              </div>
+            )
+          },
+          enableSorting: false,
+          enableHiding: false,
         },
-        enableSorting: false,
-        enableHiding: false,
-      },
-      {
-        accessorKey: "Check_Key",
-        header: () => <div className="text-center capitalize">Mã kiểm tra</div>,
-        cell: ({ row }) => (
-          <div className="text-center">{row.getValue("Check_Key")}</div>
-        ),
-      },
-      {
-        accessorKey: "Logger_ID",
-        header: () => <div className="text-center capitalize">Mã logger</div>,
-        cell: ({ row }) => (
-          <div className="text-center">{row.getValue("Logger_ID")}</div>
-        ),
-      },
-      {
-        accessorKey: "Logger_Time",
-        header: () => (
-          <div className="text-center capitalize">Thời gian ghi log</div>
-        ),
-        cell: ({ row }) => {
-          const formatted = moment(row.getValue("Logger_Time")).format(
-            "DD-MM-YYYY HH:mm:ss"
-          )
-          return <div className="text-center">{formatted}</div>
+        {
+          accessorKey: "Check_Key",
+          header: () => (
+            <div className="text-center capitalize">Mã kiểm tra</div>
+          ),
+          cell: ({ row }) => (
+            <div className="text-center">{row.getValue("Check_Key")}</div>
+          ),
         },
-      },
-      {
-        accessorKey: "Pump_ID",
-        header: () => <div className="text-center capitalize">Mã vòi bơm</div>,
-        cell: ({ row }) => (
-          <div className="text-center">{row.getValue("Pump_ID")}</div>
-        ),
-      },
-      {
-        accessorKey: "Bill_No",
-        header: () => <div className="capitalize text-center">Mã hóa đơn</div>,
-        cell: ({ row }) => (
-          <div className="text-center">{row.getValue("Bill_No")}</div>
-        ),
-      },
-      {
-        accessorKey: "Bill_Type",
-        header: () => (
-          <div className="capitalize text-center">Loại hóa đơn</div>
-        ),
-        cell: ({ row }) => (
-          <div className="text-center">
-            {BILL_TYPES.find((item) => item.value === row.getValue("Bill_Type"))
-              .label || ""}
-          </div>
-        ),
-      },
-      {
-        accessorKey: "Fuel_Type",
-        header: () => (
-          <div className="text-center capitalize">Loại nhiên liệu</div>
-        ),
-        cell: ({ row }) => (
-          <div className="text-center">{row.getValue("Fuel_Type")}</div>
-        ),
-      },
-      {
-        accessorKey: "Start_Time",
-        header: () => (
-          <div className="text-center capitalize">Thời gian bắt đầu bơm</div>
-        ),
-        cell: ({ row }) => {
-          const formatted = moment(row.getValue("Start_Time")).format(
-            "DD-MM-YYYY HH:mm:ss"
-          )
-          return <div className="text-center">{formatted}</div>
+        {
+          accessorKey: "Logger_ID",
+          header: () => <div className="text-center capitalize">Mã logger</div>,
+          cell: ({ row }) => (
+            <div className="text-center">{row.getValue("Logger_ID")}</div>
+          ),
         },
-      },
-      {
-        accessorKey: "End_Time",
-        header: () => (
-          <div className="text-center capitalize">Thời gian kết thúc bơm</div>
-        ),
-        cell: ({ row }) => {
-          const formatted = moment(row.getValue("End_Time")).format(
-            "DD-MM-YYYY HH:mm:ss"
-          )
-          return <div className="text-center">{formatted}</div>
+        {
+          accessorKey: "Logger_Time",
+          header: () => (
+            <div className="text-center capitalize">Thời gian ghi log</div>
+          ),
+          cell: ({ row }) => {
+            const formatted = moment(row.getValue("Logger_Time")).format(
+              "DD-MM-YYYY HH:mm:ss"
+            )
+            return <div className="text-center">{formatted}</div>
+          },
         },
-      },
-      {
-        accessorKey: "Unit_Price",
-        header: () => <div className="text-right capitalize">Giá</div>,
-        cell: ({ row }) => {
-          const amount = parseFloat(row.getValue("Unit_Price"))
+        {
+          accessorKey: "Pump_ID",
+          header: () => (
+            <div className="text-center capitalize">Mã vòi bơm</div>
+          ),
+          cell: ({ row }) => (
+            <div className="text-center">{row.getValue("Pump_ID")}</div>
+          ),
+        },
+        {
+          accessorKey: "Bill_No",
+          header: () => (
+            <div className="capitalize text-center">Mã hóa đơn</div>
+          ),
+          cell: ({ row }) => (
+            <div className="text-center">{row.getValue("Bill_No")}</div>
+          ),
+        },
+        {
+          accessorKey: "Bill_Type",
+          header: () => (
+            <div className="capitalize text-center">Loại hóa đơn</div>
+          ),
+          cell: ({ row }) => (
+            <div className="text-center">
+              {BILL_TYPES.find(
+                (item) => item.value === row.getValue("Bill_Type")
+              ).label || ""}
+            </div>
+          ),
+        },
+        {
+          accessorKey: "Fuel_Type",
+          header: () => (
+            <div className="text-center capitalize">Loại nhiên liệu</div>
+          ),
+          cell: ({ row }) => (
+            <div className="text-center">{row.getValue("Fuel_Type")}</div>
+          ),
+        },
+        {
+          accessorKey: "Start_Time",
+          header: () => (
+            <div className="text-center capitalize">Thời gian bắt đầu bơm</div>
+          ),
+          cell: ({ row }) => {
+            const formatted = moment(row.getValue("Start_Time")).format(
+              "DD-MM-YYYY HH:mm:ss"
+            )
+            return <div className="text-center">{formatted}</div>
+          },
+        },
+        {
+          accessorKey: "End_Time",
+          header: () => (
+            <div className="text-center capitalize">Thời gian kết thúc bơm</div>
+          ),
+          cell: ({ row }) => {
+            const formatted = moment(row.getValue("End_Time")).format(
+              "DD-MM-YYYY HH:mm:ss"
+            )
+            return <div className="text-center">{formatted}</div>
+          },
+        },
+        {
+          accessorKey: "Unit_Price",
+          header: () => <div className="text-right capitalize">Giá</div>,
+          cell: ({ row }) => {
+            const amount = parseFloat(row.getValue("Unit_Price"))
 
-          // Format the amount as a dollar amount
-          const formatted = new Intl.NumberFormat("vi-VN", {
-            style: "currency",
-            currency: "VND",
-          }).format(amount)
+            // Format the amount as a dollar amount
+            const formatted = new Intl.NumberFormat("vi-VN", {
+              style: "currency",
+              currency: "VND",
+            }).format(amount)
 
-          return <div className="text-right font-medium">{formatted}</div>
+            return <div className="text-right font-medium">{formatted}</div>
+          },
         },
-      },
-      {
-        accessorKey: "Quantity",
-        header: () => <div className="text-right capitalize">Số lượng</div>,
-        cell: ({ row }) => {
-          const quantity = parseFloat(row.getValue("Quantity"))
+        {
+          accessorKey: "Quantity",
+          header: () => <div className="text-right capitalize">Số lượng</div>,
+          cell: ({ row }) => {
+            const quantity = parseFloat(row.getValue("Quantity"))
 
-          return <div className="text-right font-medium">{quantity}</div>
+            return <div className="text-right font-medium">{quantity}</div>
+          },
         },
-      },
-      {
-        accessorKey: "Total_Price",
-        header: () => <div className="text-right capitalize">Tổng tiền</div>,
-        cell: ({ row }) => {
-          const value = parseFloat(row.getValue("Total_Price"))
+        {
+          accessorKey: "Total_Price",
+          header: () => <div className="text-right capitalize">Tổng tiền</div>,
+          cell: ({ row }) => {
+            const value = parseFloat(row.getValue("Total_Price"))
 
-          const formatted = new Intl.NumberFormat("vi-VN", {
-            style: "currency",
-            currency: "VND",
-          }).format(value)
+            const formatted = new Intl.NumberFormat("vi-VN", {
+              style: "currency",
+              currency: "VND",
+            }).format(value)
 
-          return <div className="text-right font-medium">{formatted}</div>
+            return <div className="text-right font-medium">{formatted}</div>
+          },
         },
-      },
-      {
-        id: "actions",
-        enableHiding: false,
-        cell: ({ row }) => {
-          const rowValue = row.original
-          return (
-            <RowActions id={rowValue.id} checkKey={rowValue.Check_Key} applyFilter={applyFilter} />
-          )
+        {
+          accessorKey: "storeName",
+          header: () => <div className="text-center">Cửa hàng</div>,
+          cell: ({ row }) => {
+            const rowValue = row.original
+            return <div className="text-center">{rowValue.Store?.name}</div>
+          },
         },
-      },
-    ],
-    [meta, selected, setSelected, data, currentPageSelected.length, applyFilter]
+        {
+          accessorKey: "branchName",
+          header: () => <div className="text-center">Chi Nhánh</div>,
+          cell: ({ row }) => {
+            const rowValue = row.original
+            return <div className="text-center">{rowValue.Branch?.name}</div>
+          },
+        },
+        {
+          accessorKey: "companyName",
+          header: () => <div className="text-center">Công Ty</div>,
+          cell: ({ row }) => {
+            const rowValue = row.original
+
+            return <div className="text-center">{rowValue.Company?.name}</div>
+          },
+        },
+        {
+          id: "actions",
+          size: 50,
+          enableHiding: false,
+          cell: ({ row }) => {
+            const rowValue = row.original
+            return (
+              <RowActions
+                id={rowValue.id}
+                checkKey={rowValue.Check_Key}
+                applyFilter={applyFilter}
+              />
+            )
+          },
+        },
+      ].filter((item) => (allowEdit ? true : item.id !== "actions")),
+    [
+      meta,
+      selected,
+      setSelected,
+      data,
+      currentPageSelected.length,
+      applyFilter,
+      allowEdit,
+    ]
   )
-  
+
   const tableColumns = useMemo(
     () =>
       loading
         ? columns.map((column) => ({
             ...column,
-            cell: <Skeleton className={"h-4 w-full"} />,
+            cell: <Skeleton className={"h-5 w-full"} />,
           }))
         : columns,
     [loading, columns]
-  );
+  )
+
+  const tableData = useMemo(
+    () => (loading ? Array(meta.pageSize) : data),
+    [data, loading, meta.pageSize]
+  )
 
   const table = useReactTable({
-    data,
+    data: tableData,
     columns: tableColumns,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
@@ -323,7 +386,8 @@ export function FuelPage() {
   })
 
   const onFieldChange = useCallback(
-    (value, name) => setFilter((prev) => ({ ...prev, [name]: value })), []
+    (value, name) => setFilter((prev) => ({ ...prev, [name]: value })),
+    []
   )
 
   return (
@@ -332,12 +396,14 @@ export function FuelPage() {
         <h1 className="text-4xl leading-normal">{activedMenu.name}</h1>
         <div className="space-x-2">
           <ExportInvoice {...{ filter, meta, selected }} />
-          <Link
-            className={cn(buttonVariants({ variant: "outline" }))}
-            to={PATH.FUEL_CREATE}
-          >
-            Tạo Hóa Đơn
-          </Link>
+          {allowEdit && (
+            <Link
+              className={cn(buttonVariants({ variant: "outline" }))}
+              to={PATH.FUEL_CREATE}
+            >
+              Tạo Hóa Đơn
+            </Link>
+          )}
         </div>
       </div>
 
