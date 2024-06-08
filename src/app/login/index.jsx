@@ -69,7 +69,7 @@ export default function LoginPage() {
                   <FormItem>
                     <FormLabel>Tên đăng nhập</FormLabel>
                     <FormControl>
-                      <Input placeholder="Điền tên đăng nhập" {...field} />
+                      <Input placeholder="Nhập tên đăng nhập" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -84,7 +84,7 @@ export default function LoginPage() {
                     <FormControl>
                       <Input
                         type="password"
-                        placeholder="Điền mật khẩu"
+                        placeholder="Nhập mật khẩu"
                         {...field}
                       />
                     </FormControl>
