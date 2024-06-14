@@ -102,22 +102,6 @@ export function UserPage() {
         },
       },
       {
-        accessorKey: "companyName",
-        header: () => <div className="text-center">Công ty</div>,
-        cell: ({ row }) => {
-          return (
-            <div className="text-center">{row.getValue("companyName")}</div>
-          )
-        },
-      },
-      {
-        accessorKey: "branchName",
-        header: () => <div className="text-center">Chi nhánh</div>,
-        cell: ({ row }) => {
-          return <div className="text-center">{row.getValue("branchName")}</div>
-        },
-      },
-      {
         accessorKey: "status",
         header: () => <div className="text-center">Trạng thái</div>,
         cell: ({ row }) => (

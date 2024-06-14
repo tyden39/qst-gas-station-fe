@@ -23,7 +23,7 @@ export default function Header() {
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <div className="flex items-center gap-2 cursor-pointer">
-            <span className="hover:underline">{user?.username}</span>
+            <span className="">{user?.username}</span>
             <Button
               variant="outline"
               size="icon"

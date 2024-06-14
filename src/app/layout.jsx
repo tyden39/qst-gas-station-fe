@@ -7,12 +7,12 @@ export default function Layout() {
   return (
     <div className="flex bg-gray-50">
       <Sidebar />
-      <section className="flex-1 flex flex-col">
+      <div className="flex-1 h-screen flex flex-col">
         <Header />
-        <div className="p-4 flex-1">
+        <section className="p-4 flex-1 overflow-scroll">
           <Outlet />
-        </div>
-      </section>
+        </section>
+      </div>
     </div>
   )
 }

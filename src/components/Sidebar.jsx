@@ -29,8 +29,8 @@ const Sidebar = () => {
         collapsed ? "w-12" : "w-64"
       )}
     >
-      <div className="p-2 border-b text-center">
-        <span className="leading-10 text-3xl">Gas Station</span>
+      <div className="p-2 border-b text-center bg-[#001C39]">
+        <span className="leading-10 text-3xl text-background">QS PECO</span>
       </div>
       <div className="p-2 space-y-2">
         {menu.filter(item => user?.roles === USER_ROLE.READ_ONLY_STORE ? !item.path.includes(PATH.USER) : true).map((item) =>
@@ -50,7 +50,7 @@ const Sidebar = () => {
           ) : (
             <Button
               key={`menu-${item.id}`}
-              className={cn("w-full justify-start")}
+              className={cn("w-full justify-start", pathname === item.path && "bg-[#A4C9FE] text-[#001C39] hover:bg-[#A4C9FE] hover:text-[#001C39]")}
               variant={pathname === item.path ? "secondary" : "ghost"}
               onClick={() => handleNavigate(item)}
             >
