@@ -132,6 +132,7 @@ export function UserPage() {
       {
         id: "actions",
         enableHiding: false,
+        size: 50,
         cell: ({ row }) => {
           const rowValue = row.original
 

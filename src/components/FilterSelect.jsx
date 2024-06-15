@@ -35,7 +35,7 @@ export function FilterSelect({
         onValueChange: onValueChangeLocal,
       }}
     >
-      <SelectTrigger className={cn("w-full gap-2", className)}>
+      <SelectTrigger className={cn("w-full gap-2 hover:bg-accent", className)}>
         <Label>{label}</Label>
         <EllipsisTooltip className={"flex-1 text-left"} content={selectList.find(item => item.value === valueLocal)?.label}>
           <SelectValue {...{ placeholder }} />
