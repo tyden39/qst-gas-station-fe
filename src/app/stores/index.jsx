@@ -1,9 +1,6 @@
 import {
   getCoreRowModel,
-  getFilteredRowModel,
-  getPaginationRowModel,
-  getSortedRowModel,
-  useReactTable,
+  useReactTable
 } from "@tanstack/react-table"
 
 import { fetchAll } from "actions/storeActions"
@@ -12,29 +9,30 @@ import PagePagination from "components/pagination"
 import PageTable from "components/table"
 import { buttonVariants } from "components/ui/button"
 import { Skeleton } from "components/ui/skeleton"
+import { TOAST } from "components/ui/toast"
+import { useToast } from "components/ui/use-toast"
+import { getActiveMenu } from "lib/url"
 import { cn } from "lib/utils"
 import { useCallback, useEffect, useMemo, useState } from "react"
-import { Link } from "react-router-dom"
+import { Link, useLocation } from "react-router-dom"
 import PATH from "routers/path"
 import RowActions from "./components/RowActions"
 import { initColumnVisibility, initFilter, initMeta } from "./initial"
-import { TOAST } from "components/ui/toast"
-import { useToast } from "components/ui/use-toast"
 
 export function StorePage() {
   const { toast } = useToast()
+
+  const location = useLocation()
+  const activeMenuName = getActiveMenu(location.pathname)
+
   const [data, setData] = useState([])
   const [meta, setMeta] = useState(initMeta)
 
   const [filter, setFilter] = useState(initFilter)
   const [activedFilter, setActivedFilter] = useState(initFilter)
-  const [sorting, setSorting] = useState([])
   const [loading, setLoading] = useState(false)
   const canSubmit = JSON.stringify(filter) !== JSON.stringify(activedFilter)
-  const [columnFilters, setColumnFilters] = useState([])
   const [columnVisibility, setColumnVisibility] = useState(initColumnVisibility)
-
-  const [rowSelection, setRowSelection] = useState({})
 
   const applyFilter = useCallback(
     (forceFilter) => {
@@ -178,7 +176,7 @@ export function StorePage() {
   return (
     <div className="w-full">
       <div className="flex justify-between items-center">
-        <h1 className="text-4xl leading-normal">Cửa hàng</h1>
+        <h1 className="text-4xl leading-normal">{activeMenuName}</h1>
         <Link className={cn(buttonVariants())} to={PATH.STORE_CREATE}>
           Thêm cửa hàng
         </Link>

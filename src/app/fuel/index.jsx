@@ -12,12 +12,13 @@ import PageTable from "components/table"
 import { buttonVariants } from "components/ui/button"
 import { Checkbox } from "components/ui/checkbox"
 import { Skeleton } from "components/ui/skeleton"
+import { getActiveMenu } from "lib/url"
 import { cn } from "lib/utils"
 import moment from "moment"
 import { useCallback, useEffect, useMemo, useState } from "react"
-import { Link } from "react-router-dom"
+import { Link, useLocation } from "react-router-dom"
 import PATH from "routers/path"
-import { useAppNavigation } from "zustands/useAppNavigation"
+import useAuth from "zustands/useAuth"
 import useInvoice from "zustands/useInvoice"
 import { fetchInvoices } from "../../actions/fuelActions"
 import ExportInvoice from "./components/ExportInvoice"
@@ -25,12 +26,14 @@ import RowActions from "./components/RowActions"
 import { BILL_TYPES } from "./constant"
 import InvoiceFilter from "./filter"
 import { initColumnVisibility, initFilter, initMeta } from "./initial"
-import useAuth from "zustands/useAuth"
 
 export function FuelPage() {
   const getPermission = useAuth((state) => state.getPermission)
   const allowEdit = getPermission(PATH.FUEL, "edit")
-  const activedMenu = useAppNavigation((state) => state.activedMenu)
+
+  const location = useLocation()
+  const activeMenuName = getActiveMenu(location.pathname)
+
   const [data, setData] = useState([])
   const [meta, setMeta] = useState(initMeta)
 
@@ -393,7 +396,7 @@ export function FuelPage() {
   return (
     <div className="w-full">
       <div className="flex justify-between items-center">
-        <h1 className="text-4xl leading-normal">{activedMenu.name}</h1>
+        <h1 className="text-4xl leading-normal">{activeMenuName}</h1>
         <div className="space-x-2">
           <ExportInvoice {...{ filter, meta, selected }} />
           {allowEdit && (

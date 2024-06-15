@@ -11,18 +11,16 @@ import PagePagination from "components/pagination"
 import PageTable from "components/table"
 import { buttonVariants } from "components/ui/button"
 import { Skeleton } from "components/ui/skeleton"
+import { USER_ROLES } from "constants/user-roles"
 import { cn } from "lib/utils"
 import { useCallback, useEffect, useMemo, useState } from "react"
 import { Link } from "react-router-dom"
 import PATH from "routers/path"
-import { useAppNavigation } from "zustands/useAppNavigation"
 import { fetchUsers } from "../../actions/userApi"
 import RowActions from "./components/RowActions"
 import { initColumnVisibility, initFilter, initMeta } from "./initial"
-import { USER_ROLES } from "constants/user-roles"
 
 export function UserPage() {
-  const activedMenu = useAppNavigation((state) => state.activedMenu)
   const [data, setData] = useState([])
   const [meta, setMeta] = useState(initMeta)
 
@@ -196,7 +194,7 @@ export function UserPage() {
   return (
     <div className="w-full">
       <div className="flex justify-between items-center">
-        <h1 className="text-4xl leading-normal">{activedMenu.name}</h1>
+        <h1 className="text-4xl leading-normal">Người dùng</h1>
         <Link className={cn(buttonVariants())} to={PATH.USER_CREATE}>
           Thêm người dùng
         </Link>
