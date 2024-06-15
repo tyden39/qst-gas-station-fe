@@ -17,6 +17,7 @@ import CreateSuccessConfirm from "../components/CreateSucessConfirm"
 import { transformToSelectList } from "lib/transofrm"
 import { fetchSimpleList as fetchCompanySimpleList } from "actions/companyActions"
 import { fetchSimpleList as fetchBranchSimpleList } from "actions/branchActions"
+import PATH from "routers/path"
 
 const newSchema = z.object({
   name: z.string().optional().nullable(),
@@ -57,6 +58,7 @@ export default function StoreCreatePage() {
       const response = await edit(params.id, values)
       if (response.status === 200) {
         form.reset(response.data, {keepDirtyValues: true})
+        navigation(PATH.STORE)
         toast({
           variant: "success",
           description: "Lưu thông tin thành công!",

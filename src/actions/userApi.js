@@ -27,19 +27,29 @@ export const fetchUsers = async (filter, pageMeta) => {
   }
 }
 
-export const createUser = async (formData) => {
+export const create = async (formData) => {
   try {
     const response = await axiosInstance.post(
       `${API_PATHS.USER_CREATE}`,
       formData
     )
-    return response.data.data
+    return response.data
   } catch (error) {
-    console.log(error)
+    if (!axios.isAxiosError(error)) console.error(error)
+    return axios.isAxiosError(error)
+      ? error.response?.data || {
+          status: -1,
+          message: "Không thể lấy dữ liệu từ máy chủ!",
+        }
+      : {
+          status: -1,
+          message:
+            "Lỗi hệ thống, vui lòng liên hệ quản trị viên để biết thêm chi tiết!",
+        }
   }
 }
 
-export const editUser = async (id, formData) => {
+export const edit = async (id, formData) => {
   try {
     const response = await axiosInstance.post(
       `${API_PATHS.USER_EDIT}/${id}`,

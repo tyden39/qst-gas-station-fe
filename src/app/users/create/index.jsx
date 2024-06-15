@@ -1,5 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod"
-import { createUser, editUser, fetchOneUser } from "actions/userApi"
+import { create, edit, fetchOneUser } from "actions/userApi"
 import { Button } from "components/ui/button"
 import { Card } from "components/ui/card"
 import { Form } from "components/ui/form"
@@ -14,6 +14,9 @@ import UserInfo from "./UserInfo"
 import UserRoles from "./UserRoles"
 import { useToast } from "components/ui/use-toast"
 import { USER_ROLES } from "constants/user-roles"
+import PATH from "routers/path"
+import { TOAST } from "components/ui/toast"
+import CreateSuccessConfirm from "../components/CreateSucessConfirm"
 
 const newSchema = z
   .object({
@@ -66,6 +69,7 @@ export default function UserCreatePage() {
   const isEdit = location.pathname.includes("edit")
   const [loading, setLoading] = useState(false)
   const [isChangePassword, setIsChangePassword] = useState(false)
+  const [open, setOpen] = useState(false)
 
   const form = useForm({
     resolver: zodResolver(isEdit ? isChangePassword ? editSchemaWithPassword : editSchema : newSchema),
@@ -80,19 +84,33 @@ export default function UserCreatePage() {
   //     currentLocation.pathname !== nextLocation.pathname
   // );
 
-  function onSubmit(values) {
+  async function onSubmit(values) {
     setLoading(true)
     if (isEdit) {
-      const resUser = editUser(params.id, values)
-      if (resUser.error) console.log(resUser.errorMessage)
-      else toast({
-        variant: 'success',
-        description: "You have edited user successfully!"
-      })
+      const response = await edit(params.id, values)
+      if (response.status === 200) {
+        form.reset(response.data, {keepDirtyValues: true})
+        navigation(PATH.USER)
+        toast({
+          variant: "success",
+          description: "Lưu thông tin thành công!",
+        })
+      } else
+        toast({
+          variant: TOAST.DESTRUCTIVE,
+          title: "Lưu thông tin thất bại!",
+          description: response.message,
+        })
     } else {
-      const newUser = createUser(values)
-      if (newUser.error) console.log(newUser.errorMessage)
-      else navigation(-1)
+      const response = await create(values)
+      if (response.status === 201) {
+        setOpen(true)
+      } else
+        toast({
+          variant: TOAST.DESTRUCTIVE,
+          title: "Tạo mới thất bại!",
+          description: response.message,
+        })
     }
     setLoading(false)
   }
@@ -161,6 +179,7 @@ export default function UserCreatePage() {
       ) : null} */}
         </RouterForm>
       </Form>
-    </div>
+      <CreateSuccessConfirm {...{open, setOpen}} />
+      </div>
   )
 }

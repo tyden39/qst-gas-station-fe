@@ -9,7 +9,7 @@ import { cn } from "lib/utils"
 import { ChevronLeft } from "lucide-react"
 import { useEffect } from "react"
 import { useForm } from "react-hook-form"
-import { Link, useLocation, useParams } from "react-router-dom"
+import { Link, useLocation, useNavigate, useParams } from "react-router-dom"
 import PATH from "routers/path"
 import { z } from "zod"
 import FormCreate from "./create-form"
@@ -31,6 +31,7 @@ const schema = z
   })
 
 export default function FuelCreatePage() {
+  const navigation = useNavigate()
   const {toast} = useToast()
   const location = useLocation()
   const params = useParams()
@@ -45,6 +46,7 @@ export default function FuelCreatePage() {
     if (isEdit) {
       const {data} = await editInvoice(params.id, values)
       if (data.status === 200) {
+        navigation(PATH.FUEL)
         toast({
           variant: 'success',
           description: "Cập nhật hóa đơn thành công!"

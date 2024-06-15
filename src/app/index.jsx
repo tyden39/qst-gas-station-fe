@@ -24,6 +24,7 @@ export default function App() {
         <Route element={<Providers />}>
           <Route path={PATH.LOGIN} element={user ? <Navigate to={PATH.HOME} /> : <LoginPage />} />
           <Route element={<Layout />}>
+            <Route path={PATH.HOME} element={<Navigate to={PATH.FUEL} />} />
             <Route element={<PrivateRoute />}>
               {privateRoutes.map((route, index) => {
                 const Page = getPermissionPage(route, user)

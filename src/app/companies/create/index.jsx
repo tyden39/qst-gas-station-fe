@@ -14,6 +14,7 @@ import { z } from "zod"
 import CreateForm from "./create-form"
 import SkeletonForm from "./skeleton-form"
 import CreateSuccessConfirm from "../components/CreateSucessConfirm"
+import PATH from "routers/path"
 
 const newSchema = z.object({
   name: z.string().optional().nullable(),
@@ -51,6 +52,7 @@ export default function CompanyCreatePage() {
       const response = await editCompany(params.id, values)
       if (response.status === 200) {
         form.reset(response.data, {keepDirtyValues: true})
+        navigation(PATH.COMPANY)
         toast({
           variant: "success",
           description: "Lưu thông tin thành công!",
