@@ -9,6 +9,7 @@ import useAuth from "zustands/useAuth"
 import Layout from "./layout"
 import LoginPage from "./login"
 import Providers from "./providers"
+import NotFound from "./404"
 
 export default function App() {
   const user = JSON.parse(localStorage.getItem(AUTH_CONFIG.USER_STORAGE_NAME))
@@ -33,6 +34,7 @@ export default function App() {
                 )
               })}
             </Route>
+            <Route path="*" element={<NotFound />} />
           </Route>
         </Route>
       </Routes>
