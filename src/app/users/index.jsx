@@ -99,20 +99,27 @@ export function UserPage() {
           return <div className="text-center">{USER_ROLES.find(item => item.value === row.getValue("roles"))?.label}</div>
         },
       },
+      // {
+      //   accessorKey: "status",
+      //   header: () => <div className="text-center">Trạng thái</div>,
+      //   cell: ({ row }) => (
+      //     <div
+      //       className={cn(
+      //         "text-center font-bold",
+      //         row.getValue("status") === "active"
+      //           ? "text-green-500"
+      //           : "text-gray-500"
+      //       )}
+      //     >
+      //       {row.getValue("status") === "active" ? "Hoạt động" : "Vô hiệu"}
+      //     </div>
+      //   ),
+      // },
       {
-        accessorKey: "status",
-        header: () => <div className="text-center">Trạng thái</div>,
+        accessorKey: "storeName",
+        header: () => <div className="text-center">Cửa hàng</div>,
         cell: ({ row }) => (
-          <div
-            className={cn(
-              "text-center font-bold",
-              row.getValue("status") === "active"
-                ? "text-green-500"
-                : "text-gray-500"
-            )}
-          >
-            {row.getValue("status") === "active" ? "Hoạt động" : "Vô hiệu"}
-          </div>
+          <div className="text-center">{row.getValue("storeName")}</div>
         ),
       },
       {
