@@ -33,7 +33,7 @@ const Sidebar = () => {
         <span className="leading-10 text-3xl text-background">QS PECO</span>
       </div>
       <div className="p-2 space-y-2">
-        {menu.filter(item => user?.roles === USER_ROLE.READ_ONLY_STORE ? !item.path.includes(PATH.USER) : true).map((item) =>
+        {menu.filter(item => item.role === 'public' || user?.roles.includes(item.role)).map((item) =>
           collapsed ? (
             <Tooltip key={`collapsed-menu-${item.id}`}>
               <TooltipTrigger asChild>
