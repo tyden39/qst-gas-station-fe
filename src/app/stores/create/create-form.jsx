@@ -9,7 +9,13 @@ import {
 } from "components/ui/form"
 import { Input } from "components/ui/input"
 
-export default function CreateForm({ form, companyList, branchList }) {
+export default function CreateForm({
+  form,
+  companyList,
+  branchList,
+  getBranchList,
+  getStoreList,
+}) {
   return (
     <Card className="w-full">
       <CardContent>
@@ -79,6 +85,10 @@ export default function CreateForm({ form, companyList, branchList }) {
               placeholder: "Chọn công ty",
               name: "companyId",
               list: companyList,
+              onChange: async (value) => {
+                await getBranchList(value)
+                form.resetField("branchId")
+              },
             }}
           />
           <FormSelect
@@ -88,6 +98,7 @@ export default function CreateForm({ form, companyList, branchList }) {
               placeholder: "Chọn chi nhánh",
               name: "branchId",
               list: branchList,
+              disabled: !form.watch("companyId"),
             }}
           />
         </div>

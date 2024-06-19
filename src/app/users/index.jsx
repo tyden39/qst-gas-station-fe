@@ -19,6 +19,12 @@ import PATH from "routers/path"
 import { fetchUsers } from "../../actions/userApi"
 import RowActions from "./components/RowActions"
 import { initColumnVisibility, initFilter, initMeta } from "./initial"
+import UserFilter from "./filter"
+
+import { fetchSimpleList as fetchBranchSimpleList } from "actions/branchActions"
+import { fetchSimpleList as fetchCompanySimpleList } from "actions/companyActions"
+import { fetchSimpleList as fetchStoreSimpleList } from "actions/storeActions"
+import { transformToSelectList } from "lib/transofrm"
 
 export function UserPage() {
   const [data, setData] = useState([])
@@ -33,6 +39,11 @@ export function UserPage() {
   const [columnVisibility, setColumnVisibility] = useState(initColumnVisibility)
 
   const [rowSelection, setRowSelection] = useState({})
+
+  const [companyList, setCompanyList] = useState([])
+  const [branchList, setBranchList] = useState([])
+  const [storeList, setStoreList] = useState([])
+  // const [fetchInfoLoading, setFetchInfoLoading] = useState(false)
 
   const applyFilter = useCallback(
     (forceFilter) => {
@@ -96,7 +107,7 @@ export function UserPage() {
         accessorKey: "roles",
         header: () => <div className="text-center">Vai trò người dùng</div>,
         cell: ({ row }) => {
-          return <div className="text-center">{USER_ROLES.find(item => item.value === row.getValue("roles"))?.label}</div>
+          return <div className="text-center">{USER_ROLES.find(item => item.value === (row.getValue("roles")?.[0]))?.label}</div>
         },
       },
       // {
@@ -195,9 +206,42 @@ export function UserPage() {
   })
 
   const onFieldChange = useCallback(
-    (value, name) => setFilter((prev) => ({ ...prev, [name]: value })),
+    (value, name) => setFilter((prev) => ({ ...prev, [name]: value === 'all' ? undefined : value })),
     []
   )
+
+  const getCompanyList = async (value) => {
+    const response = await fetchCompanySimpleList({ companyId: value })
+    if (response.status === 200) {
+      const resData = response.data
+      setCompanyList(resData)
+    }
+  }
+
+  const getBranchList = async (value) => {
+    const response = await fetchBranchSimpleList({ companyId: value })
+    if (response.status === 200) {
+      const branchList = response.data
+      setBranchList(branchList)
+    }
+  }
+
+  const getStoreList = async (value) => {
+    const response = await fetchStoreSimpleList({ branchId: value })
+    if (response.status === 200) {
+      const storeList = response.data
+      setStoreList(storeList)
+    }
+  }
+
+  useEffect(() => {
+    const initialData = async () => {
+      getCompanyList()
+      getBranchList()
+      getStoreList()
+    }
+    initialData()
+  }, [])
 
   return (
     <div className="w-full">
@@ -219,7 +263,7 @@ export function UserPage() {
           searchInputPlaceholder: "Tìm kiếm",
         }}
       >
-        {/* <InvoiceFilter {...{ onFieldChange }} /> */}
+        <UserFilter {...{ onFieldChange, companyList, branchList, storeList, getBranchList, getCompanyList, getStoreList }} />
       </PageHeader>
       <PageTable {...{ table }} />
       <PagePagination {...{ table, meta, setMeta, applyFilter }} />

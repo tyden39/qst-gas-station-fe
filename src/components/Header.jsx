@@ -1,4 +1,6 @@
 import { User } from "lucide-react"
+import { Link } from "react-router-dom"
+import PATH from "routers/path"
 import useAuth from "zustands/useAuth"
 import { Button } from "./ui/button"
 import {
@@ -8,11 +10,10 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu"
-import { Link } from "react-router-dom"
-import PATH from "routers/path"
 
 export default function Header() {
-  const [user, logout] = useAuth((state) => [state.user, state.logout])
+  const [user] = useAuth(state => [state.user])
+  const [logout] = useAuth((state) => [state.logout])
 
   return (
     <header className="w-full h-fit flex justify-end items-center px-4 py-2 border-b bg-white">

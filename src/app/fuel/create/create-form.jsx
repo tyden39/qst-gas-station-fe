@@ -11,7 +11,15 @@ import {
 import { Input } from "components/ui/input"
 import { BILL_TYPES, FUEL_TYPE, PUMP_ID } from "../constant"
 
-export default function FormCreate({ form }) {
+export default function FormCreate({
+  form,
+  companyList,
+  branchList,
+  storeList,
+  getBranchList,
+  getStoreList,
+}) {
+  console.log(form.watch('companyId'))
   return (
     <Card className="w-full">
       <CardHeader>
@@ -149,11 +157,52 @@ export default function FormCreate({ form }) {
               <FormItem className="flex flex-col">
                 <FormLabel>Tổng tiền</FormLabel>
                 <FormControl>
-                  <Input type="number" placeholder="Nhập tổng tiền" {...field} />
+                  <Input
+                    type="number"
+                    placeholder="Nhập tổng tiền"
+                    {...field}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
             )}
+          />
+          <FormSelect
+            {...{
+              form,
+              label: "Công ty",
+              placeholder: "Chọn công ty",
+              name: "companyId",
+              list: companyList,
+              onChange: async (value) => {
+                await getBranchList(value)
+                form.resetField("branchId")
+              },
+            }}
+          />
+          <FormSelect
+            {...{
+              form,
+              label: "Chi nhánh",
+              placeholder: "Chọn chi nhánh",
+              name: "branchId",
+              list: branchList,
+              disabled: !form.watch('companyId'),
+              onChange: async (value) => {
+                await getStoreList(value)
+                form.resetField("storeId")
+              },
+            }}
+          />
+          <FormSelect
+            {...{
+              form,
+              label: "Cửa hàng",
+              placeholder: "Chọn cửa hàng",
+              name: "storeId",
+              list: storeList,
+              disabled: !form.watch('branchId'),
+            }}
           />
         </div>
       </CardContent>

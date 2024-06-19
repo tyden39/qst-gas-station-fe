@@ -20,6 +20,7 @@ export function FilterSelect({
   placeholder,
   selectList = [],
   className,
+  disabled
 }) {
   const [valueLocal, setValueLocal] = useState()
   const onValueChangeLocal = (value) => {
@@ -31,14 +32,15 @@ export function FilterSelect({
     <Select
       {...{
         value,
-        defaultValue,
+        // defaultValue,
         onValueChange: onValueChangeLocal,
+        disabled
       }}
     >
       <SelectTrigger className={cn("w-full gap-2 hover:bg-accent", className)}>
         <Label>{label}</Label>
         <EllipsisTooltip className={"flex-1 text-left"} content={selectList.find(item => item.value === valueLocal)?.label}>
-          <SelectValue {...{ placeholder }} />
+          {value ? <SelectValue /> : placeholder}
         </EllipsisTooltip>
       </SelectTrigger>
       <SelectContent>

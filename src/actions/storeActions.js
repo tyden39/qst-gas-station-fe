@@ -3,12 +3,37 @@ import axios from "axios"
 import { API_PATHS } from "constants/api-paths"
 import { convertToQueryString } from "lib/utils"
 
+export const fetchSimpleList = async (filter, pageMeta) => {
+  try {
+    const params = { ...filter }
+    const queries = convertToQueryString(params)
+
+    const response = await axiosInstance.get(
+      `${API_PATHS.STORE_SIMPLE_LIST}${queries ? `?${queries}` : ""}`
+    )
+
+    return response.data
+  } catch (error) {
+    if (!axios.isAxiosError(error)) console.error(error)
+    return axios.isAxiosError(error)
+      ? error.response?.data || {
+          status: -1,
+          message: "Không thể lấy dữ liệu từ máy chủ!",
+        }
+      : {
+          status: -1,
+          message:
+            "Lỗi hệ thống, vui lòng liên hệ quản trị viên để biết thêm chi tiết!",
+        }
+  }
+}
+
 export const fetchAll = async (filter, pageMeta) => {
   try {
-    const startDate = filter.billDate?.from
-    const endDate = filter.billDate?.to
+    const startDate = filter.createdAt?.from
+    const endDate = filter.createdAt?.to
     const newFilter = { ...filter }
-    delete newFilter.billDate
+    delete newFilter.createdAt
 
     const { pageSize } = pageMeta
     const page = pageMeta.currentPage

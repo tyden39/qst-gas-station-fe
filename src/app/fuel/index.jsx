@@ -26,6 +26,9 @@ import RowActions from "./components/RowActions"
 import { BILL_TYPES } from "./constant"
 import InvoiceFilter from "./filter"
 import { initColumnVisibility, initFilter, initMeta } from "./initial"
+import { fetchSimpleList as fetchBranchSimpleList } from "actions/branchActions"
+import { fetchSimpleList as fetchCompanySimpleList } from "actions/companyActions"
+import { fetchSimpleList as fetchStoreSimpleList } from "actions/storeActions"
 
 export function FuelPage() {
   const getPermission = useAuth((state) => state.getPermission)
@@ -51,6 +54,10 @@ export function FuelPage() {
   const [currentPageSelected, setCurrentPageSelected] = useState([])
 
   const [rowSelection, setRowSelection] = useState({})
+
+  const [companyList, setCompanyList] = useState([])
+  const [branchList, setBranchList] = useState([])
+  const [storeList, setStoreList] = useState([])
 
   const applyFilter = useCallback(
     (forceFilter) => {
@@ -302,11 +309,12 @@ export function FuelPage() {
           },
         },
         {
-          accessorKey: "storeName",
-          header: () => <div className="text-center">Cửa hàng</div>,
+          accessorKey: "companyName",
+          header: () => <div className="text-center">Công Ty</div>,
           cell: ({ row }) => {
             const rowValue = row.original
-            return <div className="text-center">{rowValue.Store?.name}</div>
+
+            return <div className="text-center">{rowValue.Store?.Branch?.Company?.name}</div>
           },
         },
         {
@@ -318,12 +326,11 @@ export function FuelPage() {
           },
         },
         {
-          accessorKey: "companyName",
-          header: () => <div className="text-center">Công Ty</div>,
+          accessorKey: "storeName",
+          header: () => <div className="text-center">Cửa hàng</div>,
           cell: ({ row }) => {
             const rowValue = row.original
-
-            return <div className="text-center">{rowValue.Store?.Branch?.Company?.name}</div>
+            return <div className="text-center">{rowValue.Store?.name}</div>
           },
         },
         {
@@ -389,9 +396,42 @@ export function FuelPage() {
   })
 
   const onFieldChange = useCallback(
-    (value, name) => setFilter((prev) => ({ ...prev, [name]: value })),
+    (value, name) => setFilter((prev) => ({ ...prev, [name]: value === 'all' ? undefined : value })),
     []
   )
+
+  const getCompanyList = async (value) => {
+    const response = await fetchCompanySimpleList({ companyId: value })
+    if (response.status === 200) {
+      const resData = response.data
+      setCompanyList(resData)
+    }
+  }
+
+  const getBranchList = async (value) => {
+    const response = await fetchBranchSimpleList({ companyId: value })
+    if (response.status === 200) {
+      const branchList = response.data
+      setBranchList(branchList)
+    }
+  }
+
+  const getStoreList = async (value) => {
+    const response = await fetchStoreSimpleList({ branchId: value })
+    if (response.status === 200) {
+      const storeList = response.data
+      setStoreList(storeList)
+    }
+  }
+
+  useEffect(() => {
+    const initialData = async () => {
+      getCompanyList()
+      getBranchList()
+      getStoreList()
+    }
+    initialData()
+  }, [])
 
   return (
     <div className="w-full">
@@ -422,7 +462,7 @@ export function FuelPage() {
           searchInputPlaceholder: "Tìm kiếm theo Mã Kiểm Tra",
         }}
       >
-        <InvoiceFilter {...{ onFieldChange }} />
+        <InvoiceFilter {...{ onFieldChange, companyList, branchList, storeList, getBranchList, getStoreList }} />
       </PageHeader>
       <PageTable {...{ table }} />
       <PagePagination {...{ table, meta, setMeta, applyFilter }} />

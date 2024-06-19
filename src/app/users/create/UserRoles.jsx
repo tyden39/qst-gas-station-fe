@@ -1,4 +1,4 @@
-import { TooltipArrow } from "@radix-ui/react-tooltip"
+import FormSelect from "components/form/select"
 import {
   Card,
   CardContent,
@@ -15,10 +15,18 @@ import {
 } from "components/ui/form"
 import { RadioGroup, RadioGroupItem } from "components/ui/radio-group"
 import { Tooltip, TooltipContent, TooltipTrigger } from "components/ui/tooltip"
-import { USER_ROLES } from "constants/user-roles"
 import { CircleHelp } from "lucide-react"
 
-export default function UserRoles({ form }) {
+export default function UserRoles({
+  form,
+  roles,
+  companyList,
+  branchList,
+  storeList,
+  getBranchList,
+  getStoreList
+}) {
+
   return (
     <Card className="w-full">
       <CardHeader>
@@ -37,8 +45,11 @@ export default function UserRoles({ form }) {
                   value={field.value}
                   className="grid grid-cols-1 w-full items-center gap-8"
                 >
-                  {USER_ROLES.map((item) => (
-                    <FormItem className="flex items-center space-x-2 space-y-0">
+                  {roles.map((item) => (
+                    <FormItem
+                      key={item.label}
+                      className="flex items-center space-x-2 space-y-0"
+                    >
                       <FormControl>
                         <RadioGroupItem value={item.value} />
                       </FormControl>
@@ -59,6 +70,46 @@ export default function UserRoles({ form }) {
             </FormItem>
           )}
         />
+
+        <div className="grid grid-cols-3 gap-4 pt-6">
+        <FormSelect
+            {...{
+              form,
+              label: "Công ty",
+              placeholder: "Chọn công ty",
+              name: "companyId",
+              list: companyList,
+              onChange: async (value) => {
+                await getBranchList(value)
+                form.resetField("branchId")
+              },
+            }}
+          />
+          <FormSelect
+            {...{
+              form,
+              label: "Chi nhánh",
+              placeholder: "Chọn chi nhánh",
+              name: "branchId",
+              list: branchList,
+              disabled: !form.watch('companyId'),
+              onChange: async (value) => {
+                await getStoreList(value)
+                form.resetField("storeId")
+              },
+            }}
+          />
+          <FormSelect
+            {...{
+              form,
+              label: "Cửa hàng",
+              placeholder: "Chọn cửa hàng",
+              name: "storeId",
+              list: storeList,
+              disabled: !form.watch('branchId'),
+            }}
+          />
+        </div>
       </CardContent>
     </Card>
   )

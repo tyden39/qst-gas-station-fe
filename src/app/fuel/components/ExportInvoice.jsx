@@ -21,6 +21,7 @@ export default function ExportInvoice({ filter, meta, selected }) {
   const [open, setOpen] = useState(false)
   const [loading, setLoading] = useState(false)
   const { billDate, billType, fuelType, keyword, pumpId } = filter
+
   const onExport = async (event) => {
     event.preventDefault();
     setLoading(true)
@@ -32,7 +33,7 @@ export default function ExportInvoice({ filter, meta, selected }) {
       description: "Xuất excel thất bại!"
     })
     else toast({
-      variant: TOAST.DESTRUCTIVE,
+      variant: TOAST.SUCCESS,
       description: "Xuất excel thành công!"
     })
 

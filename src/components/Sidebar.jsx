@@ -1,18 +1,16 @@
 import { TooltipTrigger } from "@radix-ui/react-tooltip"
 import { cn } from "lib/utils"
 import { Home } from "lucide-react"
-import { Button } from "./ui/button"
-import { Tooltip, TooltipContent } from "./ui/tooltip"
 import { Link, useLocation, useNavigate } from "react-router-dom"
 import menu from "routers/menu"
 import { useAppNavigation } from "zustands/useAppNavigation"
 import useAuth from "zustands/useAuth"
-import PATH from "routers/path"
-import { USER_ROLE } from "constants/user-roles"
+import { Button } from "./ui/button"
+import { Tooltip, TooltipContent } from "./ui/tooltip"
 
 const Sidebar = () => {
   const [collapsed, setActivedMenu] = useAppNavigation((state) => [state.collapsed, state.setActivedMenu])
-  const user = useAuth(state => state.user)
+  const [user] = useAuth(state => [state.user])
   const { pathname } = useLocation()
   const navigation = useNavigate()
 

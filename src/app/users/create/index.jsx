@@ -1,22 +1,28 @@
 import { zodResolver } from "@hookform/resolvers/zod"
+import { fetchSimpleList as fetchBranchSimpleList } from "actions/branchActions"
+import { fetchSimpleList as fetchCompanySimpleList } from "actions/companyActions"
+import { fetchSimpleList as fetchStoreSimpleList } from "actions/storeActions"
 import { create, edit, fetchOneUser } from "actions/userApi"
 import { Button } from "components/ui/button"
 import { Card } from "components/ui/card"
 import { Form } from "components/ui/form"
+import { TOAST } from "components/ui/toast"
+import { useToast } from "components/ui/use-toast"
+import { USER_ROLE, USER_ROLES } from "constants/user-roles"
+import { transformToSelectList } from "lib/transofrm"
 import { cn } from "lib/utils"
 import { ChevronLeft } from "lucide-react"
-import { useEffect, useState } from "react"
-import { useForm, Form as RouterForm } from "react-hook-form"
+import { useEffect, useMemo, useState } from "react"
+import { Form as RouterForm, useForm } from "react-hook-form"
 import { Link, useLocation, useNavigate, useParams } from "react-router-dom"
+import PATH from "routers/path"
 import { z } from "zod"
+import useAuth from "zustands/useAuth"
+import CreateSuccessConfirm from "../components/CreateSucessConfirm"
 import AccountInfo from "./AccountInfo"
 import UserInfo from "./UserInfo"
 import UserRoles from "./UserRoles"
-import { useToast } from "components/ui/use-toast"
-import { USER_ROLES } from "constants/user-roles"
-import PATH from "routers/path"
-import { TOAST } from "components/ui/toast"
-import CreateSuccessConfirm from "../components/CreateSucessConfirm"
+import SkeletonForm from "./skeleton-form"
 
 const newSchema = z
   .object({
@@ -29,31 +35,190 @@ const newSchema = z
     lastName: z.string({ required_error: "Họ không được để trống" }),
     email: z.string().optional().nullable(),
     phone: z.string().optional().nullable(),
-    roles: z.string({ required_error: "Vai trò người dùng không được để trống" }),
+    roles: z.string({
+      required_error: "Vai trò người dùng không được để trống",
+    }),
+    companyId: z.string().optional().nullable(),
+    branchId: z.string().optional().nullable(),
+    storeId: z.string().optional().nullable(),
+  })
+  .superRefine((data, ctx) => {
+    if (data.roles === USER_ROLE.COMPANY) {
+      if (!data.companyId)
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ["companyId"],
+          message: "Công ty không được để trống",
+        })
+    }
+
+    if (data.roles === USER_ROLE.BRANCH) {
+      if (!data.companyId)
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ["companyId"],
+          message: "Công ty không được để trống",
+        })
+      if (!data.branchId)
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ["branchId"],
+          message: "Công ty không được để trống",
+        })
+    }
+
+    if (
+      data.roles === USER_ROLE.STORE ||
+      data.roles === USER_ROLE.READ_ONLY_STORE
+    ) {
+      if (!data.companyId)
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ["companyId"],
+          message: "Công ty không được để trống",
+        })
+      if (!data.branchId)
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ["branchId"],
+          message: "Công ty không được để trống",
+        })
+      if (!data.storeId)
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ["storeId"],
+          message: "Công ty không được để trống",
+        })
+    }
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: "Mật khẩu không khớp",
     path: ["confirmPassword"],
   })
 
-  const editSchema = z.object({
-    firstName: z.string({ required_error: "Tên không được để trống" }),
-    lastName: z.string({ required_error: "Họ không được để trống" }),
-    email: z.string().optional().nullable(),
-    phone: z.string().optional().nullable(),
-    roles: z.string({ required_error: "Vai trò người dùng không được để trống" }),
-  })
+const editSchema = z.object({
+  firstName: z.string({ required_error: "Tên không được để trống" }),
+  lastName: z.string({ required_error: "Họ không được để trống" }),
+  email: z.string().optional().nullable(),
+  phone: z.string().optional().nullable(),
+  roles: z.string({ required_error: "Vai trò người dùng không được để trống" }),
+  companyId: z.string().optional().nullable(),
+  branchId: z.string().optional().nullable(),
+  storeId: z.string().optional().nullable(),
+})
+.superRefine((data, ctx) => {
+  if (data.roles === USER_ROLE.COMPANY) {
+    if (!data.companyId)
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["companyId"],
+        message: "Công ty không được để trống",
+      })
+  }
 
-  const editSchemaWithPassword = z.object({
+  if (data.roles === USER_ROLE.BRANCH) {
+    if (!data.companyId)
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["companyId"],
+        message: "Công ty không được để trống",
+      })
+    if (!data.branchId)
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["branchId"],
+        message: "Công ty không được để trống",
+      })
+  }
+
+  if (
+    data.roles === USER_ROLE.STORE ||
+    data.roles === USER_ROLE.READ_ONLY_STORE
+  ) {
+    if (!data.companyId)
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["companyId"],
+        message: "Công ty không được để trống",
+      })
+    if (!data.branchId)
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["branchId"],
+        message: "Công ty không được để trống",
+      })
+    if (!data.storeId)
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["storeId"],
+        message: "Công ty không được để trống",
+      })
+  }
+})
+
+const editSchemaWithPassword = z
+  .object({
     firstName: z.string({ required_error: "Tên không được để trống" }),
     lastName: z.string({ required_error: "Họ không được để trống" }),
     email: z.string().optional().nullable(),
     phone: z.string().optional().nullable(),
-    roles: z.string({ required_error: "Vai trò người dùng không được để trống" }),
-    password: z.string({ required_error: "Mật khẩu không được để trống" }),
-    confirmPassword: z.string({
-      required_error: "Nhập lại mật khẩu không được để trống",
+    roles: z.string({
+      required_error: "Vai trò người dùng không được để trống",
     }),
+    password: z.string({ required_error: "Mật khẩu không được để trống" }),
+    confirmPassword: z.string(),
+    companyId: z.string().optional().nullable(),
+    branchId: z.string().optional().nullable(),
+    storeId: z.string().optional().nullable(),
+  })
+  .superRefine((data, ctx) => {
+    if (data.roles === USER_ROLE.COMPANY) {
+      if (!data.companyId)
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ["companyId"],
+          message: "Công ty không được để trống",
+        })
+    }
+
+    if (data.roles === USER_ROLE.BRANCH) {
+      if (!data.companyId)
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ["companyId"],
+          message: "Công ty không được để trống",
+        })
+      if (!data.branchId)
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ["branchId"],
+          message: "Công ty không được để trống",
+        })
+    }
+
+    if (
+      data.roles === USER_ROLE.STORE ||
+      data.roles === USER_ROLE.READ_ONLY_STORE
+    ) {
+      if (!data.companyId)
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ["companyId"],
+          message: "Công ty không được để trống",
+        })
+      if (!data.branchId)
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ["branchId"],
+          message: "Công ty không được để trống",
+        })
+      if (!data.storeId)
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ["storeId"],
+          message: "Công ty không được để trống",
+        })
+    }
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: "Mật khẩu không khớp",
@@ -61,10 +226,21 @@ const newSchema = z
   })
 
 export default function UserCreatePage() {
-  const {toast} = useToast()
+  const { toast } = useToast()
   const navigation = useNavigate()
   const location = useLocation()
   const params = useParams()
+
+  const [user] = useAuth((state) => [state.user])
+  const roles = useMemo(
+    () => USER_ROLES.filter((item) => user?.roles?.includes(item.value)),
+    [user.roles]
+  )
+
+  const [companyList, setCompanyList] = useState([])
+  const [branchList, setBranchList] = useState([])
+  const [storeList, setStoreList] = useState([])
+  const [fetchInfoLoading, setFetchInfoLoading] = useState(false)
 
   const isEdit = location.pathname.includes("edit")
   const [loading, setLoading] = useState(false)
@@ -72,12 +248,17 @@ export default function UserCreatePage() {
   const [open, setOpen] = useState(false)
 
   const form = useForm({
-    resolver: zodResolver(isEdit ? isChangePassword ? editSchemaWithPassword : editSchema : newSchema),
+    resolver: zodResolver(
+      isEdit
+        ? isChangePassword
+          ? editSchemaWithPassword
+          : editSchema
+        : newSchema
+    ),
     defaultValues: {
-      roles: USER_ROLES[0].value,
+      roles: roles[0].value,
     },
   })
-
   // const blocker = useBlocker(
   //   ({ currentLocation, nextLocation }) =>
   //     form.formState.isDirty &&
@@ -89,7 +270,7 @@ export default function UserCreatePage() {
     if (isEdit) {
       const response = await edit(params.id, values)
       if (response.status === 200) {
-        form.reset(response.data, {keepDirtyValues: true})
+        form.reset(response.data, { keepDirtyValues: true })
         navigation(PATH.USER)
         toast({
           variant: "success",
@@ -117,14 +298,57 @@ export default function UserCreatePage() {
 
   useEffect(() => {
     const handleGetEditUser = async () => {
-      const editUser = await fetchOneUser(params.id)
-      form.reset(editUser)
+      setFetchInfoLoading(true)
+      const response = await fetchOneUser(params.id)
+      if (response.status === 200) {
+        form.reset({...response.data, roles: response.data.roles?.[0]})
+      } else
+        toast({
+          variant: TOAST.DESTRUCTIVE,
+          title: "Lấy thông tin thất bại!",
+          description: response.message,
+        })
+      setFetchInfoLoading(false)
     }
     if (isEdit && params.id) {
       handleGetEditUser()
     }
+    const getMetaData = async () => {
+      getCompanhList()
+      getBranchList()
+      getStoreList()
+    }
+    getMetaData()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
+
+  const getCompanhList = async () => {
+    const response = await fetchCompanySimpleList()
+
+    if (response.status === 200) {
+      const companyList = response.data
+      const companySelectList = transformToSelectList(companyList)
+      setCompanyList(companySelectList)
+    }
+  }
+
+  const getBranchList = async (value) => {
+    const response = await fetchBranchSimpleList({ companyId: value })
+    if (response.status === 200) {
+      const branchList = response.data
+      const branchSelectList = transformToSelectList(branchList)
+      setBranchList(branchSelectList)
+    }
+  }
+
+  const getStoreList = async (value) => {
+    const response = await fetchStoreSimpleList({ branchId: value })
+    if (response.status === 200) {
+      const storeList = response.data
+      const storeSelectList = transformToSelectList(storeList)
+      setStoreList(storeSelectList)
+    }
+  }
 
   return (
     <div className="w-full">
@@ -149,24 +373,45 @@ export default function UserCreatePage() {
           onSubmit={form.handleSubmit(onSubmit)}
           autoComplete="off"
         >
-          <div className="col-span-2 space-y-8">
-            <UserInfo {...{ form }} />
-            <UserRoles {...{ form }} />
-          </div>
-          <div className="">
-            <AccountInfo {...{ form, isEdit, isChangePassword, setIsChangePassword }} />
-          </div>
-
-          <Card className="col-span-2 p-4 space-x-4 text-right">
-            <Button disabled={loading} variant="outline" onClick={(event) => {
-              event.preventDefault()
-              navigation(-1)
-            }}>
-              Hủy
-            </Button>
-            <Button disabled={loading}>{isEdit ? "Lưu" : "Tạo mới"}</Button>
-          </Card>
-      {/* {blocker.state === "blocked" ? (
+          {fetchInfoLoading ? (
+            <SkeletonForm />
+          ) : (
+            <>
+              <div className="col-span-2 space-y-8">
+                <UserInfo {...{ form }} />
+                <UserRoles
+                  {...{
+                    form,
+                    roles,
+                    branchList,
+                    companyList,
+                    storeList,
+                    getBranchList,
+                    getStoreList,
+                  }}
+                />
+              </div>
+              <div className="">
+                <AccountInfo
+                  {...{ form, isEdit, isChangePassword, setIsChangePassword }}
+                />
+              </div>
+              <Card className="col-span-2 p-4 space-x-4 text-right">
+                <Button
+                  disabled={loading}
+                  variant="outline"
+                  onClick={(event) => {
+                    event.preventDefault()
+                    navigation(-1)
+                  }}
+                >
+                  Hủy
+                </Button>
+                <Button disabled={loading}>{isEdit ? "Lưu" : "Tạo mới"}</Button>
+              </Card>
+            </>
+          )}
+          {/* {blocker.state === "blocked" ? (
         <div>
           <p>Are you sure you want to leave?</p>
           <button onClick={() => blocker.proceed()}>
@@ -179,7 +424,7 @@ export default function UserCreatePage() {
       ) : null} */}
         </RouterForm>
       </Form>
-      <CreateSuccessConfirm {...{open, setOpen}} />
-      </div>
+      <CreateSuccessConfirm {...{ open, setOpen }} />
+    </div>
   )
 }

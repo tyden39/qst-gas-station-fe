@@ -12,7 +12,10 @@ const handleLogin = async (set, formData) => {
   try {
     const response = await axiosInstance.post(API_PATHS.LOGIN, formData)
 
+
     const { user, tokens } = response.data.data
+
+    set({ user })
 
     localStorage.setItem(
       AUTH_CONFIG.ACCESS_TOKEN_STORAGE_NAME,
@@ -20,10 +23,8 @@ const handleLogin = async (set, formData) => {
     )
     localStorage.setItem(
       AUTH_CONFIG.USER_STORAGE_NAME,
-      JSON.stringify({ ...user, isAdmin: true })
+      JSON.stringify({ ...user })
     )
-
-    set({ user: { ...user, isAdmin: true } })
 
     return response.data
   } catch (error) {
@@ -39,13 +40,12 @@ const handleLogin = async (set, formData) => {
             "Lỗi hệ thống, vui lòng liên hệ quản trị viên để biết thêm chi tiết!",
         }
   } finally {
-    set({ loading: false, user: null })
+    set({ loading: false })
   }
 }
 
 const handleLogout = async (set) => {
   set({ loading: true })
-
   try {
     await axiosInstance.get(API_PATHS.LOGOUT)
   } catch (error) {
@@ -53,22 +53,25 @@ const handleLogout = async (set) => {
   } finally {
     localStorage.removeItem(AUTH_CONFIG.ACCESS_TOKEN_STORAGE_NAME)
     localStorage.removeItem(AUTH_CONFIG.USER_STORAGE_NAME)
-    set({ loading: false })
+    set({ loading: false, user: null })
   }
 }
 
 const handleGetPermisson = (get, path, role) => {
   const user = get().user
-  if (user?.roles === USER_ROLE.READ_ONLY_STORE && role === 'edit' && path.includes(PATH.FUEL)) {
+  if (
+    user?.roles === USER_ROLE.READ_ONLY_STORE &&
+    role === "edit" &&
+    path.includes(PATH.FUEL)
+  ) {
     return false
   }
   return true
 }
 
 const useAuth = create((set, get) => ({
-  user: null,
-  isAdmin: false,
-  setUser: (user) => set({ user: { ...user, isAdmin: true } }),
+  loading: false,
+  user: JSON.parse(localStorage.getItem(AUTH_CONFIG.USER_STORAGE_NAME)),
   login: async (formData) => handleLogin(set, formData),
   logout: () => handleLogout(set),
   getPermission: (path, role) => handleGetPermisson(get, path, role),

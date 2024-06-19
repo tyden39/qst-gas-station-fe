@@ -23,7 +23,7 @@ const editSchema = z.object({
 })
 
 export default function ProfilesPage() {
-  const authUser = useAuth(state => state.user)
+  const [user] = useAuth(state => [state.user])
   const {toast} = useToast()
 
   const form = useForm({
@@ -31,7 +31,7 @@ export default function ProfilesPage() {
   })
 
   async function onSubmit(values) {
-    const response = await edit(authUser.id, values)
+    const response = await edit(user.id, values)
     if (response.status === 200) {
       form.reset(response.data, {keepDirtyValues: true})
       toast({
@@ -47,13 +47,13 @@ export default function ProfilesPage() {
 
   useEffect(() => {
     const handleGetEditUser = async () => {
-      if (!authUser?.id) return
-      const editUser = await fetchOneUser(authUser.id)
+      if (!user?.id) return
+      const editUser = await fetchOneUser(user.id)
       form.reset(editUser)
     }
     handleGetEditUser()
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [authUser])
+  }, [user])
 
   return (
     <div className="w-full">

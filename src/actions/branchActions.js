@@ -5,17 +5,8 @@ import { convertToQueryString } from "lib/utils"
 
 export const fetchSimpleList = async (filter, pageMeta) => {
   try {
-    // const startDate = filter.billDate?.from
-    // const endDate = filter.billDate?.to
-    // const newFilter = { ...filter }
-    // delete newFilter.billDate
-
-    // const { pageSize } = pageMeta
-    // const page = pageMeta.currentPage
-
-    // const params = { startDate, endDate, ...newFilter, page, pageSize }
-    // const queries = convertToQueryString(params)
-    const queries = null
+    const params = { ...filter }
+    const queries = convertToQueryString(params)
 
     const response = await axiosInstance.get(
       `${API_PATHS.BRANCH_SIMPLE_LIST}${queries ? `?${queries}` : ""}`
@@ -39,10 +30,10 @@ export const fetchSimpleList = async (filter, pageMeta) => {
 
 export const fetchAll = async (filter, pageMeta) => {
   try {
-    const startDate = filter.billDate?.from
-    const endDate = filter.billDate?.to
+    const startDate = filter.createdAt?.from
+    const endDate = filter.createdAt?.to
     const newFilter = { ...filter }
-    delete newFilter.billDate
+    delete newFilter.createdAt
 
     const { pageSize } = pageMeta
     const page = pageMeta.currentPage

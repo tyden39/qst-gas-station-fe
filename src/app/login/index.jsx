@@ -3,9 +3,8 @@ import { Button } from "components/ui/button"
 import {
   Card,
   CardContent,
-  CardDescription,
   CardHeader,
-  CardTitle,
+  CardTitle
 } from "components/ui/card"
 import {
   Form,
@@ -58,9 +57,9 @@ export default function LoginPage() {
       <Card className="w-[400px] py-6">
         <CardHeader className="text-center">
           <CardTitle className="text-4xl">Login</CardTitle>
-          <CardDescription className="text-red-500">{error}</CardDescription>
         </CardHeader>
         <CardContent>
+          <p className="text-red-500 mb-3 text-center">{error}</p>
           <Form {...form}>
             <form className="space-y-4">
               <FormField

@@ -43,7 +43,7 @@ export default function StoreCreatePage() {
 
   const form = useForm({
     resolver: zodResolver(newSchema),
-    defaultValues: {}
+    defaultValues: {},
   })
 
   // const blocker = useBlocker(
@@ -57,7 +57,7 @@ export default function StoreCreatePage() {
     if (isEdit) {
       const response = await edit(params.id, values)
       if (response.status === 200) {
-        form.reset(response.data, {keepDirtyValues: true})
+        form.reset(response.data, { keepDirtyValues: true })
         navigation(PATH.STORE)
         toast({
           variant: "success",
@@ -98,24 +98,8 @@ export default function StoreCreatePage() {
       setFetchInfoLoading(false)
     }
     const getMetaData = async () => {
-      const response = await Promise.all([
-        fetchCompanySimpleList(),
-        fetchBranchSimpleList()
-      ])
-
-      // Company
-      if (response[0].status === 200) {
-        const companyList = response[0].data
-        const companySelectList = transformToSelectList(companyList)
-        setCompanyList(companySelectList)
-      }
-
-      // Branch
-      if (response[1].status === 200) {
-        const branchList = response[1].data
-        const branchSelectList = transformToSelectList(branchList)
-        setBranchList(branchSelectList)
-      }
+      getCompanhList()
+      getBranchList()
     }
     if (isEdit && params.id) {
       handleGetEditData()
@@ -124,9 +108,25 @@ export default function StoreCreatePage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
+  const getCompanhList = async () => {
+    const response = await fetchCompanySimpleList()
 
-  useEffect(() => {
-  }, [])
+    if (response.status === 200) {
+      const companyList = response.data
+      const companySelectList = transformToSelectList(companyList)
+      setCompanyList(companySelectList)
+    }
+  }
+
+  const getBranchList = async (value) => {
+    const response = await fetchBranchSimpleList({ companyId: value })
+    if (response.status === 200) {
+      const branchList = response.data
+      const branchSelectList = transformToSelectList(branchList)
+      setBranchList(branchSelectList)
+    }
+  }
+
   return (
     <div className="w-full">
       <div className="">
@@ -150,7 +150,11 @@ export default function StoreCreatePage() {
           onSubmit={form.handleSubmit(onSubmit)}
           autoComplete="off"
         >
-          {fetchInfoLoading ? <SkeletonForm /> : <CreateForm {...{ form, companyList, branchList }} />}
+          {fetchInfoLoading ? (
+            <SkeletonForm />
+          ) : (
+            <CreateForm {...{ form, branchList, companyList, getBranchList }} />
+          )}
 
           <Card className="col-span-2 p-4 space-x-4 text-right">
             <Button
@@ -180,7 +184,7 @@ export default function StoreCreatePage() {
       ) : null} */}
         </RouterForm>
       </Form>
-      <CreateSuccessConfirm {...{open, setOpen}} />
+      <CreateSuccessConfirm {...{ open, setOpen }} />
     </div>
   )
 }

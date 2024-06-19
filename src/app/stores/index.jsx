@@ -18,6 +18,10 @@ import { Link, useLocation } from "react-router-dom"
 import PATH from "routers/path"
 import RowActions from "./components/RowActions"
 import { initColumnVisibility, initFilter, initMeta } from "./initial"
+import StoreFilter from "./filter"
+import { fetchSimpleList as fetchBranchSimpleList } from "actions/branchActions"
+import { fetchSimpleList as fetchCompanySimpleList } from "actions/companyActions"
+import { transformToSelectList } from "lib/transofrm"
 
 export function StorePage() {
   const { toast } = useToast()
@@ -33,6 +37,9 @@ export function StorePage() {
   const [loading, setLoading] = useState(false)
   const canSubmit = JSON.stringify(filter) !== JSON.stringify(activedFilter)
   const [columnVisibility, setColumnVisibility] = useState(initColumnVisibility)
+
+  const [companyList, setCompanyList] = useState([])
+  const [branchList, setBranchList] = useState([])
 
   const applyFilter = useCallback(
     (forceFilter) => {
@@ -169,9 +176,33 @@ export function StorePage() {
   })
 
   const onFieldChange = useCallback(
-    (value, name) => setFilter((prev) => ({ ...prev, [name]: value })),
+    (value, name) => setFilter((prev) => ({ ...prev, [name]: value === 'all' ? undefined : value })),
     []
   )
+
+  useEffect(() => {
+    const initialData = async () => {
+      getCompanyList()
+      getBranchList()
+    }
+    initialData()
+  }, [])
+
+  const getCompanyList = async (value) => {
+    const response = await fetchCompanySimpleList({ companyId: value })
+    if (response.status === 200) {
+      const resData = response.data
+      setCompanyList(resData)
+    }
+  }
+
+  const getBranchList = async (value) => {
+    const response = await fetchBranchSimpleList({ companyId: value })
+    if (response.status === 200) {
+      const branchList = response.data
+      setBranchList(branchList)
+    }
+  }
 
   return (
     <div className="w-full">
@@ -193,7 +224,7 @@ export function StorePage() {
           searchInputPlaceholder: "Tìm kiếm",
         }}
       >
-        {/* Filter here */}
+        <StoreFilter {...{ onFieldChange, companyList, branchList, getBranchList }} />
       </PageHeader>
       <PageTable {...{ table }} />
       <PagePagination {...{ table, meta, setMeta, applyFilter }} />

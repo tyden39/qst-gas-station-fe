@@ -1,5 +1,9 @@
 import { zodResolver } from "@hookform/resolvers/zod"
-import { createInvoice, editInvoice, fetchOneInvoice } from "actions/fuelActions"
+import {
+  createInvoice,
+  editInvoice,
+  fetchOneInvoice,
+} from "actions/fuelActions"
 import { Button, buttonVariants } from "components/ui/button"
 import { Card } from "components/ui/card"
 import { Form } from "components/ui/form"
@@ -7,34 +11,56 @@ import { TOAST } from "components/ui/toast"
 import { useToast } from "components/ui/use-toast"
 import { cn } from "lib/utils"
 import { ChevronLeft } from "lucide-react"
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
 import { Link, useLocation, useNavigate, useParams } from "react-router-dom"
 import PATH from "routers/path"
 import { z } from "zod"
 import FormCreate from "./create-form"
+import { transformToSelectList } from "lib/transofrm"
+import { fetchSimpleList as fetchBranchSimpleList } from "actions/branchActions"
+import { fetchSimpleList as fetchCompanySimpleList } from "actions/companyActions"
+import { fetchSimpleList as fetchStoreSimpleList } from "actions/storeActions"
+import CreateSuccessConfirm from "components/layout/CreateSucessConfirm"
+import SkeletonForm from "./skeleton-form"
 
-const schema = z
-  .object({
-    Check_Key: z.string({ required_error: "Mã kiểm tra không được để trống" }),
-    Logger_ID: z.string({ required_error: "Mã logger không được để trống" }),
-    Logger_Time: z.date({ required_error: "Thời gian ghi log không được để trống" }),
-    Pump_ID: z.string({ required_error: "Mã vòi bơm không được để trống" }),
-    Bill_No: z.string({ required_error: "Mã hóa đơn không được để trống" }),
-    Bill_Type: z.string({ required_error: "Loại hóa đơn không được để trống" }),
-    Fuel_Type: z.string({ required_error: "Loại nhiên liệu không được để trống" }),
-    Start_Time: z.date({ required_error: "Thời gian bắt đầu bơm không được để trống" }),
-    End_Time: z.date({ required_error: "Thời gian kết thúc bơm không được để trống" }),
-    Unit_Price: z.string({ required_error: "Giá không được để trống" }),
-    Quantity: z.string({ required_error: "Số lượng không được để trống" }),
-    Total_Price: z.string({ required_error: "Tổng giá không được để trống" }),
-  })
+const schema = z.object({
+  Check_Key: z.string({ required_error: "Mã kiểm tra không được để trống" }),
+  Logger_ID: z.string({ required_error: "Mã logger không được để trống" }),
+  Logger_Time: z.date({
+    required_error: "Thời gian ghi log không được để trống",
+  }),
+  Pump_ID: z.string({ required_error: "Mã vòi bơm không được để trống" }),
+  Bill_No: z.string({ required_error: "Mã hóa đơn không được để trống" }),
+  Bill_Type: z.string({ required_error: "Loại hóa đơn không được để trống" }),
+  Fuel_Type: z.string({
+    required_error: "Loại nhiên liệu không được để trống",
+  }),
+  Start_Time: z.date({
+    required_error: "Thời gian bắt đầu bơm không được để trống",
+  }),
+  End_Time: z.date({
+    required_error: "Thời gian kết thúc bơm không được để trống",
+  }),
+  Unit_Price: z.string({ required_error: "Giá không được để trống" }),
+  Quantity: z.string({ required_error: "Số lượng không được để trống" }),
+  Total_Price: z.string({ required_error: "Tổng giá không được để trống" }),
+  companyId: z.string().optional().nullable(),
+  branchId: z.string().optional().nullable(),
+  storeId: z.string().optional().nullable(),
+})
 
 export default function FuelCreatePage() {
   const navigation = useNavigate()
-  const {toast} = useToast()
+  const { toast } = useToast()
   const location = useLocation()
   const params = useParams()
+
+  const [companyList, setCompanyList] = useState([])
+  const [branchList, setBranchList] = useState([])
+  const [storeList, setStoreList] = useState([])
+  const [fetchInfoLoading, setFetchInfoLoading] = useState(false)
+  const [open, setOpen] = useState(false)
 
   const isEdit = location.pathname.includes("edit")
 
@@ -44,44 +70,49 @@ export default function FuelCreatePage() {
 
   async function onSubmit(values) {
     if (isEdit) {
-      const {data} = await editInvoice(params.id, values)
+      const { data } = await editInvoice(params.id, values)
       if (data.status === 200) {
         navigation(PATH.FUEL)
         toast({
-          variant: 'success',
-          description: "Cập nhật hóa đơn thành công!"
+          variant: "success",
+          description: "Cập nhật hóa đơn thành công!",
         })
-      } else toast({
-        variant: TOAST.DESTRUCTIVE,
-        title: "Cập nhật hóa đơn thất bại!",
-        description: data.message
-      })
+      } else{
+        toast({
+          variant: TOAST.DESTRUCTIVE,
+          title: "Cập nhật hóa đơn thất bại!",
+          description: data.message,
+        })
+      }
     } else {
-      const {status, data} = await createInvoice(values)
+      const { status, data } = await createInvoice(values)
 
       if (status === 201) {
         toast({
-          variant: 'success',
-          title: "Tạo hóa đơn thành công!"
+          variant: "success",
+          title: "Tạo hóa đơn thành công!",
         })
         // navigation(-1)
-      } else if (status === 409) toast({
-        variant: TOAST.DESTRUCTIVE,
-        title: "Tạo hóa đơn thất bại!",
-        description: `Đã tồn tại hóa đơn với Mã kiểm tra #${values.Check_Key}!`
-      })
-      else toast({
-        variant: TOAST.DESTRUCTIVE,
-        title: "Tạo hóa đơn thất bại!",
-        description: data.message
-      })
+      } else if (status === 409)
+        toast({
+          variant: TOAST.DESTRUCTIVE,
+          title: "Tạo hóa đơn thất bại!",
+          description: `Đã tồn tại hóa đơn với Mã kiểm tra #${values.Check_Key}!`,
+        })
+      else
+        toast({
+          variant: TOAST.DESTRUCTIVE,
+          title: "Tạo hóa đơn thất bại!",
+          description: data.message,
+        })
     }
   }
 
   useEffect(() => {
     const handleGetEditInvoice = async () => {
-      const {data} = await fetchOneInvoice(params.id)
-      if (data.status === 200){
+      setFetchInfoLoading(true)
+      const { data } = await fetchOneInvoice(params.id)
+      if (data.status === 200) {
         const resData = data.data
         const formData = {
           ...resData,
@@ -93,18 +124,54 @@ export default function FuelCreatePage() {
           Bill_Type: `${resData.Bill_Type}`,
         }
         form.reset(formData)
-      }else {
+      } else {
+        navigation(PATH.FUEL)
         toast({
           variant: TOAST.DESTRUCTIVE,
-          title: `Không tìm thấy hóa đơn với mã #${params.id}`
+          title: `Không tìm thấy hóa đơn với mã #${params.id}`,
         })
       }
+      setFetchInfoLoading(false)
     }
     if (isEdit && params.id) {
       handleGetEditInvoice()
     }
+    const getMetaData = async () => {
+      getCompanhList()
+      getBranchList()
+      getStoreList()
+    }
+    getMetaData()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
+
+  const getCompanhList = async () => {
+    const response = await fetchCompanySimpleList()
+
+    if (response.status === 200) {
+      const companyList = response.data
+      const companySelectList = transformToSelectList(companyList)
+      setCompanyList(companySelectList)
+    }
+  }
+
+  const getBranchList = async (value) => {
+    const response = await fetchBranchSimpleList({ companyId: value })
+    if (response.status === 200) {
+      const branchList = response.data
+      const branchSelectList = transformToSelectList(branchList)
+      setBranchList(branchSelectList)
+    }
+  }
+
+  const getStoreList = async (value) => {
+    const response = await fetchStoreSimpleList({ branchId: value })
+    if (response.status === 200) {
+      const storeList = response.data
+      const storeSelectList = transformToSelectList(storeList)
+      setStoreList(storeSelectList)
+    }
+  }
 
   return (
     <div className="w-full">
@@ -129,14 +196,35 @@ export default function FuelCreatePage() {
           onSubmit={form.handleSubmit(onSubmit)}
           autoComplete="off"
         >
-          <FormCreate {...{ form }} />
+          {fetchInfoLoading ? (
+            <SkeletonForm />
+          ) : (
+            <>
+              <FormCreate
+                {...{
+                  form,
+                  branchList,
+                  companyList,
+                  storeList,
+                  getBranchList,
+                  getStoreList,
+                }}
+              />
 
-          <Card className="p-4 space-x-4 text-right">
-            <Link to={PATH.FUEL} className={cn(buttonVariants({variant: 'outline'}))}>Hủy</Link>
-            <Button type="submit">{isEdit ? "Lưu" : "Tạo mới"}</Button>
-          </Card>
+              <Card className="p-4 space-x-4 text-right">
+                <Link
+                  to={PATH.FUEL}
+                  className={cn(buttonVariants({ variant: "outline" }))}
+                >
+                  Hủy
+                </Link>
+                <Button type="submit">{isEdit ? "Lưu" : "Tạo mới"}</Button>
+              </Card>
+            </>
+          )}
         </form>
       </Form>
+      <CreateSuccessConfirm {...{ open, setOpen }} />
     </div>
   )
 }

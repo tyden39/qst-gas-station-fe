@@ -50,7 +50,7 @@ export default function AccountInfo({ form, isEdit, isChangePassword, setIsChang
                 render={({ field }) => (
                   <FormItem className="flex flex-col space-y-1.5">
                     <FormLabel>
-                      Mật khẩu <span className="text-red-500">*</span>
+                      {isEdit ? 'Mật khẩu mới' : 'Mật khẩu'} <span className="text-red-500">*</span>
                     </FormLabel>
                     <FormControl>
                       <Input

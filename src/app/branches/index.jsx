@@ -20,6 +20,9 @@ import RowActions from "./components/RowActions"
 import { initColumnVisibility, initFilter, initMeta } from "./initial"
 import { TOAST } from "components/ui/toast"
 import { useToast } from "components/ui/use-toast"
+import BranchFilter from "./filter"
+import { fetchSimpleList as fetchCompanySimpleList } from "actions/companyActions"
+import { transformToSelectList } from "lib/transofrm"
 
 export function BranchPage() {
   const { toast } = useToast()
@@ -35,6 +38,8 @@ export function BranchPage() {
   const [columnVisibility, setColumnVisibility] = useState(initColumnVisibility)
 
   const [rowSelection, setRowSelection] = useState({})
+
+  const [companyList, setCompanyList] = useState([])
 
   const applyFilter = useCallback(
     (forceFilter) => {
@@ -175,9 +180,26 @@ export function BranchPage() {
   })
 
   const onFieldChange = useCallback(
-    (value, name) => setFilter((prev) => ({ ...prev, [name]: value })),
+    (value, name) => setFilter((prev) => ({ ...prev, [name]: value === 'all' ? undefined : value })),
     []
   )
+
+  const getCompanyList = async (value) => {
+    const response = await fetchCompanySimpleList({ companyId: value })
+    if (response.status === 200) {
+      const resData = response.data
+      const selectList = transformToSelectList(resData)
+      selectList.unshift({id: -1, value: "all", label: "Tất cả"})
+      setCompanyList(selectList)
+    }
+  }
+
+  useEffect(() => {
+    const initialData = async () => {
+      getCompanyList()
+    }
+    initialData()
+  }, [])
 
   return (
     <div className="w-full">
@@ -199,7 +221,7 @@ export function BranchPage() {
           searchInputPlaceholder: "Tìm kiếm",
         }}
       >
-        {/* Filter here */}
+        <BranchFilter {...{onFieldChange, companyList}} />
       </PageHeader>
       <PageTable {...{ table }} />
       <PagePagination {...{ table, meta, setMeta, applyFilter }} />
