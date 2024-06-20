@@ -1,69 +1,56 @@
 import { FilterSelect } from "components/FilterSelect"
 import { DatePickerWithRange } from "components/ui/datepicker"
-import { BILL_TYPES, FUEL_TYPE, PUMP_ID } from "./constant"
-import { initFilter } from "./initial"
-import { useEffect, useState } from "react"
 import { transformToSelectList } from "lib/transofrm"
+import { useEffect, useState } from "react"
+import { BILL_TYPES, FUEL_TYPE, PUMP_ID } from "./constant"
+import { USER_ROLE } from "constants/user-roles"
 
-export default function InvoiceFilter({ filter, onFieldChange, companyList, branchList, storeList }) {
+export default function InvoiceFilter({ authUser, filter, onFieldChange, companyList, branchList, storeList }) {
   
-  const [companyId, setCompanyId] = useState("all")
-  const [branchId, setBranchId] = useState("all")
-  const [storeId, setStoreId] = useState("all")
   const [companies, setCompanies] = useState([])
   const [branches, setBranches] = useState([])
   const [stores, setStores] = useState([])
 
   const onCompanyChange = async (value, name) => {
-    onFieldChange(value, name)
-    if (companyId !== value){
-      setCompanyId(value)
-      setBranchId('all')
-      onFieldChange('all', 'branchId')
+    if (filter.companyId !== value){
+      onFieldChange(value, name)
+      onFieldChange(undefined, 'branchId')
 
-      const brList = value === 'all' ? branchList : branchList.filter(x => x.companyId === value)
+      const brList = branchList.filter(x => x.companyId === value)
       const selectList = transformToSelectList(brList)
-      selectList.unshift({id: -1, value: "all", label: "Tất cả"})
       setBranches(selectList)
 
-      onBranchChange('all', 'branchId')
+      onBranchChange(undefined, 'branchId')
     }
   }
 
   const onBranchChange = (value, name) => {
-    onFieldChange(value, name)
-    if (branchId !== value){
-      setBranchId(value)
-      setStoreId('all')
-      onFieldChange('all', 'storeId')
+    if (filter.branchId !== value){
+      onFieldChange(value, name)
+      onFieldChange(undefined, 'storeId')
 
-      const stList = value === 'all' ? storeList : storeList.filter(x => x.branchId === value)
+      const stList = storeList.filter(x => x.branchId === value)
       const selectList = transformToSelectList(stList)
-      selectList.unshift({id: -1, value: "all", label: "Tất cả"})
       setStores(selectList)
     }
   }
 
   const onStoreChange = (value, name) => {
-    onFieldChange(value, name)
-    if (storeId !== value) setStoreId(value)
+    if (filter.storeId !== value) onFieldChange(value, name)
   }
 
   useEffect(() => {
     const selectList = transformToSelectList(companyList)
-    selectList.unshift({id: -1, value: "all", label: "Tất cả"})
     setCompanies(selectList)
   }, [companyList])
 
   useEffect(() => {
     const selectList = transformToSelectList(branchList)
-    selectList.unshift({id: -1, value: "all", label: "Tất cả"})
     setBranches(selectList)
   }, [branchList])
 
   useEffect(() => {
     const selectList = transformToSelectList(storeList)
-    selectList.unshift({id: -1, value: "all", label: "Tất cả"})
     setStores(selectList)
   }, [storeList])
 
@@ -72,19 +59,22 @@ export default function InvoiceFilter({ filter, onFieldChange, companyList, bran
       <DatePickerWithRange
         name={"billDate"}
         label='Thời gian ghi log:'
-        defaultValue={initFilter.billDate}
+        placeholder={'Chọn ngày'}
+        date={filter?.billDate}
         onChangeValue={onFieldChange}
       />
       <FilterSelect
         name="billType"
         value={filter?.billType}
         label={"Loại hóa đơn:"}
+        placeholder={'Chọn hóa đơn'}
         onValueChange={onFieldChange}
         selectList={BILL_TYPES}
       />
       <FilterSelect
         name="fuelType"
         label={"Loại nhiên liệu:"}
+        placeholder={'Chọn nhiên liệu'}
         value={filter?.fuelType}
         onValueChange={onFieldChange}
         selectList={FUEL_TYPE}
@@ -92,35 +82,36 @@ export default function InvoiceFilter({ filter, onFieldChange, companyList, bran
       <FilterSelect
         name="pumpId"
         label={"Mã vòi bơm:"}
+        placeholder={'Chọn vòi bơm'}
         value={filter?.pumpId}
         onValueChange={onFieldChange}
         selectList={PUMP_ID}
         className={"mb-2"}
       />
-      <FilterSelect
+      {authUser.roles.includes(USER_ROLE.ADMIN) && <FilterSelect
         name="companyId"
-        value={companyId}
+        value={filter.companyId}
         label={"Công ty:"}
         placeholder="Chọn công ty"
         onValueChange={onCompanyChange}
         selectList={companies}
-      />
-      <FilterSelect
+      />}
+      {authUser.roles.includes(USER_ROLE.COMPANY) && <FilterSelect
         name="branchId"
-        value={branchId}
+        value={filter.branchId}
         label={"Chi nhánh:"}
         placeholder="Chọn chi nhánh"
         onValueChange={onBranchChange}
         selectList={branches}
-      />
-      <FilterSelect
+      />}
+      {authUser.roles.includes(USER_ROLE.BRANCH) && <FilterSelect
         name="storeId"
-        value={storeId}
+        value={filter.storeId}
         label={"Cửa hàng:"}
         placeholder="Chọn cửa hàng"
         onValueChange={onStoreChange}
         selectList={stores}
-      />
+      />}
     </>
   )
 }

@@ -56,12 +56,12 @@ export default function ExportInvoice({ filter, meta, selected }) {
           <p>Bạn đang xuất hóa đơn với các điều kiện sau:</p>
           <p>- Từ khóa: <span className="font-bold">{keyword}</span></p>
           <p>- Thời gian ghi Log:{" "}
-            <span className="font-bold">{`${moment(billDate.from).format("DD-MM-YYYY HH:mm:ss")} 
-            - ${moment(billDate.to).format("DD-MM-YYYY HH:mm:ss")}`}</span>
+            <span className="font-bold">{`${moment(billDate?.from).format("DD-MM-YYYY HH:mm:ss")} 
+            - ${moment(billDate?.to).format("DD-MM-YYYY HH:mm:ss")}`}</span>
           </p>
-          <p>- Loại hóa đơn: <span className="font-bold">{BILL_TYPES.find(item => item.value === billType).label}</span></p>
-          <p>- Loại nhiên liệu: <span className="font-bold">{FUEL_TYPE.find(item => item.value === fuelType).label}</span></p>
-          <p>- Mã vòi bơm: <span className="font-bold">{PUMP_ID.find(item => item.value === pumpId).label}</span></p>
+          <p>- Loại hóa đơn: <span className="font-bold">{BILL_TYPES.find(item => item.value === billType)?.label}</span></p>
+          <p>- Loại nhiên liệu: <span className="font-bold">{FUEL_TYPE.find(item => item.value === fuelType)?.label}</span></p>
+          <p>- Mã vòi bơm: <span className="font-bold">{PUMP_ID.find(item => item.value === pumpId)?.label}</span></p>
           <p>- Số dòng đã chọn: <span className="font-bold">{selected.length}</span></p>
         </DialogDescription>
         <DialogFooter>

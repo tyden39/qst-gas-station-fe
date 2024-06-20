@@ -1,12 +1,14 @@
 
 import moment from "moment"
-import { BILL_TYPES, FUEL_TYPE, PUMP_ID } from "./constant"
 
 export const initFilter = {
   keyword: "",
-  billType: BILL_TYPES[0].value,
-  fuelType: FUEL_TYPE[0].value,
-  pumpId: PUMP_ID[0].value,
+  billType: null,
+  fuelType: null,
+  pumpId: null,
+  companyId: null,
+  branchId: null,
+  storeId: null,
   billDate: { from: moment().subtract(1, 'M').toDate(), to: new Date() }
 }
 

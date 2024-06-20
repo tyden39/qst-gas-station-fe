@@ -24,8 +24,11 @@ import { initColumnVisibility, initFilter, initMeta } from "./initial"
 import { fetchSimpleList as fetchBranchSimpleList } from "actions/branchActions"
 import { fetchSimpleList as fetchCompanySimpleList } from "actions/companyActions"
 import { fetchSimpleList as fetchStoreSimpleList } from "actions/storeActions"
+import FilterTags from "./filterTags"
+import useAuth from "zustands/useAuth"
 
 export function UserPage() {
+  const [authUser] = useAuth((state) => [state.user])
   const [data, setData] = useState([])
   const [meta, setMeta] = useState(initMeta)
 
@@ -47,11 +50,13 @@ export function UserPage() {
   const applyFilter = useCallback(
     (forceFilter) => {
       setLoading(true)
-      fetchUsers({ ...filter, ...forceFilter }, meta)
+      const finalFilter = { ...filter, ...forceFilter }
+      fetchUsers(finalFilter, meta)
         .then(({ data, meta }) => {
           setMeta(meta)
           setData(data)
-          setActivedFilter(filter)
+          setFilter(finalFilter)
+          setActivedFilter(finalFilter)
         })
         .catch((error) => console.log(error))
         .finally(() => setLoading(false))
@@ -255,6 +260,8 @@ export function UserPage() {
         {...{
           table,
           filter,
+          initFilter,
+          activedFilter,
           onFieldChange,
           applyFilter,
           loading,
@@ -262,8 +269,9 @@ export function UserPage() {
           searchInputPlaceholder: "Tìm kiếm",
         }}
       >
-        <UserFilter {...{ onFieldChange, companyList, branchList, storeList, getBranchList, getCompanyList, getStoreList }} />
+        <UserFilter {...{ authUser, filter, onFieldChange, companyList, branchList, storeList, getBranchList, getStoreList }} />
       </PageHeader>
+      <FilterTags {...{activedFilter, applyFilter, companyList, branchList, storeList}} />
       <PageTable {...{ table }} />
       <PagePagination {...{ table, meta, setMeta, applyFilter }} />
     </div>

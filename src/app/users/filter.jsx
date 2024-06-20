@@ -1,67 +1,55 @@
 import { FilterSelect } from "components/FilterSelect"
 import { DatePickerWithRange } from "components/ui/datepicker"
+import { USER_ROLE } from "constants/user-roles"
 import { transformToSelectList } from "lib/transofrm"
 import { useEffect, useState } from "react"
 
-export default function UserFilter({ onFieldChange, companyList, branchList, storeList }) {
+export default function UserFilter({ authUser, filter, onFieldChange, companyList, branchList, storeList }) {
   
-  const [companyId, setCompanyId] = useState("all")
-  const [branchId, setBranchId] = useState("all")
-  const [storeId, setStoreId] = useState("all")
   const [companies, setCompanies] = useState([])
   const [branches, setBranches] = useState([])
   const [stores, setStores] = useState([])
 
   const onCompanyChange = async (value, name) => {
-    onFieldChange(value, name)
-    if (companyId !== value){
-      setCompanyId(value)
-      setBranchId('all')
-      onFieldChange('all', 'branchId')
+    if (filter.companyId !== value){
+      onFieldChange(value, name)
+      onFieldChange(undefined, 'branchId')
 
-      const brList = value === 'all' ? branchList : branchList.filter(x => x.companyId === value)
+      const brList = branchList.filter(x => x.companyId === value)
       const selectList = transformToSelectList(brList)
-      selectList.unshift({id: -1, value: "all", label: "Tất cả"})
       setBranches(selectList)
 
-      onBranchChange('all', 'branchId')
+      onBranchChange(undefined, 'branchId')
     }
   }
 
   const onBranchChange = (value, name) => {
-    onFieldChange(value, name)
-    if (branchId !== value){
-      setBranchId(value)
-      setStoreId('all')
-      onFieldChange('all', 'storeId')
+    if (filter.branchId !== value){
+      onFieldChange(value, name)
+      onFieldChange(undefined, 'storeId')
 
-      const stList = value === 'all' ? storeList : storeList.filter(x => x.branchId === value)
+      const stList = storeList.filter(x => x.branchId === value)
       const selectList = transformToSelectList(stList)
-      selectList.unshift({id: -1, value: "all", label: "Tất cả"})
       setStores(selectList)
     }
   }
 
   const onStoreChange = (value, name) => {
-    onFieldChange(value, name)
-    if (storeId !== value) setStoreId(value)
+    if (filter.storeId !== value) onFieldChange(value, name)
   }
 
   useEffect(() => {
     const selectList = transformToSelectList(companyList)
-    selectList.unshift({id: -1, value: "all", label: "Tất cả"})
     setCompanies(selectList)
   }, [companyList])
 
   useEffect(() => {
     const selectList = transformToSelectList(branchList)
-    selectList.unshift({id: -1, value: "all", label: "Tất cả"})
     setBranches(selectList)
   }, [branchList])
 
   useEffect(() => {
     const selectList = transformToSelectList(storeList)
-    selectList.unshift({id: -1, value: "all", label: "Tất cả"})
     setStores(selectList)
   }, [storeList])
 
@@ -70,33 +58,34 @@ export default function UserFilter({ onFieldChange, companyList, branchList, sto
       <DatePickerWithRange
         name={"createdAt"}
         label="Ngày tạo:"
+        date={filter.createdAt}
         placeholder="Chọn ngày"
         onChangeValue={onFieldChange}
       />
-      <FilterSelect
+      {authUser.roles.includes(USER_ROLE.ADMIN) && <FilterSelect
         name="companyId"
-        value={companyId}
+        value={filter.companyId}
         label={"Công ty:"}
         placeholder="Chọn công ty"
         onValueChange={onCompanyChange}
         selectList={companies}
-      />
-      <FilterSelect
+      />}
+      {authUser.roles.includes(USER_ROLE.COMPANY) && <FilterSelect
         name="branchId"
-        value={branchId}
+        value={filter.branchId}
         label={"Chi nhánh:"}
         placeholder="Chọn chi nhánh"
         onValueChange={onBranchChange}
         selectList={branches}
-      />
-      <FilterSelect
+      />}
+      {authUser.roles.includes(USER_ROLE.BRANCH) && <FilterSelect
         name="storeId"
-        value={storeId}
+        value={filter.storeId}
         label={"Cửa hàng:"}
         placeholder="Chọn cửa hàng"
         onValueChange={onStoreChange}
         selectList={stores}
-      />
+      />}
     </>
   )
 }

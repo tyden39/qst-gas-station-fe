@@ -12,23 +12,33 @@ export default function PagePaginationCapacity({
   currentPage,
   pageSize,
   setMeta,
+  selected,
 }) {
   const startItem = (currentPage - 1) * pageSize
   const endItem = Math.min(startItem + pageSize, totalItems)
-  
+
   return (
     <div className="flex items-center gap-2">
-      {/* {table.getFilteredSelectedRowModel().rows.length} of{" "}
-      {table.getFilteredRowModel().rows.length} row(s) selected. */}
+      {selected && selected.length > 0 ? (
+        <span className="pl-2">{`Chọn ${selected.length} trong số ${totalItems} dòng`}</span>
+      ) : (
+        <span className="pl-2">
+          {startItem + 1} - {endItem} trong số {totalItems} dòng
+        </span>
+      )}
 
-      <span>
-        {startItem + 1} - {endItem} trong số {totalItems} trang
-      </span>
       <Select
         defaultValue={pageSize}
         onValueChange={(value) => {
-          const newPage = value * currentPage > totalItems ? Math.ceil(totalItems / value) : currentPage
-          setMeta((prev) => ({ ...prev, pageSize: value, currentPage: newPage}))
+          const newPage =
+            value * currentPage > totalItems
+              ? Math.ceil(totalItems / value)
+              : currentPage
+          setMeta((prev) => ({
+            ...prev,
+            pageSize: value,
+            currentPage: newPage,
+          }))
         }}
       >
         <SelectTrigger className="w-[150px]">

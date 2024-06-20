@@ -29,9 +29,11 @@ import { initColumnVisibility, initFilter, initMeta } from "./initial"
 import { fetchSimpleList as fetchBranchSimpleList } from "actions/branchActions"
 import { fetchSimpleList as fetchCompanySimpleList } from "actions/companyActions"
 import { fetchSimpleList as fetchStoreSimpleList } from "actions/storeActions"
+import FilterTags from "./filterTags"
+import { USER_ROLE } from "constants/user-roles"
 
 export function FuelPage() {
-  const getPermission = useAuth((state) => state.getPermission)
+  const [getPermission, authUser] = useAuth((state) => [state.getPermission, state.user])
   const allowCreate = getPermission(PATH.FUEL_CREATE)
   const allowEdit = getPermission(PATH.FUEL_EDIT)
 
@@ -45,7 +47,6 @@ export function FuelPage() {
   const [activedFilter, setActivedFilter] = useState(initFilter)
   const [sorting, setSorting] = useState([])
   const [loading, setLoading] = useState(false)
-  const canSubmit = JSON.stringify(filter) !== JSON.stringify(activedFilter)
   const [columnFilters, setColumnFilters] = useState([])
   const [columnVisibility, setColumnVisibility] = useState(initColumnVisibility)
   const [selected, setSelected] = useInvoice((state) => [
@@ -60,14 +61,18 @@ export function FuelPage() {
   const [branchList, setBranchList] = useState([])
   const [storeList, setStoreList] = useState([])
 
+  const canSubmit = JSON.stringify(filter) !== JSON.stringify(activedFilter)
+
   const applyFilter = useCallback(
     (forceFilter) => {
       setLoading(true)
-      fetchInvoices({ ...filter, ...forceFilter }, meta)
+      const finalFilter = { ...filter, ...forceFilter }
+      fetchInvoices(finalFilter, meta)
         .then(({ data, meta }) => {
           setMeta(meta)
           setData(data)
-          setActivedFilter(filter)
+          setFilter(finalFilter)
+          setActivedFilter(finalFilter)
         })
         .catch((error) => console.log(error))
         .finally(() => setLoading(false))
@@ -234,7 +239,7 @@ export function FuelPage() {
             <div className="text-center">
               {BILL_TYPES.find(
                 (item) => item.value === row.getValue("Bill_Type")
-              ).label || ""}
+              )?.label || ""}
             </div>
           ),
         },
@@ -292,7 +297,7 @@ export function FuelPage() {
           cell: ({ row }) => {
             const quantity = parseFloat(row.getValue("Quantity"))
 
-            return <div className="text-right font-medium">{quantity}</div>
+            return <div className="text-right font-medium">{quantity} {" "}l</div>
           },
         },
         {
@@ -310,12 +315,11 @@ export function FuelPage() {
           },
         },
         {
-          accessorKey: "companyName",
-          header: () => <div className="text-center">Công Ty</div>,
+          accessorKey: "storeName",
+          header: () => <div className="text-center">Cửa hàng</div>,
           cell: ({ row }) => {
             const rowValue = row.original
-
-            return <div className="text-center">{rowValue.Store?.Branch?.Company?.name}</div>
+            return <div className="text-center">{rowValue.Store?.name}</div>
           },
         },
         {
@@ -327,11 +331,12 @@ export function FuelPage() {
           },
         },
         {
-          accessorKey: "storeName",
-          header: () => <div className="text-center">Cửa hàng</div>,
+          accessorKey: "companyName",
+          header: () => <div className="text-center">Công Ty</div>,
           cell: ({ row }) => {
             const rowValue = row.original
-            return <div className="text-center">{rowValue.Store?.name}</div>
+
+            return <div className="text-center">{rowValue.Store?.Branch?.Company?.name}</div>
           },
         },
         {
@@ -427,9 +432,9 @@ export function FuelPage() {
 
   useEffect(() => {
     const initialData = async () => {
-      getCompanyList()
-      getBranchList()
-      getStoreList()
+      authUser.roles.includes(USER_ROLE.ADMIN) && getCompanyList()
+      authUser.roles.includes(USER_ROLE.COMPANY) && getBranchList()
+      authUser.roles.includes(USER_ROLE.BRANCH) && getStoreList()
     }
     initialData()
   }, [])
@@ -455,6 +460,7 @@ export function FuelPage() {
         {...{
           table,
           filter,
+          initFilter,
           activedFilter,
           onFieldChange,
           applyFilter,
@@ -463,10 +469,11 @@ export function FuelPage() {
           searchInputPlaceholder: "Tìm kiếm theo Mã Kiểm Tra",
         }}
       >
-        <InvoiceFilter {...{ filter, onFieldChange, companyList, branchList, storeList, getBranchList, getStoreList }} />
+        <InvoiceFilter {...{ authUser, filter, onFieldChange, companyList, branchList, storeList, getBranchList, getStoreList }} />
       </PageHeader>
+      <FilterTags {...{activedFilter, applyFilter, companyList, branchList, storeList}} />
       <PageTable {...{ table }} />
-      <PagePagination {...{ table, meta, setMeta, applyFilter }} />
+      <PagePagination {...{ table, meta, selected }} />
     </div>
   )
 }

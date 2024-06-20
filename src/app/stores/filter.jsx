@@ -3,45 +3,37 @@ import { DatePickerWithRange } from "components/ui/datepicker"
 import { transformToSelectList } from "lib/transofrm"
 import { useEffect, useState } from "react"
 
-export default function StoreFilter({ onFieldChange, companyList, branchList }) {
+export default function InvoiceFilter({ filter, onFieldChange, companyList, branchList }) {
   
-  const [companyId, setCompanyId] = useState("all")
-  const [branchId, setBranchId] = useState("all")
   const [companies, setCompanies] = useState([])
   const [branches, setBranches] = useState([])
 
   const onCompanyChange = async (value, name) => {
-    onFieldChange(value, name)
-    if (companyId !== value){
-      setCompanyId(value)
-      setBranchId('all')
-      onFieldChange('all', 'branchId')
+    if (filter.companyId !== value){
+      onFieldChange(value, name)
+      onFieldChange(undefined, 'branchId')
 
-      const brList = value === 'all' ? branchList : branchList.filter(x => x.companyId === value)
+      const brList = branchList.filter(x => x.companyId === value)
       const selectList = transformToSelectList(brList)
-      selectList.unshift({id: -1, value: "all", label: "Tất cả"})
       setBranches(selectList)
 
-      onBranchChange('all', 'branchId')
+      onBranchChange(undefined, 'branchId')
     }
   }
 
   const onBranchChange = (value, name) => {
-    onFieldChange(value, name)
-    if (branchId !== value){
-      setBranchId(value)
+    if (filter.branchId !== value){
+      onFieldChange(value, name)
     }
   }
 
   useEffect(() => {
     const selectList = transformToSelectList(companyList)
-    selectList.unshift({id: -1, value: "all", label: "Tất cả"})
     setCompanies(selectList)
   }, [companyList])
 
   useEffect(() => {
     const selectList = transformToSelectList(branchList)
-    selectList.unshift({id: -1, value: "all", label: "Tất cả"})
     setBranches(selectList)
   }, [branchList])
 
@@ -50,12 +42,13 @@ export default function StoreFilter({ onFieldChange, companyList, branchList }) 
       <DatePickerWithRange
         name={"createdAt"}
         label="Ngày tạo:"
+        date={filter?.createdAt}
         placeholder="Chọn ngày"
         onChangeValue={onFieldChange}
       />
       <FilterSelect
         name="companyId"
-        value={companyId}
+        value={filter.companyId}
         label={"Công ty:"}
         placeholder="Chọn công ty"
         onValueChange={onCompanyChange}
@@ -63,7 +56,7 @@ export default function StoreFilter({ onFieldChange, companyList, branchList }) 
       />
       <FilterSelect
         name="branchId"
-        value={branchId}
+        value={filter.branchId}
         label={"Chi nhánh:"}
         placeholder="Chọn chi nhánh"
         onValueChange={onBranchChange}

@@ -1,5 +1,4 @@
 export const BILL_TYPES = [
-  {id: -1, value: "-1", label: "Tất cả"}, 
   {id: 0, value: "0", label: "Hóa đơn bị lỗi"}, 
   {id: 1, value: "1", label: "Xuất ngay"}, 
   {id: 2, value: "2", label: "Xuất nháp"}, 
@@ -9,7 +8,6 @@ export const BILL_TYPES = [
 ]
 
 export const FUEL_TYPE = [
-  {id: -1, value: "-1", label: "Tất cả"}, 
   {id: 0, value: "0", label: "Xăng RON 95-III"},
   {id: 1, value: "1", label: "Xăng RON 95-IV (Euro 4)"},
   {id: 2, value: "2", label: "Xăng E5 RON 92-II"},
@@ -19,7 +17,6 @@ export const FUEL_TYPE = [
 ]
 
 export const PUMP_ID = [
-  {id: -1, value: "-1", label: "Tất cả"}, 
   {id: 0, value: "0", label: "0"},
   {id: 1, value: "1", label: "1"},
   {id: 2, value: "2", label: "2"},

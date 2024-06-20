@@ -23,6 +23,7 @@ import { useToast } from "components/ui/use-toast"
 import BranchFilter from "./filter"
 import { fetchSimpleList as fetchCompanySimpleList } from "actions/companyActions"
 import { transformToSelectList } from "lib/transofrm"
+import FilterTags from "./filterTags"
 
 export function BranchPage() {
   const { toast } = useToast()
@@ -33,24 +34,28 @@ export function BranchPage() {
   const [activedFilter, setActivedFilter] = useState(initFilter)
   const [sorting, setSorting] = useState([])
   const [loading, setLoading] = useState(false)
-  const canSubmit = JSON.stringify(filter) !== JSON.stringify(activedFilter)
+  
   const [columnFilters, setColumnFilters] = useState([])
   const [columnVisibility, setColumnVisibility] = useState(initColumnVisibility)
-
   const [rowSelection, setRowSelection] = useState({})
+  
+  const canSubmit = JSON.stringify(filter) !== JSON.stringify(activedFilter)
+  const canResetFilter = JSON.stringify(activedFilter) !== JSON.stringify(initFilter)
 
   const [companyList, setCompanyList] = useState([])
 
   const applyFilter = useCallback(
     (forceFilter) => {
       setLoading(true)
-      fetchAll({ ...filter, ...forceFilter }, meta)
+      const finalFilter = { ...filter, ...forceFilter }
+      fetchAll(finalFilter, meta)
         .then((response) => {
           if (response.status === 200) {
             const { data, meta } = response.data
             setMeta(meta)
             setData(data)
-            setActivedFilter(filter)
+            setFilter(finalFilter)
+            setActivedFilter(finalFilter)
           } else {
             toast({
               variant: TOAST.DESTRUCTIVE,
@@ -189,7 +194,6 @@ export function BranchPage() {
     if (response.status === 200) {
       const resData = response.data
       const selectList = transformToSelectList(resData)
-      selectList.unshift({id: -1, value: "all", label: "Tất cả"})
       setCompanyList(selectList)
     }
   }
@@ -200,6 +204,11 @@ export function BranchPage() {
     }
     initialData()
   }, [])
+
+  const deleteFilter = (filterName) => {
+    setFilter((prev) => ({ ...prev, [filterName]: null }))
+    setActivedFilter((prev) => ({ ...prev, [filterName]: null }))
+  }
 
   return (
     <div className="w-full">
@@ -214,17 +223,21 @@ export function BranchPage() {
         {...{
           table,
           filter,
+          initFilter,
+          activedFilter,
           onFieldChange,
           applyFilter,
           loading,
           canSubmit,
           searchInputPlaceholder: "Tìm kiếm",
+          canResetFilter
         }}
       >
-        <BranchFilter {...{onFieldChange, companyList}} />
+        <BranchFilter {...{filter, onFieldChange, companyList}} />
       </PageHeader>
+      <FilterTags {...{activedFilter, applyFilter, companyList}} />
       <PageTable {...{ table }} />
-      <PagePagination {...{ table, meta, setMeta, applyFilter }} />
+      <PagePagination {...{ meta, setMeta }} />
     </div>
   )
 }

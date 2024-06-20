@@ -1,5 +1,8 @@
 export const initFilter = {
   keyword: "",
+  companyId: null,
+  branchId: null,
+  storeId: null,
 }
 
 export const initMeta = {

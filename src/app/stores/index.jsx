@@ -21,6 +21,7 @@ import PATH from "routers/path"
 import RowActions from "./components/RowActions"
 import StoreFilter from "./filter"
 import { initColumnVisibility, initFilter, initMeta } from "./initial"
+import FilterTags from "./filterTags"
 
 export function StorePage() {
   const { toast } = useToast()
@@ -43,13 +44,15 @@ export function StorePage() {
   const applyFilter = useCallback(
     (forceFilter) => {
       setLoading(true)
-      fetchAll({ ...filter, ...forceFilter }, meta)
+      const finalFilter = { ...filter, ...forceFilter }
+      fetchAll(finalFilter, meta)
         .then((response) => {
           if (response.status === 200) {
             const { data, meta } = response.data
             setMeta(meta)
             setData(data)
-            setActivedFilter(filter)
+            setFilter(finalFilter)
+            setActivedFilter(finalFilter)
           } else {
             toast({
               variant: TOAST.DESTRUCTIVE,
@@ -216,6 +219,8 @@ export function StorePage() {
         {...{
           table,
           filter,
+          initFilter,
+          activedFilter,
           onFieldChange,
           applyFilter,
           loading,
@@ -223,8 +228,9 @@ export function StorePage() {
           searchInputPlaceholder: "Tìm kiếm",
         }}
       >
-        <StoreFilter {...{ onFieldChange, companyList, branchList, getBranchList }} />
+        <StoreFilter {...{ filter, onFieldChange, companyList, branchList, getBranchList }} />
       </PageHeader>
+      <FilterTags {...{activedFilter, applyFilter, companyList, branchList}} />
       <PageTable {...{ table }} />
       <PagePagination {...{ table, meta, setMeta, applyFilter }} />
     </div>

@@ -9,11 +9,8 @@ import { Popover, PopoverContent, PopoverTrigger } from "components/ui/popover"
 import { cn } from "lib/utils"
 import { Label } from "./label"
 
-export function DatePickerWithRange({ className, onChangeValue, defaultValue, name, label, placeholder }) {
-  const [date, setDate] = React.useState(defaultValue)
-
+export function DatePickerWithRange({ className, onChangeValue, date, name, label, placeholder }) {
   const onSelect = (value) => {
-    setDate(value)
     onChangeValue(value, name)
   }
 
@@ -24,22 +21,21 @@ export function DatePickerWithRange({ className, onChangeValue, defaultValue, na
           className={cn(
             buttonVariants({ variant: "outline" }),
             "text-left font-normal gap-2",
-            !date && "text-muted-foreground"
           )}
         >
           <Label className="hover:cursor-pointer">{label}</Label>
           <EllipsisTooltip className="flex-1">
             {date?.from ? (
-              date.to ? (
+              date?.to ? (
                 <>
-                  {format(date.from, "dd-MM-yyyy hh:mm:ss")} -{" "}
-                  {format(date.to, "dd-MM-yyyy hh:mm:ss")}
+                  {format(date?.from, "dd-MM-yyyy hh:mm:ss")} -{" "}
+                  {format(date?.to, "dd-MM-yyyy hh:mm:ss")}
                 </>
               ) : (
-                format(date.from, "dd-MM-yyyy hh:mm:ss")
+                format(date?.from, "dd-MM-yyyy hh:mm:ss")
               )
             ) : (
-              <span>{placeholder}</span>
+              <span className="text-muted-foreground">{placeholder}</span>
             )}
           </EllipsisTooltip>
           <CalendarIcon className="h-4 w-4" />

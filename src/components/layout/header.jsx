@@ -14,8 +14,10 @@ import { useCallback, useRef, useState } from "react"
 export default function PageHeader({
   children,
   table,
+  initFilter,
   filter,
   onFieldChange,
+  activedFilter,
   applyFilter,
   loading,
   canSubmit,
@@ -23,6 +25,12 @@ export default function PageHeader({
 }) {
   const [showMoreFilter, setShowMoreFilter] = useState(false)
   const debounceRef = useRef(null)
+
+  const canResetFilter = JSON.stringify(activedFilter) !== JSON.stringify(initFilter)
+
+  const resetFilter = () => {
+    applyFilter(initFilter)
+  }
 
   const debouncedSubmit = useCallback(
     (value) => {
@@ -58,17 +66,20 @@ export default function PageHeader({
             Bộ lọc khác
           </Button>}
           {showMoreFilter && (
-            <Button
-              disabled={loading || !canSubmit}
-              onClick={() => applyFilter()}
-              className="w-24"
-            >
-              {loading ? (
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              ) : (
-                "Áp dụng"
-              )}
-            </Button>
+            <>
+              <Button
+                disabled={loading || !canSubmit}
+                onClick={() => applyFilter()}
+                className="w-24"
+              >
+                {loading ? (
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                ) : (
+                  "Áp dụng"
+                )}
+              </Button>
+              {canResetFilter && <Button variant="link" className="text-sm" onClick={resetFilter}>Đặt lại mặc định</Button>}
+            </>
           )}
         </div>
         <DropdownMenu>
@@ -102,7 +113,7 @@ export default function PageHeader({
       <div
         style={{ maxHeight: showMoreFilter ? "50vh" : 0 }}
         className={cn(
-          "grid grid-cols-4 gap-2 transition-[max-height] duration-300 overflow-hidden"
+          "grid grid-cols-4 gap-x-2 transition-[max-height,margin] duration-300 overflow-hidden", showMoreFilter ? 'mb-2' : 'mb-0'
         )}
       >
         {children}
