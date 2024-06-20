@@ -15,7 +15,6 @@ export function FilterSelect({
   name,
   label,
   value,
-  defaultValue,
   onValueChange,
   placeholder,
   selectList = [],
@@ -32,7 +31,6 @@ export function FilterSelect({
     <Select
       {...{
         value,
-        // defaultValue,
         onValueChange: onValueChangeLocal,
         disabled
       }}

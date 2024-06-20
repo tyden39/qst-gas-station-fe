@@ -462,7 +462,7 @@ export function FuelPage() {
           searchInputPlaceholder: "Tìm kiếm theo Mã Kiểm Tra",
         }}
       >
-        <InvoiceFilter {...{ onFieldChange, companyList, branchList, storeList, getBranchList, getStoreList }} />
+        <InvoiceFilter {...{ filter, onFieldChange, companyList, branchList, storeList, getBranchList, getStoreList }} />
       </PageHeader>
       <PageTable {...{ table }} />
       <PagePagination {...{ table, meta, setMeta, applyFilter }} />

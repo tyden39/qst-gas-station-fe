@@ -5,7 +5,7 @@ import { initFilter } from "./initial"
 import { useEffect, useState } from "react"
 import { transformToSelectList } from "lib/transofrm"
 
-export default function InvoiceFilter({ onFieldChange, companyList, branchList, storeList }) {
+export default function InvoiceFilter({ filter, onFieldChange, companyList, branchList, storeList }) {
   
   const [companyId, setCompanyId] = useState("all")
   const [branchId, setBranchId] = useState("all")
@@ -77,7 +77,7 @@ export default function InvoiceFilter({ onFieldChange, companyList, branchList, 
       />
       <FilterSelect
         name="billType"
-        defaultValue={initFilter.billType}
+        value={filter?.billType}
         label={"Loại hóa đơn:"}
         onValueChange={onFieldChange}
         selectList={BILL_TYPES}
@@ -85,14 +85,14 @@ export default function InvoiceFilter({ onFieldChange, companyList, branchList, 
       <FilterSelect
         name="fuelType"
         label={"Loại nhiên liệu:"}
-        defaultValue={initFilter.fuelType}
+        value={filter?.fuelType}
         onValueChange={onFieldChange}
         selectList={FUEL_TYPE}
       />
       <FilterSelect
         name="pumpId"
         label={"Mã vòi bơm:"}
-        defaultValue={initFilter.pumpId}
+        value={filter?.pumpId}
         onValueChange={onFieldChange}
         selectList={PUMP_ID}
         className={"mb-2"}
