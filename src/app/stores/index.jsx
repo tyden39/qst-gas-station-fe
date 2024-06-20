@@ -3,6 +3,8 @@ import {
   useReactTable
 } from "@tanstack/react-table"
 
+import { fetchSimpleList as fetchBranchSimpleList } from "actions/branchActions"
+import { fetchSimpleList as fetchCompanySimpleList } from "actions/companyActions"
 import { fetchAll } from "actions/storeActions"
 import PageHeader from "components/layout/header"
 import PagePagination from "components/pagination"
@@ -17,11 +19,8 @@ import { useCallback, useEffect, useMemo, useState } from "react"
 import { Link, useLocation } from "react-router-dom"
 import PATH from "routers/path"
 import RowActions from "./components/RowActions"
-import { initColumnVisibility, initFilter, initMeta } from "./initial"
 import StoreFilter from "./filter"
-import { fetchSimpleList as fetchBranchSimpleList } from "actions/branchActions"
-import { fetchSimpleList as fetchCompanySimpleList } from "actions/companyActions"
-import { transformToSelectList } from "lib/transofrm"
+import { initColumnVisibility, initFilter, initMeta } from "./initial"
 
 export function StorePage() {
   const { toast } = useToast()

@@ -18,13 +18,12 @@ import { Link } from "react-router-dom"
 import PATH from "routers/path"
 import { fetchUsers } from "../../actions/userApi"
 import RowActions from "./components/RowActions"
-import { initColumnVisibility, initFilter, initMeta } from "./initial"
 import UserFilter from "./filter"
+import { initColumnVisibility, initFilter, initMeta } from "./initial"
 
 import { fetchSimpleList as fetchBranchSimpleList } from "actions/branchActions"
 import { fetchSimpleList as fetchCompanySimpleList } from "actions/companyActions"
 import { fetchSimpleList as fetchStoreSimpleList } from "actions/storeActions"
-import { transformToSelectList } from "lib/transofrm"
 
 export function UserPage() {
   const [data, setData] = useState([])
