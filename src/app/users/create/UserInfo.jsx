@@ -19,7 +19,7 @@ export default function UserInfo({ form }) {
           <div className="grid grid-cols-2 gap-4">
             <FormField
               control={form.control}
-              name="lastName"
+              name="firstName"
               render={({ field }) => (
                 <FormItem className="flex flex-col space-y-1.5">
                   <FormLabel>Họ <span className="text-red-500">*</span></FormLabel>
@@ -32,7 +32,7 @@ export default function UserInfo({ form }) {
             />
             <FormField
               control={form.control}
-              name="firstName"
+              name="lastName"
               render={({ field }) => (
                 <FormItem className="flex flex-col space-y-1.5">
                   <FormLabel>Tên <span className="text-red-500">*</span></FormLabel>
