@@ -32,7 +32,8 @@ import { fetchSimpleList as fetchStoreSimpleList } from "actions/storeActions"
 
 export function FuelPage() {
   const getPermission = useAuth((state) => state.getPermission)
-  const allowEdit = getPermission(PATH.FUEL, "edit")
+  const allowCreate = getPermission(PATH.FUEL_CREATE)
+  const allowEdit = getPermission(PATH.FUEL_EDIT)
 
   const location = useLocation()
   const activeMenuName = getActiveMenu(location.pathname)
@@ -439,7 +440,7 @@ export function FuelPage() {
         <h1 className="text-4xl leading-normal">{activeMenuName}</h1>
         <div className="space-x-2">
           <ExportInvoice {...{ filter, meta, selected }} />
-          {allowEdit && (
+          {allowCreate && (
             <Link
               className={cn(buttonVariants({ variant: "outline" }))}
               to={PATH.FUEL_CREATE}

@@ -23,8 +23,8 @@ const privateRoutes = [
   { path: PATH.PROFILES, component: ProfilesPage, role: USER_ROLE.READ_ONLY_STORE },
 
   { path: PATH.FUEL, component: FuelPage, role: USER_ROLE.READ_ONLY_STORE },
-  { path: PATH.FUEL_CREATE, component: FuelCreatePage, role: USER_ROLE.READ_ONLY_STORE },
-  { path: PATH.FUEL_EDIT, component: FuelCreatePage, role: USER_ROLE.READ_ONLY_STORE },
+  { path: PATH.FUEL_CREATE, component: FuelCreatePage, role: USER_ROLE.STORE },
+  { path: PATH.FUEL_EDIT, component: FuelCreatePage, role: USER_ROLE.STORE },
   { path: PATH.FUEL_DEBUG, component: FuelDebugPage, role: USER_ROLE.READ_ONLY_STORE },
   { path: PATH.FUEL_FILES, component: FuelFilesPage, role: USER_ROLE.READ_ONLY_STORE },
 
