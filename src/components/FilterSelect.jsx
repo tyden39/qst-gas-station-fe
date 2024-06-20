@@ -7,10 +7,9 @@ import {
   SelectValue,
 } from "components/ui/select"
 import { cn } from "lib/utils"
-import { useState } from "react"
+import { PackageOpen } from "lucide-react"
 import EllipsisTooltip from "./EllipsisTooltip"
 import { Label } from "./ui/label"
-import { PackageOpen } from "lucide-react"
 
 export function FilterSelect({
   name,

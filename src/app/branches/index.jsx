@@ -7,23 +7,23 @@ import {
 } from "@tanstack/react-table"
 
 import { fetchAll } from "actions/branchActions"
+import { fetchSimpleList as fetchCompanySimpleList } from "actions/companyActions"
 import PageHeader from "components/layout/header"
 import PagePagination from "components/pagination"
 import PageTable from "components/table"
 import { buttonVariants } from "components/ui/button"
 import { Skeleton } from "components/ui/skeleton"
+import { TOAST } from "components/ui/toast"
+import { useToast } from "components/ui/use-toast"
+import { transformToSelectList } from "lib/transofrm"
 import { cn } from "lib/utils"
 import { useCallback, useEffect, useMemo, useState } from "react"
 import { Link } from "react-router-dom"
 import PATH from "routers/path"
 import RowActions from "./components/RowActions"
-import { initColumnVisibility, initFilter, initMeta } from "./initial"
-import { TOAST } from "components/ui/toast"
-import { useToast } from "components/ui/use-toast"
 import BranchFilter from "./filter"
-import { fetchSimpleList as fetchCompanySimpleList } from "actions/companyActions"
-import { transformToSelectList } from "lib/transofrm"
 import FilterTags from "./filterTags"
+import { initColumnVisibility, initFilter, initMeta } from "./initial"
 
 export function BranchPage() {
   const { toast } = useToast()
@@ -204,11 +204,6 @@ export function BranchPage() {
     }
     initialData()
   }, [])
-
-  const deleteFilter = (filterName) => {
-    setFilter((prev) => ({ ...prev, [filterName]: null }))
-    setActivedFilter((prev) => ({ ...prev, [filterName]: null }))
-  }
 
   return (
     <div className="w-full">

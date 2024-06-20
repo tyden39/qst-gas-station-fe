@@ -6,12 +6,16 @@ import {
   useReactTable,
 } from "@tanstack/react-table"
 
+import { fetchSimpleList as fetchBranchSimpleList } from "actions/branchActions"
+import { fetchSimpleList as fetchCompanySimpleList } from "actions/companyActions"
+import { fetchSimpleList as fetchStoreSimpleList } from "actions/storeActions"
 import PageHeader from "components/layout/header"
 import PagePagination from "components/pagination"
 import PageTable from "components/table"
 import { buttonVariants } from "components/ui/button"
 import { Checkbox } from "components/ui/checkbox"
 import { Skeleton } from "components/ui/skeleton"
+import { USER_ROLE } from "constants/user-roles"
 import { getActiveMenu } from "lib/url"
 import { cn } from "lib/utils"
 import moment from "moment"
@@ -25,12 +29,8 @@ import ExportInvoice from "./components/ExportInvoice"
 import RowActions from "./components/RowActions"
 import { BILL_TYPES } from "./constant"
 import InvoiceFilter from "./filter"
-import { initColumnVisibility, initFilter, initMeta } from "./initial"
-import { fetchSimpleList as fetchBranchSimpleList } from "actions/branchActions"
-import { fetchSimpleList as fetchCompanySimpleList } from "actions/companyActions"
-import { fetchSimpleList as fetchStoreSimpleList } from "actions/storeActions"
 import FilterTags from "./filterTags"
-import { USER_ROLE } from "constants/user-roles"
+import { initColumnVisibility, initFilter, initMeta } from "./initial"
 
 export function FuelPage() {
   const [getPermission, authUser] = useAuth((state) => [state.getPermission, state.user])
@@ -437,7 +437,7 @@ export function FuelPage() {
       authUser.roles.includes(USER_ROLE.BRANCH) && getStoreList()
     }
     initialData()
-  }, [])
+  }, [authUser.roles])
 
   return (
     <div className="w-full">

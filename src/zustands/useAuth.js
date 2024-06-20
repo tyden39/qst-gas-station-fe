@@ -1,9 +1,7 @@
 import axiosInstance from "actions/axiosInstance"
 import axios from "axios"
 import { API_PATHS } from "constants/api-paths"
-import { USER_ROLE } from "constants/user-roles"
 import { AUTH_CONFIG } from "routers/config"
-import PATH from "routers/path"
 import { privateRoutes } from "routers/routes"
 import { create } from "zustand"
 
@@ -12,7 +10,6 @@ const handleLogin = async (set, formData) => {
 
   try {
     const response = await axiosInstance.post(API_PATHS.LOGIN, formData)
-
 
     const { user, tokens } = response.data.data
 
