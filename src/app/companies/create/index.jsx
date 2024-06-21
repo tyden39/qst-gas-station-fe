@@ -1,5 +1,9 @@
 import { zodResolver } from "@hookform/resolvers/zod"
-import { createCompany, editCompany, fetchOneCompany } from "actions/companyActions"
+import {
+  createCompany,
+  editCompany,
+  fetchOneCompany,
+} from "actions/companyActions"
 import { Button } from "components/ui/button"
 import { Card } from "components/ui/card"
 import { Form } from "components/ui/form"
@@ -37,7 +41,7 @@ export default function CompanyCreatePage() {
 
   const form = useForm({
     resolver: zodResolver(newSchema),
-    defaultValues: {}
+    defaultValues: {},
   })
 
   // const blocker = useBlocker(
@@ -51,7 +55,7 @@ export default function CompanyCreatePage() {
     if (isEdit) {
       const response = await editCompany(params.id, values)
       if (response.status === 200) {
-        form.reset(response.data, {keepDirtyValues: true})
+        form.reset(response.data, { keepDirtyValues: true })
         navigation(PATH.COMPANY)
         toast({
           variant: "success",
@@ -120,23 +124,26 @@ export default function CompanyCreatePage() {
           onSubmit={form.handleSubmit(onSubmit)}
           autoComplete="off"
         >
-          {fetchInfoLoading ? <SkeletonForm /> : <CreateForm {...{ form }} />}
-
-          <Card className="col-span-2 p-4 space-x-4 text-right">
-            <Button
-              disabled={loading}
-              variant="outline"
-              onClick={(event) => {
-                event.preventDefault()
-                navigation(-1)
-              }}
-            >
-              Hủy
-            </Button>
-            <Button disabled={!form.formState.isDirty || loading}>
-              {isEdit ? "Lưu" : "Tạo mới"}
-            </Button>
-          </Card>
+          {fetchInfoLoading ? (
+            <SkeletonForm />
+          ) : (
+            <>
+              <CreateForm {...{ form }} />
+              <Card className="col-span-2 p-4 space-x-4 text-right">
+                <Button
+                  disabled={loading}
+                  variant="outline"
+                  onClick={(event) => {
+                    event.preventDefault()
+                    navigation(-1)
+                  }}
+                >
+                  Hủy
+                </Button>
+                <Button disabled={loading}>{isEdit ? "Lưu" : "Tạo mới"}</Button>
+              </Card>
+            </>
+          )}
           {/* {blocker.state === "blocked" ? (
         <div>
           <p>Are you sure you want to leave?</p>
@@ -150,7 +157,7 @@ export default function CompanyCreatePage() {
       ) : null} */}
         </RouterForm>
       </Form>
-      <CreateSuccessConfirm {...{open, setOpen}} />
+      <CreateSuccessConfirm {...{ open, setOpen }} />
     </div>
   )
 }

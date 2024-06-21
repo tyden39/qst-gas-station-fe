@@ -23,6 +23,12 @@ export default function FormSelect({
   disabled,
   onChange,
 }) {
+  const handleClose = async (e, field) => {
+    if (!disabled) {
+      field.onChange(null)
+    }
+  }
+  
   return (
     <FormField
       control={form.control}
@@ -40,8 +46,12 @@ export default function FormSelect({
               value={field.value}
             >
               <FormControl>
-                <SelectTrigger>
-                  {field.value ? <SelectValue placeholder={placeholder} /> : placeholder}
+                <SelectTrigger {...{disabled, value: field.value, onClose: (e) => handleClose(e, field)}}>
+                  {field.value ? (
+                    <SelectValue placeholder={placeholder} />
+                  ) : (
+                    placeholder
+                  )}
                 </SelectTrigger>
               </FormControl>
               <SelectContent>

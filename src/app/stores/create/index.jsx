@@ -153,24 +153,26 @@ export default function StoreCreatePage() {
           {fetchInfoLoading ? (
             <SkeletonForm />
           ) : (
-            <CreateForm {...{ form, branchList, companyList, getBranchList }} />
-          )}
+            <>
+              <CreateForm
+                {...{ form, branchList, companyList, getBranchList }}
+              />
 
-          <Card className="col-span-2 p-4 space-x-4 text-right">
-            <Button
-              disabled={loading}
-              variant="outline"
-              onClick={(event) => {
-                event.preventDefault()
-                navigation(-1)
-              }}
-            >
-              Hủy
-            </Button>
-            <Button disabled={!form.formState.isDirty || loading}>
-              {isEdit ? "Lưu" : "Tạo mới"}
-            </Button>
-          </Card>
+              <Card className="col-span-2 p-4 space-x-4 text-right">
+                <Button
+                  disabled={loading}
+                  variant="outline"
+                  onClick={(event) => {
+                    event.preventDefault()
+                    navigation(-1)
+                  }}
+                >
+                  Hủy
+                </Button>
+                <Button disabled={loading}>{isEdit ? "Lưu" : "Tạo mới"}</Button>
+              </Card>
+            </>
+          )}
           {/* {blocker.state === "blocked" ? (
         <div>
           <p>Are you sure you want to leave?</p>

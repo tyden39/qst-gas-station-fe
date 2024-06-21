@@ -26,13 +26,23 @@ import SkeletonForm from "./skeleton-form"
 
 const newSchema = z
   .object({
-    username: z.string({ required_error: "Tên đăng nhập không được để trống" }),
-    password: z.string({ required_error: "Mật khẩu không được để trống" }),
-    confirmPassword: z.string({
-      required_error: "Nhập lại mật khẩu không được để trống",
-    }),
-    firstName: z.string({ required_error: "Tên không được để trống" }),
-    lastName: z.string({ required_error: "Họ không được để trống" }),
+    username: z
+      .string({ required_error: "Tên đăng nhập không được để trống" })
+      .min(5, "Tên đăng nhập phải >= 6 ký tự"),
+    password: z
+      .string({ required_error: "Mật khẩu không được để trống" })
+      .min(1, "Mật khẩu không được để trống"),
+    confirmPassword: z
+      .string({
+        required_error: "Nhập lại mật khẩu không được để trống",
+      })
+      .min(1, "Nhập lại mật khẩu không được để trống"),
+    firstName: z
+      .string({ required_error: "Họ không được để trống" })
+      .min(1, "Họ không được để trống"),
+    lastName: z
+      .string({ required_error: "Tên không được để trống" })
+      .min(1, "Tên không được để trống"),
     email: z.string().optional().nullable(),
     phone: z.string().optional().nullable(),
     roles: z.string({
@@ -96,70 +106,73 @@ const newSchema = z
     path: ["confirmPassword"],
   })
 
-const editSchema = z.object({
-  firstName: z.string({ required_error: "Tên không được để trống" }),
-  lastName: z.string({ required_error: "Họ không được để trống" }),
-  email: z.string().optional().nullable(),
-  phone: z.string().optional().nullable(),
-  roles: z.string({ required_error: "Vai trò người dùng không được để trống" }),
-  companyId: z.string().optional().nullable(),
-  branchId: z.string().optional().nullable(),
-  storeId: z.string().optional().nullable(),
-})
-.superRefine((data, ctx) => {
-  if (data.roles === USER_ROLE.COMPANY) {
-    if (!data.companyId)
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        path: ["companyId"],
-        message: "Công ty không được để trống",
-      })
-  }
+const editSchema = z
+  .object({
+    firstName: z.string({ required_error: "Tên không được để trống" }).min(1, "Tên không được để trống"),
+    lastName: z.string({ required_error: "Họ không được để trống" }).min(1, "Họ không được để trống"),
+    email: z.string().optional().nullable(),
+    phone: z.string().optional().nullable(),
+    roles: z.string({
+      required_error: "Vai trò người dùng không được để trống",
+    }),
+    companyId: z.string().optional().nullable(),
+    branchId: z.string().optional().nullable(),
+    storeId: z.string().optional().nullable(),
+  })
+  .superRefine((data, ctx) => {
+    if (data.roles === USER_ROLE.COMPANY) {
+      if (!data.companyId)
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ["companyId"],
+          message: "Công ty không được để trống",
+        })
+    }
 
-  if (data.roles === USER_ROLE.BRANCH) {
-    if (!data.companyId)
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        path: ["companyId"],
-        message: "Công ty không được để trống",
-      })
-    if (!data.branchId)
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        path: ["branchId"],
-        message: "Công ty không được để trống",
-      })
-  }
+    if (data.roles === USER_ROLE.BRANCH) {
+      if (!data.companyId)
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ["companyId"],
+          message: "Công ty không được để trống",
+        })
+      if (!data.branchId)
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ["branchId"],
+          message: "Công ty không được để trống",
+        })
+    }
 
-  if (
-    data.roles === USER_ROLE.STORE ||
-    data.roles === USER_ROLE.READ_ONLY_STORE
-  ) {
-    if (!data.companyId)
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        path: ["companyId"],
-        message: "Công ty không được để trống",
-      })
-    if (!data.branchId)
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        path: ["branchId"],
-        message: "Công ty không được để trống",
-      })
-    if (!data.storeId)
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        path: ["storeId"],
-        message: "Công ty không được để trống",
-      })
-  }
-})
+    if (
+      data.roles === USER_ROLE.STORE ||
+      data.roles === USER_ROLE.READ_ONLY_STORE
+    ) {
+      if (!data.companyId)
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ["companyId"],
+          message: "Công ty không được để trống",
+        })
+      if (!data.branchId)
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ["branchId"],
+          message: "Công ty không được để trống",
+        })
+      if (!data.storeId)
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ["storeId"],
+          message: "Công ty không được để trống",
+        })
+    }
+  })
 
 const editSchemaWithPassword = z
   .object({
-    firstName: z.string({ required_error: "Tên không được để trống" }),
-    lastName: z.string({ required_error: "Họ không được để trống" }),
+    firstName: z.string({ required_error: "Tên không được để trống" }).min(1, "Tên không được để trống"),
+    lastName: z.string({ required_error: "Họ không được để trống" }).min(1, "Họ không được để trống"),
     email: z.string().optional().nullable(),
     phone: z.string().optional().nullable(),
     roles: z.string({
@@ -255,6 +268,7 @@ export default function UserCreatePage() {
           : editSchema
         : newSchema
     ),
+    mode: "onTouched",
     defaultValues: {
       roles: roles[0].value,
     },
@@ -301,7 +315,7 @@ export default function UserCreatePage() {
       setFetchInfoLoading(true)
       const response = await fetchOneUser(params.id)
       if (response.status === 200) {
-        form.reset({...response.data, roles: response.data.roles?.[0]})
+        form.reset({ ...response.data, roles: response.data.roles?.[0] })
       } else
         toast({
           variant: TOAST.DESTRUCTIVE,
@@ -349,7 +363,7 @@ export default function UserCreatePage() {
       setStoreList(storeSelectList)
     }
   }
-
+console.log(form.formState)
   return (
     <div className="w-full">
       <div className="">
@@ -407,7 +421,9 @@ export default function UserCreatePage() {
                 >
                   Hủy
                 </Button>
-                <Button disabled={loading}>{isEdit ? "Lưu" : "Tạo mới"}</Button>
+                <Button disabled={loading || !form.formState.isValid}>
+                  {isEdit ? "Lưu" : "Tạo mới"}
+                </Button>
               </Card>
             </>
           )}

@@ -24,7 +24,10 @@ export default function UserInfo({ form }) {
                 <FormItem className="flex flex-col space-y-1.5">
                   <FormLabel>Họ <span className="text-red-500">*</span></FormLabel>
                   <FormControl>
-                    <Input placeholder="Nhập họ" {...field} />
+                    <Input placeholder="Nhập họ" {...field} onChange={(e) => {
+                      const value = e.target.value
+                      field.onChange(value)
+                    }} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

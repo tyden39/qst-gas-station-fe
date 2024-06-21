@@ -26,7 +26,7 @@ export default function CreateForm({
             render={({ field }) => (
               <FormItem className="flex flex-col space-y-1.5">
                 <FormLabel>
-                  Tên cửa hàng <span className="text-red-500">*</span>
+                  Tên cửa hàng
                 </FormLabel>
                 <FormControl>
                   <Input placeholder="Nhập tên cửa hàng" {...field} />
