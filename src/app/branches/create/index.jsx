@@ -20,7 +20,9 @@ import PATH from "routers/path"
 import CloseConfirm from "components/layout/CloseConfirm"
 
 const newSchema = z.object({
-  name: z.string().optional().nullable(),
+  name: z
+    .string({ required_error: "Tên chi nhánh không được để trống" })
+    .min(1, "Tên chi nhánh không được để trống"),
   subTaxCode: z.string().optional().nullable(),
   email: z.string().optional().nullable(),
   address: z.string().optional().nullable(),
@@ -165,6 +167,6 @@ export default function BranchCreatePage() {
       </Form>
       <CreateSuccessConfirm {...{ open, setOpen }} />
       <CloseConfirm {...{ open: openClosePopup, setOpen: setOpenClosePopup }} />
-      </div>
+    </div>
   )
 }

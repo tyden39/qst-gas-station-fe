@@ -21,7 +21,9 @@ import PATH from "routers/path"
 import CloseConfirm from "components/layout/CloseConfirm"
 
 const newSchema = z.object({
-  name: z.string().optional().nullable(),
+  name: z
+    .string({ required_error: "Tên cửa hàng không được để trống" })
+    .min(1, "Tên cửa hàng không được để trống"),
   email: z.string().optional().nullable(),
   address: z.string().optional().nullable(),
   phone: z.string().optional().nullable(),
@@ -45,6 +47,7 @@ export default function StoreCreatePage() {
 
   const form = useForm({
     resolver: zodResolver(newSchema),
+    mode: 'onTouched',
     defaultValues: {},
   })
 
@@ -178,17 +181,6 @@ export default function StoreCreatePage() {
               </Card>
             </>
           )}
-          {/* {blocker.state === "blocked" ? (
-        <div>
-          <p>Are you sure you want to leave?</p>
-          <button onClick={() => blocker.proceed()}>
-            Proceed
-          </button>
-          <button onClick={() => blocker.reset()}>
-            Cancel
-          </button>
-        </div>
-      ) : null} */}
         </RouterForm>
       </Form>
       <CreateSuccessConfirm {...{ open, setOpen }} />

@@ -22,7 +22,9 @@ import PATH from "routers/path"
 import CloseConfirm from "components/layout/CloseConfirm"
 
 const newSchema = z.object({
-  name: z.string().optional().nullable(),
+  name: z
+    .string({ required_error: "Tên công ty không được để trống" })
+    .min(1, "Tên công ty không được để trống"),
   taxCode: z.string().optional().nullable(),
   email: z.string().optional().nullable(),
   address: z.string().optional().nullable(),
@@ -43,6 +45,7 @@ export default function CompanyCreatePage() {
 
   const form = useForm({
     resolver: zodResolver(newSchema),
+    mode: 'onTouched',
     defaultValues: {},
   })
 
