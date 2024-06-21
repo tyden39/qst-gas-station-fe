@@ -67,7 +67,9 @@ export default function UserRoles({
   return (
     <Card className="w-full">
       <CardHeader>
-        <CardTitle>Vai trò người dùng <span className="text-red-500">*</span></CardTitle>
+        <CardTitle>
+          Vai trò người dùng <span className="text-red-500">*</span>
+        </CardTitle>
         <CardDescription>Chọn một trong các vai trò:</CardDescription>
       </CardHeader>
       <CardContent>
@@ -109,24 +111,34 @@ export default function UserRoles({
         />
 
         <div className="grid grid-cols-3 gap-4 pt-6">
-          <FormSelect
-            {...{
-              form,
-              label: <span>Công ty <span className="text-red-500">*</span></span>,
-              placeholder: "Chọn công ty",
-              name: "companyId",
-              list: companyList,
-              onChange: async (value) => {
-                await getBranchList(value)
-                form.resetField("branchId")
-              },
-            }}
-          />
+          {![USER_ROLE.ADMIN].includes(rolesValue) ? (
+            <FormSelect
+              {...{
+                form,
+                label: (
+                  <span>
+                    Công ty <span className="text-red-500">*</span>
+                  </span>
+                ),
+                placeholder: "Chọn công ty",
+                name: "companyId",
+                list: companyList,
+                onChange: async (value) => {
+                  await getBranchList(value)
+                  form.resetField("branchId")
+                },
+              }}
+            />
+          ) : null}
           {![USER_ROLE.ADMIN, USER_ROLE.COMPANY].includes(rolesValue) ? (
             <FormSelect
               {...{
                 form,
-                label: <span>Chi nhánh <span className="text-red-500">*</span></span>,
+                label: (
+                  <span>
+                    Chi nhánh <span className="text-red-500">*</span>
+                  </span>
+                ),
                 placeholder: "Chọn chi nhánh",
                 name: "branchId",
                 list: branchList,
@@ -144,7 +156,11 @@ export default function UserRoles({
             <FormSelect
               {...{
                 form,
-                label: <span>Cửa hàng <span className="text-red-500">*</span></span>,
+                label: (
+                  <span>
+                    Cửa hàng <span className="text-red-500">*</span>
+                  </span>
+                ),
                 placeholder: "Chọn cửa hàng",
                 name: "storeId",
                 list: storeList,
