@@ -18,11 +18,12 @@ import { Link, useLocation, useNavigate, useParams } from "react-router-dom"
 import PATH from "routers/path"
 import { z } from "zod"
 import useAuth from "zustands/useAuth"
-import CreateSuccessConfirm from "../components/CreateSucessConfirm"
 import AccountInfo from "./AccountInfo"
 import UserInfo from "./UserInfo"
 import UserRoles from "./UserRoles"
 import SkeletonForm from "./skeleton-form"
+import CreateSuccessConfirm from "components/layout/CreateSucessConfirm"
+import CloseConfirm from "components/layout/CloseConfirm"
 
 const newSchema = z
   .object({
@@ -259,6 +260,7 @@ export default function UserCreatePage() {
   const [loading, setLoading] = useState(false)
   const [isChangePassword, setIsChangePassword] = useState(false)
   const [open, setOpen] = useState(false)
+  const [openClosePopup, setOpenClosePopup] = useState(false)
 
   const form = useForm({
     resolver: zodResolver(
@@ -364,6 +366,8 @@ export default function UserCreatePage() {
     }
   }
 
+  const isDirty = form.formState.isDirty
+
   return (
     <div className="w-full">
       <div className="">
@@ -416,7 +420,8 @@ export default function UserCreatePage() {
                   variant="outline"
                   onClick={(event) => {
                     event.preventDefault()
-                    navigation(-1)
+                    if (isDirty) setOpenClosePopup(true)
+                    else navigation(-1)
                   }}
                 >
                   Hủy
@@ -427,20 +432,10 @@ export default function UserCreatePage() {
               </Card>
             </>
           )}
-          {/* {blocker.state === "blocked" ? (
-        <div>
-          <p>Are you sure you want to leave?</p>
-          <button onClick={() => blocker.proceed()}>
-            Proceed
-          </button>
-          <button onClick={() => blocker.reset()}>
-            Cancel
-          </button>
-        </div>
-      ) : null} */}
         </RouterForm>
       </Form>
       <CreateSuccessConfirm {...{ open, setOpen }} />
+      <CloseConfirm {...{ open: openClosePopup, setOpen: setOpenClosePopup }} />
     </div>
   )
 }

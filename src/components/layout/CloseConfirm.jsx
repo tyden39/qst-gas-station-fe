@@ -6,11 +6,11 @@ import {
   DialogDescription,
   DialogFooter,
   DialogHeader,
-  DialogTitle
+  DialogTitle,
 } from "components/ui/dialog"
 import { useNavigate } from "react-router-dom"
 
-const CreateSuccessConfirm = ({ open, setOpen, onSubmit, onReturn }) => {
+const CloseConfirm = ({ open, setOpen, onReturn }) => {
   const navigation = useNavigate()
 
   const onOpenChange = (open) => {
@@ -18,8 +18,7 @@ const CreateSuccessConfirm = ({ open, setOpen, onSubmit, onReturn }) => {
   }
 
   const handleSubmit = async () => {
-    if (onSubmit) onSubmit()
-    navigation(0)
+    setOpen(false)
   }
 
   const handleReturn = () => {
@@ -29,22 +28,34 @@ const CreateSuccessConfirm = ({ open, setOpen, onSubmit, onReturn }) => {
 
   return (
     <Dialog {...{ open, onOpenChange }}>
-      <DialogContent className="sm:max-w-[450px] space-y-6" hideClose>
+      <DialogContent
+        className="sm:max-w-[450px] space-y-6"
+        hideClose
+        onInteractOutside={(e) => {
+          e.preventDefault()
+        }}
+      >
         <DialogHeader className="space-y-4">
-          <DialogTitle className="text-center text-4xl">Tạo mới thành công</DialogTitle>
-          <DialogDescription className="flex justify-center">
-            <img src="/images/check.png" alt="check" width={100} />
+          <DialogTitle className="flex justify-center">
+            <img src="/images/warning.png" alt="check" width={100} />
+          </DialogTitle>
+          <DialogDescription className="text-center">
+            Bạn có chắc chắn muốn rời khỏi trang này không? Những thông tin bạn đã nhập vào biểu mẫu sẽ không được lưu.
           </DialogDescription>
         </DialogHeader>
         <DialogFooter className="sm:justify-center items-center">
           <DialogClose asChild>
-            <Button className="w-[150px]" variant="outline" onClick={handleReturn}>
-              Trở lại danh sách
+            <Button
+              className="w-[150px]"
+              variant="outline"
+              onClick={handleReturn}
+            >
+              Thoát
             </Button>
           </DialogClose>
           <DialogClose asChild>
             <Button className="w-[150px]" onClick={handleSubmit}>
-              Tạo thêm
+              Trở lại
             </Button>
           </DialogClose>
         </DialogFooter>
@@ -53,4 +64,4 @@ const CreateSuccessConfirm = ({ open, setOpen, onSubmit, onReturn }) => {
   )
 }
 
-export default CreateSuccessConfirm
+export default CloseConfirm

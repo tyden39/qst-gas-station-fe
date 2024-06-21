@@ -6,7 +6,7 @@ import {
   DialogDescription,
   DialogFooter,
   DialogHeader,
-  DialogTitle
+  DialogTitle,
 } from "components/ui/dialog"
 import { useNavigate } from "react-router-dom"
 
@@ -29,16 +29,28 @@ const CreateSuccessConfirm = ({ open, setOpen, onSubmit, onReturn }) => {
 
   return (
     <Dialog {...{ open, onOpenChange }}>
-      <DialogContent className="sm:max-w-[450px] space-y-6" hideClose>
+      <DialogContent
+        className="sm:max-w-[450px] space-y-6"
+        hideClose
+        onInteractOutside={(e) => {
+          e.preventDefault()
+        }}
+      >
         <DialogHeader className="space-y-4">
-          <DialogTitle className="text-center text-4xl">Tạo mới thành công</DialogTitle>
+          <DialogTitle className="text-center text-4xl">
+            Tạo mới thành công
+          </DialogTitle>
           <DialogDescription className="flex justify-center">
             <img src="/images/check.png" alt="check" width={100} />
           </DialogDescription>
         </DialogHeader>
         <DialogFooter className="sm:justify-center items-center">
           <DialogClose asChild>
-            <Button className="w-[150px]" variant="outline" onClick={handleReturn}>
+            <Button
+              className="w-[150px]"
+              variant="outline"
+              onClick={handleReturn}
+            >
               Trở lại danh sách
             </Button>
           </DialogClose>

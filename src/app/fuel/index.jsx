@@ -473,7 +473,7 @@ export function FuelPage() {
       </PageHeader>
       <FilterTags {...{activedFilter, applyFilter, companyList, branchList, storeList}} />
       <PageTable {...{ table }} />
-      <PagePagination {...{ table, meta, selected }} />
+      <PagePagination {...{ setMeta, meta, selected }} />
     </div>
   )
 }

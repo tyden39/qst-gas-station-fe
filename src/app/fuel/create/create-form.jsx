@@ -32,7 +32,7 @@ export default function FormCreate({
             name="Check_Key"
             render={({ field }) => (
               <FormItem className="flex flex-col space-y-1.5">
-                <FormLabel>Mã kiểm tra</FormLabel>
+                <FormLabel>Mã kiểm tra <span className="text-red-500">*</span></FormLabel>
                 <FormControl>
                   <Input
                     placeholder="Nhập mã kiểm tra"
@@ -49,7 +49,7 @@ export default function FormCreate({
             name="Logger_ID"
             render={({ field }) => (
               <FormItem className="flex flex-col space-y-1.5">
-                <FormLabel>Mã logger</FormLabel>
+                <FormLabel>Mã logger <span className="text-red-500">*</span></FormLabel>
                 <FormControl>
                   <Input placeholder="Nhập mã logger" {...field} />
                 </FormControl>
@@ -62,7 +62,7 @@ export default function FormCreate({
             name="Logger_Time"
             render={({ field }) => (
               <FormItem className="flex flex-col">
-                <FormLabel>Thời gian ghi log</FormLabel>
+                <FormLabel>Thời gian ghi log <span className="text-red-500">*</span></FormLabel>
                 <FormDatePicker {...{ field, placeholder: "Chọn ngày" }} />
                 <FormMessage />
               </FormItem>
@@ -71,7 +71,7 @@ export default function FormCreate({
           <FormSelect
             form={form}
             name="Pump_ID"
-            label="Mã vòi bơm"
+            label={<>Mã vòi bơm <span className="text-red-500">*</span></>}
             placeholder={"Chọn mã vòi bơm"}
             list={PUMP_ID.slice(1)}
           />
@@ -80,7 +80,7 @@ export default function FormCreate({
             name="Bill_No"
             render={({ field }) => (
               <FormItem className="flex flex-col space-y-1.5">
-                <FormLabel>Mã hóa đơn</FormLabel>
+                <FormLabel>Mã hóa đơn <span className="text-red-500">*</span></FormLabel>
                 <FormControl>
                   <Input placeholder="Nhập mã hóa đơn" {...field} />
                 </FormControl>
@@ -91,14 +91,14 @@ export default function FormCreate({
           <FormSelect
             form={form}
             name="Bill_Type"
-            label="Loại hóa đơn"
+            label={<>Loại hóa đơn <span className="text-red-500">*</span></>}
             placeholder={"Chọn loại hóa đơn"}
             list={BILL_TYPES.slice(1)}
           />
           <FormSelect
             form={form}
             name="Fuel_Type"
-            label="Loại nhiên liệu"
+            label={<>Loại nhiên liệu <span className="text-red-500">*</span></>}
             placeholder={"Chọn loại nhiên liệu"}
             list={FUEL_TYPE.slice(1)}
           />
@@ -107,7 +107,7 @@ export default function FormCreate({
             name="Start_Time"
             render={({ field }) => (
               <FormItem className="flex flex-col">
-                <FormLabel>Thời gian bắt đầu bơm</FormLabel>
+                <FormLabel>Thời gian bắt đầu bơm <span className="text-red-500">*</span></FormLabel>
                 <FormDatePicker {...{ field, placeholder: "Chọn ngày" }} />
                 <FormMessage />
               </FormItem>
@@ -118,7 +118,7 @@ export default function FormCreate({
             name="End_Time"
             render={({ field }) => (
               <FormItem className="flex flex-col">
-                <FormLabel>Thời gian kết thúc bơm</FormLabel>
+                <FormLabel>Thời gian kết thúc bơm <span className="text-red-500">*</span></FormLabel>
                 <FormDatePicker {...{ field, placeholder: "Chọn ngày" }} />
                 <FormMessage />
               </FormItem>
@@ -129,7 +129,7 @@ export default function FormCreate({
             name="Unit_Price"
             render={({ field }) => (
               <FormItem className="flex flex-col">
-                <FormLabel>Giá</FormLabel>
+                <FormLabel>Giá <span className="text-red-500">*</span></FormLabel>
                 <FormControl>
                   <Input type="number" placeholder="Nhập giá" {...field} />
                 </FormControl>
@@ -142,7 +142,7 @@ export default function FormCreate({
             name="Quantity"
             render={({ field }) => (
               <FormItem className="flex flex-col">
-                <FormLabel>Số lượng</FormLabel>
+                <FormLabel>Số lượng <span className="text-red-500">*</span></FormLabel>
                 <FormControl>
                   <Input type="number" placeholder="Nhập số lượng" {...field} />
                 </FormControl>
@@ -155,7 +155,7 @@ export default function FormCreate({
             name="Total_Price"
             render={({ field }) => (
               <FormItem className="flex flex-col">
-                <FormLabel>Tổng tiền</FormLabel>
+                <FormLabel>Tổng tiền <span className="text-red-500">*</span></FormLabel>
                 <FormControl>
                   <Input
                     type="number"

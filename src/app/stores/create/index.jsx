@@ -13,11 +13,12 @@ import { Link, useLocation, useNavigate, useParams } from "react-router-dom"
 import { z } from "zod"
 import CreateForm from "./create-form"
 import SkeletonForm from "./skeleton-form"
-import CreateSuccessConfirm from "../components/CreateSucessConfirm"
+import CreateSuccessConfirm from "components/layout/CreateSucessConfirm"
 import { transformToSelectList } from "lib/transofrm"
 import { fetchSimpleList as fetchCompanySimpleList } from "actions/companyActions"
 import { fetchSimpleList as fetchBranchSimpleList } from "actions/branchActions"
 import PATH from "routers/path"
+import CloseConfirm from "components/layout/CloseConfirm"
 
 const newSchema = z.object({
   name: z.string().optional().nullable(),
@@ -40,6 +41,7 @@ export default function StoreCreatePage() {
   const [open, setOpen] = useState(false)
   const [companyList, setCompanyList] = useState([])
   const [branchList, setBranchList] = useState([])
+  const [openClosePopup, setOpenClosePopup] = useState(false)
 
   const form = useForm({
     resolver: zodResolver(newSchema),
@@ -127,6 +129,8 @@ export default function StoreCreatePage() {
     }
   }
 
+  const isDirty = form.formState.isDirty
+
   return (
     <div className="w-full">
       <div className="">
@@ -164,7 +168,8 @@ export default function StoreCreatePage() {
                   variant="outline"
                   onClick={(event) => {
                     event.preventDefault()
-                    navigation(-1)
+                    if(isDirty) setOpenClosePopup(true)
+                    else navigation(-1)
                   }}
                 >
                   Hủy
@@ -187,6 +192,7 @@ export default function StoreCreatePage() {
         </RouterForm>
       </Form>
       <CreateSuccessConfirm {...{ open, setOpen }} />
+      <CloseConfirm {...{ open: openClosePopup, setOpen: setOpenClosePopup }} />
     </div>
   )
 }

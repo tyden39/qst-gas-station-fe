@@ -1,14 +1,19 @@
 import { zodResolver } from "@hookform/resolvers/zod"
+import { fetchSimpleList as fetchBranchSimpleList } from "actions/branchActions"
+import { fetchSimpleList as fetchCompanySimpleList } from "actions/companyActions"
 import {
   createInvoice,
   editInvoice,
   fetchOneInvoice,
 } from "actions/fuelActions"
-import { Button, buttonVariants } from "components/ui/button"
+import { fetchSimpleList as fetchStoreSimpleList } from "actions/storeActions"
+import CreateSuccessConfirm from "components/layout/CreateSucessConfirm"
+import { Button } from "components/ui/button"
 import { Card } from "components/ui/card"
 import { Form } from "components/ui/form"
 import { TOAST } from "components/ui/toast"
 import { useToast } from "components/ui/use-toast"
+import { transformToSelectList } from "lib/transofrm"
 import { cn } from "lib/utils"
 import { ChevronLeft } from "lucide-react"
 import { useEffect, useState } from "react"
@@ -17,34 +22,51 @@ import { Link, useLocation, useNavigate, useParams } from "react-router-dom"
 import PATH from "routers/path"
 import { z } from "zod"
 import FormCreate from "./create-form"
-import { transformToSelectList } from "lib/transofrm"
-import { fetchSimpleList as fetchBranchSimpleList } from "actions/branchActions"
-import { fetchSimpleList as fetchCompanySimpleList } from "actions/companyActions"
-import { fetchSimpleList as fetchStoreSimpleList } from "actions/storeActions"
-import CreateSuccessConfirm from "components/layout/CreateSucessConfirm"
 import SkeletonForm from "./skeleton-form"
+import CloseConfirm from "components/layout/CloseConfirm"
 
 const schema = z.object({
-  Check_Key: z.string({ required_error: "Mã kiểm tra không được để trống" }),
-  Logger_ID: z.string({ required_error: "Mã logger không được để trống" }),
-  Logger_Time: z.date({
-    required_error: "Thời gian ghi log không được để trống",
-  }),
-  Pump_ID: z.string({ required_error: "Mã vòi bơm không được để trống" }),
-  Bill_No: z.string({ required_error: "Mã hóa đơn không được để trống" }),
-  Bill_Type: z.string({ required_error: "Loại hóa đơn không được để trống" }),
-  Fuel_Type: z.string({
-    required_error: "Loại nhiên liệu không được để trống",
-  }),
-  Start_Time: z.date({
-    required_error: "Thời gian bắt đầu bơm không được để trống",
-  }),
-  End_Time: z.date({
-    required_error: "Thời gian kết thúc bơm không được để trống",
-  }),
-  Unit_Price: z.string({ required_error: "Giá không được để trống" }),
-  Quantity: z.string({ required_error: "Số lượng không được để trống" }),
-  Total_Price: z.string({ required_error: "Tổng giá không được để trống" }),
+  Check_Key: z
+    .string({ required_error: "Mã kiểm tra không được để trống" })
+    .min(1, "Mã kiểm tra không được để trống"),
+  Logger_ID: z
+    .string({ required_error: "Mã logger không được để trống" })
+    .min(1, "Mã logger không được để trống"),
+  Logger_Time: z
+    .date({
+      required_error: "Thời gian ghi log không được để trống",
+    }),
+  Pump_ID: z
+    .string({ required_error: "Mã vòi bơm không được để trống" })
+    .min(1, "Mã vòi bơm không được để trống"),
+  Bill_No: z
+    .string({ required_error: "Mã hóa đơn không được để trống" })
+    .min(1, "Mã hóa đơn không được để trống"),
+  Bill_Type: z
+    .string({ required_error: "Loại hóa đơn không được để trống" })
+    .min(1, "Loại hóa đơn không được để trống"),
+  Fuel_Type: z
+    .string({
+      required_error: "Loại nhiên liệu không được để trống",
+    })
+    .min(1, "Loại nhiên liệu không được để trống"),
+  Start_Time: z
+    .date({
+      required_error: "Thời gian bắt đầu bơm không được để trống",
+    }),
+  End_Time: z
+    .date({
+      required_error: "Thời gian kết thúc bơm không được để trống",
+    }),
+  Unit_Price: z
+    .string({ required_error: "Giá không được để trống" })
+    .min(1, "Giá không được để trống"),
+  Quantity: z
+    .string({ required_error: "Số lượng không được để trống" })
+    .min(1, "Số lượng không được để trống"),
+  Total_Price: z
+    .string({ required_error: "Tổng giá không được để trống" })
+    .min(1, "Tổng giá không được để trống"),
   companyId: z.string().optional().nullable(),
   branchId: z.string().optional().nullable(),
   storeId: z.string().optional().nullable(),
@@ -61,12 +83,17 @@ export default function FuelCreatePage() {
   const [storeList, setStoreList] = useState([])
   const [fetchInfoLoading, setFetchInfoLoading] = useState(false)
   const [open, setOpen] = useState(false)
+  const [openClosePopup, setOpenClosePopup] = useState(false)
 
   const isEdit = location.pathname.includes("edit")
 
   const form = useForm({
     resolver: zodResolver(schema),
+    mode: 'onTouched'
   })
+
+  const isDirty = form.formState.isDirty
+  const isValid = form.formState.isValid
 
   async function onSubmit(values) {
     if (isEdit) {
@@ -77,7 +104,7 @@ export default function FuelCreatePage() {
           variant: "success",
           description: "Cập nhật hóa đơn thành công!",
         })
-      } else{
+      } else {
         toast({
           variant: TOAST.DESTRUCTIVE,
           title: "Cập nhật hóa đơn thất bại!",
@@ -212,19 +239,25 @@ export default function FuelCreatePage() {
               />
 
               <Card className="p-4 space-x-4 text-right">
-                <Link
-                  to={PATH.FUEL}
-                  className={cn(buttonVariants({ variant: "outline" }))}
+                <Button
+                  variant="outline"
+                  onClick={(event) => {
+                    event.preventDefault()
+                    console.log()
+                    if (isDirty) setOpenClosePopup(true)
+                    else navigation(PATH.FUEL)
+                  }}
                 >
                   Hủy
-                </Link>
-                <Button type="submit">{isEdit ? "Lưu" : "Tạo mới"}</Button>
+                </Button>
+                <Button disabled={!isValid} type="submit">{isEdit ? "Lưu" : "Tạo mới"}</Button>
               </Card>
             </>
           )}
         </form>
       </Form>
       <CreateSuccessConfirm {...{ open, setOpen }} />
+      <CloseConfirm {...{ open: openClosePopup, setOpen: setOpenClosePopup }} />
     </div>
   )
 }
