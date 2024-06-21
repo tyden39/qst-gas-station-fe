@@ -24,6 +24,12 @@ export function FilterSelect({
   const onValueChangeLocal = (value) => {
     onValueChange(value, name)
   }
+
+  const handleClose = async (e) => {
+    if (!disabled) {
+      onValueChange(null, name)
+    }
+  }
   
   return (
     <Select
@@ -33,7 +39,7 @@ export function FilterSelect({
         disabled,
       }}
     >
-      <SelectTrigger className={cn("w-full gap-2 hover:bg-accent", className)}>
+      <SelectTrigger className={cn("w-full gap-2 hover:bg-accent", className)} value={value} onClose={handleClose}>
         <Label>{label}</Label>
         <EllipsisTooltip
           className={"flex-1 text-left"}

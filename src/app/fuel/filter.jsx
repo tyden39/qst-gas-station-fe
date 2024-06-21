@@ -16,7 +16,7 @@ export default function InvoiceFilter({ authUser, filter, onFieldChange, company
       onFieldChange(value, name)
       onFieldChange(undefined, 'branchId')
 
-      const brList = branchList.filter(x => x.companyId === value)
+      const brList = value ? branchList.filter(x => x.companyId === value) : branchList
       const selectList = transformToSelectList(brList)
       setBranches(selectList)
 
@@ -29,7 +29,7 @@ export default function InvoiceFilter({ authUser, filter, onFieldChange, company
       onFieldChange(value, name)
       onFieldChange(undefined, 'storeId')
 
-      const stList = storeList.filter(x => x.branchId === value)
+      const stList = value ? storeList.filter(x => x.branchId === value) : storeList
       const selectList = transformToSelectList(stList)
       setStores(selectList)
     }

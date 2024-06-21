@@ -14,7 +14,18 @@ import AccountInfo from "./AccountInfo"
 import UserInfo from "./UserInfo"
 import SkeletonForm from "./skeleton-form"
 
-const editSchema = z
+const editSchema = z.object({
+  firstName: z
+    .string({ required_error: "Tên không được để trống" })
+    .min(1, "Tên không được để trống"),
+  lastName: z
+    .string({ required_error: "Họ không được để trống" })
+    .min(1, "Họ không được để trống"),
+  email: z.string().optional().nullable(),
+  phone: z.string().optional().nullable(),
+})
+
+const editSchemaWithPassword = z
   .object({
     firstName: z
       .string({ required_error: "Tên không được để trống" })
@@ -24,27 +35,16 @@ const editSchema = z
       .min(1, "Họ không được để trống"),
     email: z.string().optional().nullable(),
     phone: z.string().optional().nullable(),
+    password: z.string({ required_error: "Mật khẩu không được để trống" }),
+    confirmPassword: z.string(),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Mật khẩu không khớp",
+    path: ["confirmPassword"],
   })
 
-const editSchemaWithPassword = z.object({
-  firstName: z
-    .string({ required_error: "Tên không được để trống" })
-    .min(1, "Tên không được để trống"),
-  lastName: z
-    .string({ required_error: "Họ không được để trống" })
-    .min(1, "Họ không được để trống"),
-  email: z.string().optional().nullable(),
-  phone: z.string().optional().nullable(),
-  password: z.string({ required_error: "Mật khẩu không được để trống" }),
-  confirmPassword: z.string(),
-})
-.refine((data) => data.password === data.confirmPassword, {
-  message: "Mật khẩu không khớp",
-  path: ["confirmPassword"],
-})
-
 export default function ProfilesPage() {
-  const [user] = useAuth((state) => [state.user])
+  const [user, logout] = useAuth((state) => [state.user, state.logout])
   const { toast } = useToast()
   const [fetchInfoLoading, setFetchInfoLoading] = useState(false)
   const [isChangePassword, setIsChangePassword] = useState(false)
@@ -59,13 +59,13 @@ export default function ProfilesPage() {
   async function onSubmit(values) {
     const response = await edit(user.id, values)
     if (response.status === 200) {
-      setIsChangePassword(false)
       form.reset(response.data)
-      toast({
-        variant: "success",
-        description: "Lưu thông tin thành công!",
-      })
-      setIsChangePassword(false)
+      if (isChangePassword) logout()
+      else
+        toast({
+          variant: "success",
+          description: "Lưu thông tin thành công!",
+        })
     } else
       toast({
         variant: TOAST.DESTRUCTIVE,

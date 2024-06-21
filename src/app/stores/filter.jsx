@@ -13,7 +13,7 @@ export default function InvoiceFilter({ filter, onFieldChange, companyList, bran
       onFieldChange(value, name)
       onFieldChange(undefined, 'branchId')
 
-      const brList = branchList.filter(x => x.companyId === value)
+      const brList = value ? branchList.filter(x => x.companyId === value) : branchList
       const selectList = transformToSelectList(brList)
       setBranches(selectList)
 
