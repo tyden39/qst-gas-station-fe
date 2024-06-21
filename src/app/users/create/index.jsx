@@ -363,7 +363,7 @@ export default function UserCreatePage() {
       setStoreList(storeSelectList)
     }
   }
-console.log(form.formState)
+
   return (
     <div className="w-full">
       <div className="">

@@ -19,7 +19,7 @@ export default function FormCreate({
   getBranchList,
   getStoreList,
 }) {
-  console.log(form.watch('companyId'))
+
   return (
     <Card className="w-full">
       <CardHeader>
