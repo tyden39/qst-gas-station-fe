@@ -41,7 +41,7 @@ const Sidebar = () => {
           )
           .map((item) =>
             item.name === "seperate" ? (
-              <Separator orientation="horizontal" />
+              <Separator key={'seperate-menu'} orientation="horizontal" />
             ) : collapsed ? (
               <Tooltip key={`collapsed-menu-${item.id}`}>
                 <TooltipTrigger asChild>
