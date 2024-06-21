@@ -15,6 +15,9 @@ import "./index.css"
 import Layout from "./layout"
 import LoginPage from "./login"
 import Providers from "./providers"
+import { registerLocale } from  "react-datepicker";
+import vi from 'date-fns/locale/vi'; 
+registerLocale('vi', vi)
 
 export default function App() {
   const [user] = useAuth((state) => [state.user])

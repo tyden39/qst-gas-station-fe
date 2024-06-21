@@ -280,7 +280,7 @@ export default function UserCreatePage() {
     if (isEdit) {
       const response = await edit(params.id, values)
       if (response.status === 200) {
-        form.reset(response.data, { keepDirtyValues: true })
+        form.reset(response.data)
         navigation(PATH.USER)
         toast({
           variant: "success",

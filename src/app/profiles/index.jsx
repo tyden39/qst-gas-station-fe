@@ -14,7 +14,19 @@ import AccountInfo from "./AccountInfo"
 import UserInfo from "./UserInfo"
 import SkeletonForm from "./skeleton-form"
 
-const editSchema = z.object({
+const editSchema = z
+  .object({
+    firstName: z
+      .string({ required_error: "Tên không được để trống" })
+      .min(1, "Tên không được để trống"),
+    lastName: z
+      .string({ required_error: "Họ không được để trống" })
+      .min(1, "Họ không được để trống"),
+    email: z.string().optional().nullable(),
+    phone: z.string().optional().nullable(),
+  })
+
+const editSchemaWithPassword = z.object({
   firstName: z
     .string({ required_error: "Tên không được để trống" })
     .min(1, "Tên không được để trống"),
@@ -23,26 +35,37 @@ const editSchema = z.object({
     .min(1, "Họ không được để trống"),
   email: z.string().optional().nullable(),
   phone: z.string().optional().nullable(),
+  password: z.string({ required_error: "Mật khẩu không được để trống" }),
+  confirmPassword: z.string(),
+})
+.refine((data) => data.password === data.confirmPassword, {
+  message: "Mật khẩu không khớp",
+  path: ["confirmPassword"],
 })
 
 export default function ProfilesPage() {
   const [user] = useAuth((state) => [state.user])
   const { toast } = useToast()
   const [fetchInfoLoading, setFetchInfoLoading] = useState(false)
+  const [isChangePassword, setIsChangePassword] = useState(false)
 
   const form = useForm({
-    resolver: zodResolver(editSchema),
+    resolver: zodResolver(
+      isChangePassword ? editSchemaWithPassword : editSchema
+    ),
     mode: "onTouched",
   })
 
   async function onSubmit(values) {
     const response = await edit(user.id, values)
     if (response.status === 200) {
-      form.reset(response.data, { keepDirtyValues: true })
+      setIsChangePassword(false)
+      form.reset(response.data)
       toast({
         variant: "success",
         description: "Lưu thông tin thành công!",
       })
+      setIsChangePassword(false)
     } else
       toast({
         variant: TOAST.DESTRUCTIVE,
@@ -86,16 +109,18 @@ export default function ProfilesPage() {
           >
             <div className="col-span-2 space-y-8">
               <UserInfo {...{ form }} />
+
+              <Card className="col-span-2 p-4 space-x-4 text-right">
+                <Button type="submit" disabled={!form.formState.isDirty}>
+                  Lưu
+                </Button>
+              </Card>
             </div>
             <div className="">
-              <AccountInfo {...{ form, isEdit: true }} />
+              <AccountInfo
+                {...{ form, isChangePassword, setIsChangePassword }}
+              />
             </div>
-
-            <Card className="col-span-2 p-4 space-x-4 text-right">
-              <Button type="submit" disabled={!form.formState.isDirty}>
-                Lưu
-              </Button>
-            </Card>
           </form>
         )}
       </Form>

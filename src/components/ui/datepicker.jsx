@@ -1,15 +1,22 @@
 import { format } from "date-fns"
 import { Calendar as CalendarIcon } from "lucide-react"
-import * as React from "react"
 
 import EllipsisTooltip from "components/EllipsisTooltip"
 import { buttonVariants } from "components/ui/button"
-import { Calendar } from "components/ui/calendar"
 import { Popover, PopoverContent, PopoverTrigger } from "components/ui/popover"
 import { cn } from "lib/utils"
+import { Calendar } from "./calendar"
 import { Label } from "./label"
 
-export function DatePickerWithRange({ className, onChangeValue, date, name, label, placeholder }) {
+export function DatePickerWithRange({
+  className,
+  onChangeValue,
+  date,
+  name,
+  label,
+  placeholder,
+}) {
+
   const onSelect = (value) => {
     onChangeValue(value, name)
   }
@@ -20,7 +27,7 @@ export function DatePickerWithRange({ className, onChangeValue, date, name, labe
         <div
           className={cn(
             buttonVariants({ variant: "outline" }),
-            "text-left font-normal gap-2",
+            "text-left font-normal gap-2"
           )}
         >
           <Label className="hover:cursor-pointer">{label}</Label>

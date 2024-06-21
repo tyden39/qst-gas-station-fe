@@ -1,4 +1,3 @@
-import { PopoverArrow } from "@radix-ui/react-popover"
 import { Button } from "components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "components/ui/card"
 import {
@@ -9,9 +8,8 @@ import {
   FormMessage,
 } from "components/ui/form"
 import { Input } from "components/ui/input"
-import { Popover, PopoverContent, PopoverTrigger } from "components/ui/popover"
 
-export default function AccountInfo({ form, isEdit }) {
+export default function AccountInfo({ form, isChangePassword, setIsChangePassword }) {
   return (
     <Card className="w-full">
       <CardHeader>
@@ -27,23 +25,22 @@ export default function AccountInfo({ form, isEdit }) {
                 <FormLabel>
                   Tên đăng nhập <span className="text-red-500">*</span>
                 </FormLabel>
-                <FormControl disabled={isEdit}>
+                <FormControl disabled={true}>
                   <Input placeholder="Nhập tên đăng nhập" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
             )}
           />
-          {isEdit ? (
-            <Popover>
-              <PopoverTrigger asChild>
-                <Button>Đổi mật khẩu</Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-80" side="top">
-                Tính năng đang phát triển
-                <PopoverArrow className="fill-white" />
-              </PopoverContent>
-            </Popover>
+          {!isChangePassword ? (
+            <Button
+              onClick={(event) => {
+                event.preventDefault()
+                setIsChangePassword(true)
+              }}
+            >
+              Đổi mật khẩu
+            </Button>
           ) : (
             <>
               <FormField
@@ -52,7 +49,7 @@ export default function AccountInfo({ form, isEdit }) {
                 render={({ field }) => (
                   <FormItem className="flex flex-col space-y-1.5">
                     <FormLabel>
-                      Mật khẩu <span className="text-red-500">*</span>
+                      Mật khẩu mới <span className="text-red-500">*</span>
                     </FormLabel>
                     <FormControl>
                       <Input
@@ -84,6 +81,14 @@ export default function AccountInfo({ form, isEdit }) {
                   </FormItem>
                 )}
               />
+              <Button
+                onClick={(event) => {
+                  event.preventDefault()
+                  setIsChangePassword(false)
+                }}
+              >
+                Hủy đổi mật khẩu
+              </Button>
             </>
           )}
         </div>

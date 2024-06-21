@@ -7,8 +7,10 @@ import {
   FormMessage,
 } from "components/ui/form"
 import { Input } from "components/ui/input"
+import { USER_ROLES } from "constants/user-roles"
 
 export default function UserInfo({ form }) {
+  const rolesValue = form.watch('roles')
   return (
     <Card className="w-full">
       <CardHeader>
@@ -70,6 +72,10 @@ export default function UserInfo({ form }) {
               </FormItem>
             )}
           />
+          <div className="flex flex-col space-y-1.5">
+            <FormLabel>Vai trò người dùng</FormLabel>
+            <Input value={USER_ROLES.find(r => r.value === rolesValue)?.label} disabled />
+          </div>
         </div>
       </CardContent>
     </Card>
