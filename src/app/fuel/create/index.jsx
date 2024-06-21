@@ -83,7 +83,6 @@ export default function FuelCreatePage() {
   const [storeList, setStoreList] = useState([])
   const [fetchInfoLoading, setFetchInfoLoading] = useState(false)
   const [open, setOpen] = useState(false)
-  const [openClosePopup, setOpenClosePopup] = useState(false)
 
   const isEdit = location.pathname.includes("edit")
 
@@ -92,7 +91,6 @@ export default function FuelCreatePage() {
     mode: 'onTouched'
   })
 
-  const isDirty = form.formState.isDirty
   const isValid = form.formState.isValid
 
   async function onSubmit(values) {
@@ -243,9 +241,7 @@ export default function FuelCreatePage() {
                   variant="outline"
                   onClick={(event) => {
                     event.preventDefault()
-                    console.log()
-                    if (isDirty) setOpenClosePopup(true)
-                    else navigation(PATH.FUEL)
+                    navigation(-1)
                   }}
                 >
                   Hủy
@@ -257,7 +253,7 @@ export default function FuelCreatePage() {
         </form>
       </Form>
       <CreateSuccessConfirm {...{ open, setOpen }} />
-      <CloseConfirm {...{ open: openClosePopup, setOpen: setOpenClosePopup }} />
+      <CloseConfirm {...{ form }} />
     </div>
   )
 }

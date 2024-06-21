@@ -1,5 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod"
 import { edit, fetchOneUser } from "actions/userApi"
+import CloseConfirm from "components/layout/CloseConfirm"
 import { Button } from "components/ui/button"
 import { Card } from "components/ui/card"
 import { Form } from "components/ui/form"
@@ -14,8 +15,12 @@ import UserInfo from "./UserInfo"
 import SkeletonForm from "./skeleton-form"
 
 const editSchema = z.object({
-  firstName: z.string({ required_error: "Tên không được để trống" }),
-  lastName: z.string({ required_error: "Họ không được để trống" }),
+  firstName: z
+    .string({ required_error: "Tên không được để trống" })
+    .min(1, "Tên không được để trống"),
+  lastName: z
+    .string({ required_error: "Họ không được để trống" })
+    .min(1, "Họ không được để trống"),
   email: z.string().optional().nullable(),
   phone: z.string().optional().nullable(),
 })
@@ -27,6 +32,7 @@ export default function ProfilesPage() {
 
   const form = useForm({
     resolver: zodResolver(editSchema),
+    mode: "onTouched",
   })
 
   async function onSubmit(values) {
@@ -69,7 +75,6 @@ export default function ProfilesPage() {
       <div className="">
         <h1 className="text-4xl leading-normal mb-3">Hồ sơ người dùng</h1>
       </div>
-
       <Form {...form}>
         {fetchInfoLoading ? (
           <SkeletonForm />
@@ -94,6 +99,7 @@ export default function ProfilesPage() {
           </form>
         )}
       </Form>
+      <CloseConfirm {...{ form }} />
     </div>
   )
 }

@@ -41,19 +41,12 @@ export default function CompanyCreatePage() {
   const [loading, setLoading] = useState(false)
   const [fetchInfoLoading, setFetchInfoLoading] = useState(false)
   const [open, setOpen] = useState(false)
-  const [openClosePopup, setOpenClosePopup] = useState(false)
 
   const form = useForm({
     resolver: zodResolver(newSchema),
     mode: 'onTouched',
     defaultValues: {},
   })
-
-  // const blocker = useBlocker(
-  //   ({ currentLocation, nextLocation }) =>
-  //     form.formState.isDirty &&
-  //     currentLocation.pathname !== nextLocation.pathname
-  // );
 
   async function onSubmit(values) {
     setLoading(true)
@@ -106,8 +99,6 @@ export default function CompanyCreatePage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  const isDirty = form.formState.isDirty
-
   return (
     <div className="w-full">
       <div className="">
@@ -142,8 +133,7 @@ export default function CompanyCreatePage() {
                   variant="outline"
                   onClick={(event) => {
                     event.preventDefault()
-                    if (isDirty) setOpenClosePopup(true)
-                    else navigation(-1)
+                    navigation(-1)
                   }}
                 >
                   Hủy
@@ -155,7 +145,7 @@ export default function CompanyCreatePage() {
         </RouterForm>
       </Form>
       <CreateSuccessConfirm {...{ open, setOpen }} />
-      <CloseConfirm {...{ open: openClosePopup, setOpen: setOpenClosePopup }} />
-      </div>
+      <CloseConfirm {...{ form }} />
+    </div>
   )
 }

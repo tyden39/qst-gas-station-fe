@@ -8,26 +8,58 @@ import {
   DialogHeader,
   DialogTitle,
 } from "components/ui/dialog"
-import { useNavigate } from "react-router-dom"
+import { useCallback, useEffect } from "react"
+import { useActionData, useBlocker } from "react-router-dom"
 
-const CloseConfirm = ({ open, setOpen, onReturn }) => {
-  const navigation = useNavigate()
+const CloseConfirm = ({ form }) => {
+  const actionData = useActionData()
 
-  const onOpenChange = (open) => {
-    setOpen(open)
-  }
+  const shouldBlock = useCallback(
+    ({ currentLocation, nextLocation }) =>
+      form.formState.isDirty &&
+      currentLocation.pathname !== nextLocation.pathname,
+    [form.formState.isDirty]
+  )
+
+  const blocker = useBlocker(shouldBlock)
+
+  useEffect(() => {
+    if (actionData?.ok) {
+      form.reset()
+    }
+  }, [actionData, form])
+
+  useEffect(() => {
+    if (blocker.state === "blocked" && !form.formState.isDirty) {
+      blocker.reset()
+    }
+  }, [blocker, form.formState.isDirty])
 
   const handleSubmit = async () => {
-    setOpen(false)
+    blocker.reset?.()
   }
 
   const handleReturn = () => {
-    if (onReturn) onReturn()
-    navigation(-1)
+    blocker.proceed?.()
   }
 
+  useEffect(() => {
+    const handleBeforeUnload = (event) => {
+      if (form.formState.isDirty) {
+        event.preventDefault()
+        event.returnValue = true
+      }
+    }
+
+    window.addEventListener("beforeunload", handleBeforeUnload)
+
+    return () => {
+      window.removeEventListener("beforeunload", handleBeforeUnload)
+    }
+  }, [form.formState.isDirty])
+
   return (
-    <Dialog {...{ open, onOpenChange }}>
+    <Dialog {...{ open: blocker.state === "blocked" }}>
       <DialogContent
         className="sm:max-w-[450px] space-y-6"
         hideClose
@@ -40,7 +72,8 @@ const CloseConfirm = ({ open, setOpen, onReturn }) => {
             <img src="/images/warning.png" alt="check" width={100} />
           </DialogTitle>
           <DialogDescription className="text-center">
-            Bạn có chắc chắn muốn rời khỏi trang này không? Những thông tin bạn đã nhập vào biểu mẫu sẽ không được lưu.
+            Bạn có chắc chắn muốn rời khỏi trang này không? Những thông tin bạn
+            đã nhập vào biểu mẫu sẽ không được lưu.
           </DialogDescription>
         </DialogHeader>
         <DialogFooter className="sm:justify-center items-center">

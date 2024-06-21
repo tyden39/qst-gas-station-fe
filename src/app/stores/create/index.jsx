@@ -43,7 +43,6 @@ export default function StoreCreatePage() {
   const [open, setOpen] = useState(false)
   const [companyList, setCompanyList] = useState([])
   const [branchList, setBranchList] = useState([])
-  const [openClosePopup, setOpenClosePopup] = useState(false)
 
   const form = useForm({
     resolver: zodResolver(newSchema),
@@ -132,8 +131,6 @@ export default function StoreCreatePage() {
     }
   }
 
-  const isDirty = form.formState.isDirty
-
   return (
     <div className="w-full">
       <div className="">
@@ -171,8 +168,7 @@ export default function StoreCreatePage() {
                   variant="outline"
                   onClick={(event) => {
                     event.preventDefault()
-                    if(isDirty) setOpenClosePopup(true)
-                    else navigation(-1)
+                    navigation(-1) 
                   }}
                 >
                   Hủy
@@ -184,7 +180,7 @@ export default function StoreCreatePage() {
         </RouterForm>
       </Form>
       <CreateSuccessConfirm {...{ open, setOpen }} />
-      <CloseConfirm {...{ open: openClosePopup, setOpen: setOpenClosePopup }} />
+      <CloseConfirm {...{ form }} />
     </div>
   )
 }
