@@ -2,6 +2,7 @@ import axiosInstance from "actions/axiosInstance"
 import { convertToQueryString } from "lib/utils"
 import FileSaver from 'file-saver';
 import { API_PATHS } from "constants/api-paths";
+import { AUTH_CONFIG } from "routers/config";
 
 export const fetchOneInvoice = async (id) => {
   try {
@@ -11,6 +12,11 @@ export const fetchOneInvoice = async (id) => {
 
     return response
   } catch (error) {
+    if (error.response.status === 401) {
+      localStorage.removeItem(AUTH_CONFIG.ACCESS_TOKEN_STORAGE_NAME)
+      localStorage.removeItem(AUTH_CONFIG.USER_STORAGE_NAME)
+      window.location.href = '/login'
+    }
     return error.response
   }
 }
@@ -34,7 +40,13 @@ export const fetchInvoices = async (filter, pageMeta) => {
 
     const { data, meta } = response.data.data
     return { data, meta }
-  } catch (error) {}
+  } catch (error) {
+    if (error.response.status === 401) {
+      localStorage.removeItem(AUTH_CONFIG.ACCESS_TOKEN_STORAGE_NAME)
+      localStorage.removeItem(AUTH_CONFIG.USER_STORAGE_NAME)
+      window.location.href = '/login'
+    }
+  }
 }
 
 export const handleExport = async (filter, pageMeta, selected) => {
@@ -62,7 +74,11 @@ export const handleExport = async (filter, pageMeta, selected) => {
     if (response.status === 200) 
       FileSaver.saveAs(new Blob([response.data]), 'invoices.xlsx')
   } catch (error) {
-    console.log(error)
+    if (error.response.status === 401) {
+      localStorage.removeItem(AUTH_CONFIG.ACCESS_TOKEN_STORAGE_NAME)
+      localStorage.removeItem(AUTH_CONFIG.USER_STORAGE_NAME)
+      window.location.href = '/login'
+    }
     return 'Xuất excel thất bại'
   }
 }
@@ -74,7 +90,11 @@ export const deleteInvoice = async (id) => {
     )
     return response.status
   } catch (error) {
-    console.log(error)
+    if (error.response.status === 401) {
+      localStorage.removeItem(AUTH_CONFIG.ACCESS_TOKEN_STORAGE_NAME)
+      localStorage.removeItem(AUTH_CONFIG.USER_STORAGE_NAME)
+      window.location.href = '/login'
+    }
   }
 }
 
@@ -86,6 +106,11 @@ export const createInvoice = async (formData) => {
     )
     return response
   } catch (error) {
+    if (error.response.status === 401) {
+      localStorage.removeItem(AUTH_CONFIG.ACCESS_TOKEN_STORAGE_NAME)
+      localStorage.removeItem(AUTH_CONFIG.USER_STORAGE_NAME)
+      window.location.href = '/login'
+    }
     return error.response
   }
 }
@@ -98,6 +123,11 @@ export const editInvoice = async (id, formData) => {
     )
     return response
   } catch (error) {
+    if (error.response.status === 401) {
+      localStorage.removeItem(AUTH_CONFIG.ACCESS_TOKEN_STORAGE_NAME)
+      localStorage.removeItem(AUTH_CONFIG.USER_STORAGE_NAME)
+      window.location.href = '/login'
+    }
     return error.response
   }
 }

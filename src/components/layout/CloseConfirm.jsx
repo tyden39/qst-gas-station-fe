@@ -16,9 +16,10 @@ const CloseConfirm = ({ form }) => {
 
   const shouldBlock = useCallback(
     ({ currentLocation, nextLocation }) =>
+      !form.formState.isSubmitting &&
       form.formState.isDirty &&
       currentLocation.pathname !== nextLocation.pathname,
-    [form.formState.isDirty]
+    [form.formState.isDirty, form.formState.isSubmitting]
   )
 
   const blocker = useBlocker(shouldBlock)

@@ -2,6 +2,7 @@ import axiosInstance from "actions/axiosInstance"
 import axios from "axios"
 import { API_PATHS } from "constants/api-paths"
 import { convertToQueryString } from "lib/utils"
+import { AUTH_CONFIG } from "routers/config"
 
 export const fetchAll = async (filter, pageMeta) => {
   try {
@@ -22,6 +23,11 @@ export const fetchAll = async (filter, pageMeta) => {
 
     return response.data
   } catch (error) {
+    if (error.response.status === 401) {
+      localStorage.removeItem(AUTH_CONFIG.ACCESS_TOKEN_STORAGE_NAME)
+      localStorage.removeItem(AUTH_CONFIG.USER_STORAGE_NAME)
+      window.location.href = '/login'
+    }
     if (!axios.isAxiosError(error)) console.error(error)
     return axios.isAxiosError(error)
       ? error.response?.data || {
@@ -47,6 +53,11 @@ export const fetchSimpleList = async (filter, pageMeta) => {
 
     return response.data
   } catch (error) {
+    if (error.response.status === 401) {
+      localStorage.removeItem(AUTH_CONFIG.ACCESS_TOKEN_STORAGE_NAME)
+      localStorage.removeItem(AUTH_CONFIG.USER_STORAGE_NAME)
+      window.location.href = '/login'
+    }
     if (!axios.isAxiosError(error)) console.error(error)
     return axios.isAxiosError(error)
       ? error.response?.data || {
@@ -69,6 +80,11 @@ export const createCompany = async (formData) => {
     )
     return response.data
   } catch (error) {
+    if (error.response.status === 401) {
+      localStorage.removeItem(AUTH_CONFIG.ACCESS_TOKEN_STORAGE_NAME)
+      localStorage.removeItem(AUTH_CONFIG.USER_STORAGE_NAME)
+      window.location.href = '/login'
+    }
     if (!axios.isAxiosError(error)) console.error(error)
     return axios.isAxiosError(error)
       ? error.response?.data || {
@@ -92,6 +108,11 @@ export const editCompany = async (id, formData) => {
 
     return response.data
   } catch (error) {
+    if (error.response.status === 401) {
+      localStorage.removeItem(AUTH_CONFIG.ACCESS_TOKEN_STORAGE_NAME)
+      localStorage.removeItem(AUTH_CONFIG.USER_STORAGE_NAME)
+      window.location.href = '/login'
+    }
     if (!axios.isAxiosError(error)) console.error(error)
     return axios.isAxiosError(error)
       ? error.response?.data || {
@@ -113,6 +134,11 @@ export const deleteCompany = async (id) => {
     )
     return response.status
   } catch (error) {
+    if (error.response.status === 401) {
+      localStorage.removeItem(AUTH_CONFIG.ACCESS_TOKEN_STORAGE_NAME)
+      localStorage.removeItem(AUTH_CONFIG.USER_STORAGE_NAME)
+      window.location.href = '/login'
+    }
     if (!axios.isAxiosError(error)) console.error(error)
     return axios.isAxiosError(error)
       ? error.response?.data || {
@@ -135,6 +161,11 @@ export const fetchOneCompany = async (id) => {
 
     return response.data
   } catch (error) {
+    if (error.response.status === 401) {
+      localStorage.removeItem(AUTH_CONFIG.ACCESS_TOKEN_STORAGE_NAME)
+      localStorage.removeItem(AUTH_CONFIG.USER_STORAGE_NAME)
+      window.location.href = '/login'
+    }
     if (!axios.isAxiosError(error)) console.error(error)
     return axios.isAxiosError(error)
       ? error.response?.data || {

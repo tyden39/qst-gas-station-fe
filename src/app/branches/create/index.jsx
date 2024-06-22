@@ -74,6 +74,7 @@ export default function BranchCreatePage() {
     } else {
       const response = await create(values)
       if (response.status === 201) {
+        form.reset(response.data)
         setOpen(true)
       } else
         toast({

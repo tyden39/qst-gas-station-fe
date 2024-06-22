@@ -29,7 +29,7 @@ const newSchema = z
   .object({
     username: z
       .string({ required_error: "Tên đăng nhập không được để trống" })
-      .min(5, "Tên đăng nhập phải >= 6 ký tự"),
+      .min(5, "Tên đăng nhập phải >= 5 ký tự"),
     password: z
       .string({ required_error: "Mật khẩu không được để trống" })
       .min(1, "Mật khẩu không được để trống"),
@@ -295,6 +295,7 @@ export default function UserCreatePage() {
     } else {
       const response = await create(values)
       if (response.status === 201) {
+        form.reset(response.data)
         setOpen(true)
       } else
         toast({

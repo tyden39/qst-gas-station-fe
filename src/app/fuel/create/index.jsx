@@ -113,11 +113,8 @@ export default function FuelCreatePage() {
       const { status, data } = await createInvoice(values)
 
       if (status === 201) {
-        toast({
-          variant: "success",
-          title: "Tạo hóa đơn thành công!",
-        })
-        // navigation(-1)
+        form.reset(data)
+        setOpen(true)
       } else if (status === 409)
         toast({
           variant: TOAST.DESTRUCTIVE,

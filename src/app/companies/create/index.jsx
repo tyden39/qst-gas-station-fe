@@ -68,6 +68,7 @@ export default function CompanyCreatePage() {
     } else {
       const response = await createCompany(values)
       if (response.status === 201) {
+        form.reset(response.data)
         setOpen(true)
       } else
         toast({

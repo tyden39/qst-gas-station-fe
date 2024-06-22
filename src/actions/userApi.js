@@ -2,6 +2,7 @@ import axiosInstance from "actions/axiosInstance"
 import axios from "axios"
 import { API_PATHS } from "constants/api-paths"
 import { convertToQueryString } from "lib/utils"
+import { AUTH_CONFIG } from "routers/config"
 
 export const fetchUsers = async (filter, pageMeta) => {
   try {
@@ -23,7 +24,22 @@ export const fetchUsers = async (filter, pageMeta) => {
     const { data, meta } = response.data.data
     return { data, meta }
   } catch (error) {
-    console.log(error)
+    if (error.response.status === 401) {
+      localStorage.removeItem(AUTH_CONFIG.ACCESS_TOKEN_STORAGE_NAME)
+      localStorage.removeItem(AUTH_CONFIG.USER_STORAGE_NAME)
+      window.location.href = '/login'
+    }
+    if (!axios.isAxiosError(error)) console.error(error)
+    // return axios.isAxiosError(error)
+    //   ? error.response?.data || {
+    //       status: -1,
+    //       message: "Không thể lấy dữ liệu từ máy chủ!",
+    //     }
+    //   : {
+    //       status: -1,
+    //       message:
+    //         "Lỗi hệ thống, vui lòng liên hệ quản trị viên để biết thêm chi tiết!",
+    //     }
   }
 }
 
@@ -35,6 +51,11 @@ export const create = async (formData) => {
     )
     return response.data
   } catch (error) {
+    if (error.response.status === 401) {
+      localStorage.removeItem(AUTH_CONFIG.ACCESS_TOKEN_STORAGE_NAME)
+      localStorage.removeItem(AUTH_CONFIG.USER_STORAGE_NAME)
+      window.location.href = '/login'
+    }
     if (!axios.isAxiosError(error)) console.error(error)
     return axios.isAxiosError(error)
       ? error.response?.data || {
@@ -58,6 +79,11 @@ export const edit = async (id, formData) => {
 
     return response.data
   } catch (error) {
+    if (error.response.status === 401) {
+      localStorage.removeItem(AUTH_CONFIG.ACCESS_TOKEN_STORAGE_NAME)
+      localStorage.removeItem(AUTH_CONFIG.USER_STORAGE_NAME)
+      window.location.href = '/login'
+    }
     if (!axios.isAxiosError(error)) console.error(error)
     return axios.isAxiosError(error)
       ? error.response?.data || {
@@ -79,6 +105,11 @@ export const deleteUser = async (id) => {
     )
     return response.status
   } catch (error) {
+    if (error.response.status === 401) {
+      localStorage.removeItem(AUTH_CONFIG.ACCESS_TOKEN_STORAGE_NAME)
+      localStorage.removeItem(AUTH_CONFIG.USER_STORAGE_NAME)
+      window.location.href = '/login'
+    }
     console.log(error)
   }
 }
@@ -91,6 +122,11 @@ export const fetchOneUser = async (id) => {
 
     return response.data
   } catch (error) {
+    if (error.response.status === 401) {
+      localStorage.removeItem(AUTH_CONFIG.ACCESS_TOKEN_STORAGE_NAME)
+      localStorage.removeItem(AUTH_CONFIG.USER_STORAGE_NAME)
+      window.location.href = '/login'
+    }
     if (!axios.isAxiosError(error)) console.error(error)
     return axios.isAxiosError(error)
       ? error.response?.data || {
