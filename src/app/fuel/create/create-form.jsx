@@ -13,13 +13,8 @@ import { BILL_TYPES, FUEL_TYPE, PUMP_ID } from "../constant"
 
 export default function FormCreate({
   form,
-  companyList,
-  branchList,
   storeList,
-  getBranchList,
-  getStoreList,
 }) {
-
   return (
     <Card className="w-full">
       <CardHeader>
@@ -32,7 +27,9 @@ export default function FormCreate({
             name="Check_Key"
             render={({ field }) => (
               <FormItem className="flex flex-col space-y-1.5">
-                <FormLabel>Mã kiểm tra <span className="text-red-500">*</span></FormLabel>
+                <FormLabel>
+                  Mã kiểm tra <span className="text-red-500">*</span>
+                </FormLabel>
                 <FormControl>
                   <Input
                     placeholder="Nhập mã kiểm tra"
@@ -49,7 +46,9 @@ export default function FormCreate({
             name="Logger_ID"
             render={({ field }) => (
               <FormItem className="flex flex-col space-y-1.5">
-                <FormLabel>Mã logger <span className="text-red-500">*</span></FormLabel>
+                <FormLabel>
+                  Mã logger <span className="text-red-500">*</span>
+                </FormLabel>
                 <FormControl>
                   <Input placeholder="Nhập mã logger" {...field} />
                 </FormControl>
@@ -62,7 +61,9 @@ export default function FormCreate({
             name="Logger_Time"
             render={({ field }) => (
               <FormItem className="flex flex-col">
-                <FormLabel>Thời gian ghi log <span className="text-red-500">*</span></FormLabel>
+                <FormLabel>
+                  Thời gian ghi log <span className="text-red-500">*</span>
+                </FormLabel>
                 <FormDatePicker {...{ field, placeholder: "Chọn ngày" }} />
                 <FormMessage />
               </FormItem>
@@ -71,7 +72,11 @@ export default function FormCreate({
           <FormSelect
             form={form}
             name="Pump_ID"
-            label={<>Mã vòi bơm <span className="text-red-500">*</span></>}
+            label={
+              <>
+                Mã vòi bơm <span className="text-red-500">*</span>
+              </>
+            }
             placeholder={"Chọn mã vòi bơm"}
             list={PUMP_ID.slice(1)}
           />
@@ -80,7 +85,9 @@ export default function FormCreate({
             name="Bill_No"
             render={({ field }) => (
               <FormItem className="flex flex-col space-y-1.5">
-                <FormLabel>Mã hóa đơn <span className="text-red-500">*</span></FormLabel>
+                <FormLabel>
+                  Mã hóa đơn <span className="text-red-500">*</span>
+                </FormLabel>
                 <FormControl>
                   <Input placeholder="Nhập mã hóa đơn" {...field} />
                 </FormControl>
@@ -91,14 +98,22 @@ export default function FormCreate({
           <FormSelect
             form={form}
             name="Bill_Type"
-            label={<>Loại hóa đơn <span className="text-red-500">*</span></>}
+            label={
+              <>
+                Loại hóa đơn <span className="text-red-500">*</span>
+              </>
+            }
             placeholder={"Chọn loại hóa đơn"}
             list={BILL_TYPES.slice(1)}
           />
           <FormSelect
             form={form}
             name="Fuel_Type"
-            label={<>Loại nhiên liệu <span className="text-red-500">*</span></>}
+            label={
+              <>
+                Loại nhiên liệu <span className="text-red-500">*</span>
+              </>
+            }
             placeholder={"Chọn loại nhiên liệu"}
             list={FUEL_TYPE.slice(1)}
           />
@@ -107,7 +122,9 @@ export default function FormCreate({
             name="Start_Time"
             render={({ field }) => (
               <FormItem className="flex flex-col">
-                <FormLabel>Thời gian bắt đầu bơm <span className="text-red-500">*</span></FormLabel>
+                <FormLabel>
+                  Thời gian bắt đầu bơm <span className="text-red-500">*</span>
+                </FormLabel>
                 <FormDatePicker {...{ field, placeholder: "Chọn ngày" }} />
                 <FormMessage />
               </FormItem>
@@ -118,7 +135,9 @@ export default function FormCreate({
             name="End_Time"
             render={({ field }) => (
               <FormItem className="flex flex-col">
-                <FormLabel>Thời gian kết thúc bơm <span className="text-red-500">*</span></FormLabel>
+                <FormLabel>
+                  Thời gian kết thúc bơm <span className="text-red-500">*</span>
+                </FormLabel>
                 <FormDatePicker {...{ field, placeholder: "Chọn ngày" }} />
                 <FormMessage />
               </FormItem>
@@ -129,7 +148,9 @@ export default function FormCreate({
             name="Unit_Price"
             render={({ field }) => (
               <FormItem className="flex flex-col">
-                <FormLabel>Giá <span className="text-red-500">*</span></FormLabel>
+                <FormLabel>
+                  Giá <span className="text-red-500">*</span>
+                </FormLabel>
                 <FormControl>
                   <Input type="number" placeholder="Nhập giá" {...field} />
                 </FormControl>
@@ -142,7 +163,9 @@ export default function FormCreate({
             name="Quantity"
             render={({ field }) => (
               <FormItem className="flex flex-col">
-                <FormLabel>Số lượng <span className="text-red-500">*</span></FormLabel>
+                <FormLabel>
+                  Số lượng <span className="text-red-500">*</span>
+                </FormLabel>
                 <FormControl>
                   <Input type="number" placeholder="Nhập số lượng" {...field} />
                 </FormControl>
@@ -155,7 +178,9 @@ export default function FormCreate({
             name="Total_Price"
             render={({ field }) => (
               <FormItem className="flex flex-col">
-                <FormLabel>Tổng tiền <span className="text-red-500">*</span></FormLabel>
+                <FormLabel>
+                  Tổng tiền <span className="text-red-500">*</span>
+                </FormLabel>
                 <FormControl>
                   <Input
                     type="number"
@@ -168,42 +193,14 @@ export default function FormCreate({
             )}
           />
           <FormSelect
-            {...{
-              form,
-              label: "Công ty",
-              placeholder: "Chọn công ty",
-              name: "companyId",
-              list: companyList,
-              onChange: async (value) => {
-                await getBranchList(value)
-                form.resetField("branchId")
-              },
-            }}
-          />
-          <FormSelect
-            {...{
-              form,
-              label: "Chi nhánh",
-              placeholder: "Chọn chi nhánh",
-              name: "branchId",
-              list: branchList,
-              disabled: !form.watch('companyId'),
-              onChange: async (value) => {
-                await getStoreList(value)
-                form.resetField("storeId")
-              },
-            }}
-          />
-          <FormSelect
-            {...{
-              form,
-              label: "Cửa hàng",
-              placeholder: "Chọn cửa hàng",
-              name: "storeId",
-              list: storeList,
-              disabled: !form.watch('branchId'),
-            }}
-          />
+              {...{
+                form,
+                label: "Cửa hàng",
+                placeholder: "Chọn cửa hàng",
+                name: "storeId",
+                list: storeList,
+              }}
+            />
         </div>
       </CardContent>
     </Card>

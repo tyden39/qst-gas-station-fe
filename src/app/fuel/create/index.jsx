@@ -1,12 +1,11 @@
 import { zodResolver } from "@hookform/resolvers/zod"
-import { fetchSimpleList as fetchBranchSimpleList } from "actions/branchActions"
-import { fetchSimpleList as fetchCompanySimpleList } from "actions/companyActions"
 import {
   createInvoice,
   editInvoice,
   fetchOneInvoice,
 } from "actions/fuelActions"
 import { fetchSimpleList as fetchStoreSimpleList } from "actions/storeActions"
+import CloseConfirm from "components/layout/CloseConfirm"
 import CreateSuccessConfirm from "components/layout/CreateSucessConfirm"
 import { Button } from "components/ui/button"
 import { Card } from "components/ui/card"
@@ -23,7 +22,6 @@ import PATH from "routers/path"
 import { z } from "zod"
 import FormCreate from "./create-form"
 import SkeletonForm from "./skeleton-form"
-import CloseConfirm from "components/layout/CloseConfirm"
 
 const schema = z.object({
   Check_Key: z
@@ -32,10 +30,9 @@ const schema = z.object({
   Logger_ID: z
     .string({ required_error: "Mã logger không được để trống" })
     .min(1, "Mã logger không được để trống"),
-  Logger_Time: z
-    .date({
-      required_error: "Thời gian ghi log không được để trống",
-    }),
+  Logger_Time: z.date({
+    required_error: "Thời gian ghi log không được để trống",
+  }),
   Pump_ID: z
     .string({ required_error: "Mã vòi bơm không được để trống" })
     .min(1, "Mã vòi bơm không được để trống"),
@@ -50,14 +47,12 @@ const schema = z.object({
       required_error: "Loại nhiên liệu không được để trống",
     })
     .min(1, "Loại nhiên liệu không được để trống"),
-  Start_Time: z
-    .date({
-      required_error: "Thời gian bắt đầu bơm không được để trống",
-    }),
-  End_Time: z
-    .date({
-      required_error: "Thời gian kết thúc bơm không được để trống",
-    }),
+  Start_Time: z.date({
+    required_error: "Thời gian bắt đầu bơm không được để trống",
+  }),
+  End_Time: z.date({
+    required_error: "Thời gian kết thúc bơm không được để trống",
+  }),
   Unit_Price: z
     .string({ required_error: "Giá không được để trống" })
     .min(1, "Giá không được để trống"),
@@ -88,7 +83,7 @@ export default function FuelCreatePage() {
 
   const form = useForm({
     resolver: zodResolver(schema),
-    mode: 'onTouched'
+    mode: "onTouched",
   })
 
   const isValid = form.formState.isValid
@@ -159,32 +154,11 @@ export default function FuelCreatePage() {
       handleGetEditInvoice()
     }
     const getMetaData = async () => {
-      getCompanhList()
-      getBranchList()
       getStoreList()
     }
     getMetaData()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
-
-  const getCompanhList = async () => {
-    const response = await fetchCompanySimpleList()
-
-    if (response.status === 200) {
-      const companyList = response.data
-      const companySelectList = transformToSelectList(companyList)
-      setCompanyList(companySelectList)
-    }
-  }
-
-  const getBranchList = async (value) => {
-    const response = await fetchBranchSimpleList({ companyId: value })
-    if (response.status === 200) {
-      const branchList = response.data
-      const branchSelectList = transformToSelectList(branchList)
-      setBranchList(branchSelectList)
-    }
-  }
 
   const getStoreList = async (value) => {
     const response = await fetchStoreSimpleList({ branchId: value })
@@ -222,16 +196,7 @@ export default function FuelCreatePage() {
             <SkeletonForm />
           ) : (
             <>
-              <FormCreate
-                {...{
-                  form,
-                  branchList,
-                  companyList,
-                  storeList,
-                  getBranchList,
-                  getStoreList,
-                }}
-              />
+              <FormCreate {...{ form, storeList }} />
 
               <Card className="p-4 space-x-4 text-right">
                 <Button
@@ -243,7 +208,9 @@ export default function FuelCreatePage() {
                 >
                   Hủy
                 </Button>
-                <Button disabled={!isValid} type="submit">{isEdit ? "Lưu" : "Tạo mới"}</Button>
+                <Button disabled={!isValid} type="submit">
+                  {isEdit ? "Lưu" : "Tạo mới"}
+                </Button>
               </Card>
             </>
           )}
