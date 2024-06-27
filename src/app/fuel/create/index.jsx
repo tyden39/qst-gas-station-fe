@@ -73,8 +73,6 @@ export default function FuelCreatePage() {
   const location = useLocation()
   const params = useParams()
 
-  const [companyList, setCompanyList] = useState([])
-  const [branchList, setBranchList] = useState([])
   const [storeList, setStoreList] = useState([])
   const [fetchInfoLoading, setFetchInfoLoading] = useState(false)
   const [open, setOpen] = useState(false)
