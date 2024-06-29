@@ -1,6 +1,7 @@
 import axiosInstance from "actions/axiosInstance"
 import axios from "axios"
 import { API_PATHS } from "constants/api-paths"
+import { handleError } from "lib/api"
 import { convertToQueryString } from "lib/utils"
 import { AUTH_CONFIG } from "routers/config"
 
@@ -30,16 +31,6 @@ export const fetchUsers = async (filter, pageMeta) => {
       window.location.href = '/login'
     }
     if (!axios.isAxiosError(error)) console.error(error)
-    // return axios.isAxiosError(error)
-    //   ? error.response?.data || {
-    //       status: -1,
-    //       message: "Không thể lấy dữ liệu từ máy chủ!",
-    //     }
-    //   : {
-    //       status: -1,
-    //       message:
-    //         "Lỗi hệ thống, vui lòng liên hệ quản trị viên để biết thêm chi tiết!",
-    //     }
   }
 }
 
@@ -51,22 +42,7 @@ export const create = async (formData) => {
     )
     return response.data
   } catch (error) {
-    if (error.response.status === 401) {
-      localStorage.removeItem(AUTH_CONFIG.ACCESS_TOKEN_STORAGE_NAME)
-      localStorage.removeItem(AUTH_CONFIG.USER_STORAGE_NAME)
-      window.location.href = '/login'
-    }
-    if (!axios.isAxiosError(error)) console.error(error)
-    return axios.isAxiosError(error)
-      ? error.response?.data || {
-          status: -1,
-          message: "Không thể lấy dữ liệu từ máy chủ!",
-        }
-      : {
-          status: -1,
-          message:
-            "Lỗi hệ thống, vui lòng liên hệ quản trị viên để biết thêm chi tiết!",
-        }
+    return handleError(error)
   }
 }
 
@@ -79,29 +55,15 @@ export const edit = async (id, formData) => {
 
     return response.data
   } catch (error) {
-    if (error.response.status === 401) {
-      localStorage.removeItem(AUTH_CONFIG.ACCESS_TOKEN_STORAGE_NAME)
-      localStorage.removeItem(AUTH_CONFIG.USER_STORAGE_NAME)
-      window.location.href = '/login'
-    }
-    if (!axios.isAxiosError(error)) console.error(error)
-    return axios.isAxiosError(error)
-      ? error.response?.data || {
-          status: -1,
-          message: "Không thể lấy dữ liệu từ máy chủ!",
-        }
-      : {
-          status: -1,
-          message:
-            "Lỗi hệ thống, vui lòng liên hệ quản trị viên để biết thêm chi tiết!",
-        }
+    return handleError(error)
   }
 }
 
-export const deleteUser = async (id) => {
+export const deleteUser = async (id, force) => {
   try {
     const response = await axiosInstance.delete(
-      `${API_PATHS.USER_DELETE}/${id}`
+      `${API_PATHS.USER_DELETE}/${id}`,
+      {data: {force}}
     )
     return response.status
   } catch (error) {
@@ -122,22 +84,18 @@ export const fetchOneUser = async (id) => {
 
     return response.data
   } catch (error) {
-    if (error.response.status === 401) {
-      localStorage.removeItem(AUTH_CONFIG.ACCESS_TOKEN_STORAGE_NAME)
-      localStorage.removeItem(AUTH_CONFIG.USER_STORAGE_NAME)
-      window.location.href = '/login'
-    }
-    if (!axios.isAxiosError(error)) console.error(error)
-    return axios.isAxiosError(error)
-      ? error.response?.data || {
-          status: -1,
-          message: "Không thể lấy dữ liệu từ máy chủ!",
-        }
-      : {
-          status: -1,
-          message:
-            "Lỗi hệ thống, vui lòng liên hệ quản trị viên để biết thêm chi tiết!",
-        }
+    return handleError(error)
   }
 }
 
+
+export const restore = async (id) => {
+  try {
+    const response = await axiosInstance.post(
+      `${API_PATHS.USER_RESTORE}/${id}`
+    )
+    return response.status
+  } catch (error) {
+    return handleError(error)
+  }
+}

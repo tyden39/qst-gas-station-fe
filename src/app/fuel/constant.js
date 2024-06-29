@@ -1,10 +1,9 @@
 export const BILL_TYPES = [
-  {id: 0, value: "0", label: "Hóa đơn bị lỗi"}, 
+  {id: 0, value: "0", label: "Lỗi"}, 
   {id: 1, value: "1", label: "Xuất ngay"}, 
   {id: 2, value: "2", label: "Xuất nháp"}, 
-  {id: 3, value: "3", label: "Hóa đơn không xuất"}, 
-  {id: 4, value: "4", label: "Xuất nháp cần rà soát lại"}, 
-  {id: 5, value: "5", label: "Xuất ngay cần rà soát lại"}
+  {id: 3, value: "3", label: "Không xuất"}, 
+  {id: 4, value: "4", label: "Rà soát lại"}, 
 ]
 
 export const FUEL_TYPE = [

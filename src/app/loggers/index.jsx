@@ -5,6 +5,7 @@ import {
 
 // import { fetchSimpleList as fetchBranchSimpleList } from "actions/branchActions"
 // import { fetchSimpleList as fetchCompanySimpleList } from "actions/companyActions"
+import { fetchAll } from "actions/loggerActions"
 import PageHeader from "components/layout/header"
 import PagePagination from "components/pagination"
 import PageTable from "components/table"
@@ -12,19 +13,21 @@ import { buttonVariants } from "components/ui/button"
 import { Skeleton } from "components/ui/skeleton"
 import { TOAST } from "components/ui/toast"
 import { useToast } from "components/ui/use-toast"
+import { USER_ROLE } from "constants/user-roles"
 import { getActiveMenu } from "lib/url"
 import { cn } from "lib/utils"
 import { useCallback, useEffect, useMemo, useState } from "react"
 import { Link, useLocation } from "react-router-dom"
 import PATH from "routers/path"
+import useAuth from "zustands/useAuth"
 import RowActions from "./components/RowActions"
 import StoreFilter from "./filter"
-import { initColumnVisibility, initFilter, initMeta } from "./initial"
 import FilterTags from "./filterTags"
-import { fetchAll } from "actions/loggerActions"
+import { initColumnVisibility, initFilter, initMeta } from "./initial"
 
 export function LoggerPage() {
   const { toast } = useToast()
+  const user = useAuth(state => state.user)
 
   const location = useLocation()
   const activeMenuName = getActiveMenu(location.pathname)
@@ -110,6 +113,13 @@ export function LoggerPage() {
         },
       },
       {
+        accessorKey: "deletedAt",
+        header: () => <div className="text-center">Trạng thái</div>,
+        cell: ({ row }) => {
+          return <div className="text-center">{row.getValue("deletedAt") ? <span className="font-bold text-destructive">Đã xóa</span> : <span className="font-bold text-green-500">Hoạt động</span>}</div>
+        },
+      },
+      {
         id: "actions",
         size: 50,
         enableHiding: false,
@@ -120,13 +130,18 @@ export function LoggerPage() {
             <RowActions
               id={rowValue.id}
               name={rowValue.name}
+              userRole={user.roles[0]}
               applyFilter={applyFilter}
             />
           )
         },
       },
-    ],
-    [applyFilter, meta]
+    ].filter(item => {
+      const isAdmin = user.roles[0] === USER_ROLE.ADMIN
+      if (item.accessorKey === 'deletedAt' && !isAdmin) return false
+      return true
+    }),
+    [applyFilter, meta, user.roles]
   )
 
   const tableColumns = useMemo(

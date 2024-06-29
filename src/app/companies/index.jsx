@@ -20,11 +20,14 @@ import RowActions from "./components/RowActions"
 import { initColumnVisibility, initFilter, initMeta } from "./initial"
 import { TOAST } from "components/ui/toast"
 import { useToast } from "components/ui/use-toast"
+import useAuth from "zustands/useAuth"
+import { USER_ROLE } from "constants/user-roles"
 
 export function CompanyPage() {
   const { toast } = useToast()
   const [data, setData] = useState([])
   const [meta, setMeta] = useState(initMeta)
+  const user = useAuth(state => state.user)
 
   const [filter, setFilter] = useState(initFilter)
   const [activedFilter, setActivedFilter] = useState(initFilter)
@@ -110,6 +113,13 @@ export function CompanyPage() {
         cell: ({ row }) => <div className="">{row.getValue("phone")}</div>,
       },
       {
+        accessorKey: "deletedAt",
+        header: () => <div className="text-center">Trạng thái</div>,
+        cell: ({ row }) => {
+          return <div className="text-center">{row.getValue("deletedAt") ? <span className="font-bold text-destructive">Đã xóa</span> : <span className="font-bold text-green-500">Hoạt động</span>}</div>
+        },
+      },
+      {
         id: "actions",
         enableHiding: false,
         size: 50,
@@ -120,13 +130,18 @@ export function CompanyPage() {
             <RowActions
               id={rowValue.id}
               name={rowValue.name}
+              userRole={user.roles[0]}
               applyFilter={applyFilter}
             />
           )
         },
       },
-    ],
-    [applyFilter, meta]
+    ].filter(item => {
+      const isAdmin = user.roles[0] === USER_ROLE.ADMIN
+      if (item.accessorKey === 'deletedAt' && !isAdmin) return false
+      return true
+    }),
+    [applyFilter, meta, user.roles]
   )
 
   const tableColumns = useMemo(

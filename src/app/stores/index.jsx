@@ -22,9 +22,12 @@ import RowActions from "./components/RowActions"
 import StoreFilter from "./filter"
 import { initColumnVisibility, initFilter, initMeta } from "./initial"
 import FilterTags from "./filterTags"
+import { USER_ROLE } from "constants/user-roles"
+import useAuth from "zustands/useAuth"
 
 export function StorePage() {
   const { toast } = useToast()
+  const user = useAuth(state => state.user)
 
   const location = useLocation()
   const activeMenuName = getActiveMenu(location.pathname)
@@ -126,6 +129,13 @@ export function StorePage() {
         },
       },
       {
+        accessorKey: "deletedAt",
+        header: () => <div className="text-center">Trạng thái</div>,
+        cell: ({ row }) => {
+          return <div className="text-center">{row.getValue("deletedAt") ? <span className="font-bold text-destructive">Đã xóa</span> : <span className="font-bold text-green-500">Hoạt động</span>}</div>
+        },
+      },
+      {
         id: "actions",
         size: 50,
         enableHiding: false,
@@ -136,13 +146,18 @@ export function StorePage() {
             <RowActions
               id={rowValue.id}
               name={rowValue.name}
+              userRole={user.roles[0]}
               applyFilter={applyFilter}
             />
           )
         },
       },
-    ],
-    [applyFilter, meta]
+    ].filter(item => {
+      const isAdmin = user.roles[0] === USER_ROLE.ADMIN
+      if (item.accessorKey === 'deletedAt' && !isAdmin) return false
+      return true
+    }),
+    [applyFilter, meta, user.roles]
   )
 
   const tableColumns = useMemo(

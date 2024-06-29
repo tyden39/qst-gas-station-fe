@@ -1,4 +1,4 @@
-import { deleteInvoice } from "actions/fuelActions"
+import { deleteInvoice, restore } from "actions/fuelActions"
 import { Button } from "components/ui/button"
 import {
   Dialog,
@@ -18,15 +18,18 @@ import {
 } from "components/ui/dropdown-menu"
 import { TOAST } from "components/ui/toast"
 import { useToast } from "components/ui/use-toast"
+import { USER_ROLE } from "constants/user-roles"
 import { Loader2, MoreHorizontal } from "lucide-react"
 import { useState } from "react"
 import { Link } from "react-router-dom"
 import PATH from "routers/path"
 
-const RowActions = ({ id, checkKey, applyFilter }) => {
+const RowActions = ({ id, checkKey, applyFilter, userRole }) => {
   const { toast } = useToast()
   const [open, setOpen] = useState(false)
   const [loading, setLoading] = useState(false)
+  const [forceDelete, setForceDelete] = useState()
+  const isAdmin = userRole === USER_ROLE.ADMIN
 
   const onOpenChange = (open) => {
     if (!loading) setOpen(open)
@@ -34,8 +37,9 @@ const RowActions = ({ id, checkKey, applyFilter }) => {
 
   const onDelete = async () => {
     setLoading(true)
+    const force = forceDelete
 
-    const status = await deleteInvoice(id)
+    const status = await deleteInvoice(id, force)
     if (status === 200) {
       toast({
         variant: TOAST.SUCCESS,
@@ -50,6 +54,27 @@ const RowActions = ({ id, checkKey, applyFilter }) => {
 
     setOpen(false)
     setLoading(false)
+    setForceDelete(false)
+  }
+
+  const handleForceDelete = () => {
+    setOpen(true)
+    setForceDelete(true)
+  }
+
+  const handleRestore = async () => {
+    const status = await restore(id)
+    if (status === 200) {
+      toast({
+        variant: TOAST.SUCCESS,
+        title: "Khôi phục thành công!",
+      })
+      applyFilter()
+    } else
+      toast({
+        variant: TOAST.DESTRUCTIVE,
+        title: "Khôi phục thất bại!",
+      })
   }
 
   return (
@@ -75,14 +100,34 @@ const RowActions = ({ id, checkKey, applyFilter }) => {
               Xóa
             </DropdownMenuItem>
           </DialogTrigger>
+          {isAdmin ? (
+            <div>
+              <DropdownMenuItem asChild>
+                <p
+                  className="focus:bg-destructive focus:text-destructive-foreground cursor-pointer"
+                  onClick={handleForceDelete}
+                >
+                  Xóa vĩnh viễn
+                </p>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <p
+                  className="focus:bg-green-500 focus:text-destructive-foreground cursor-pointer"
+                  onClick={handleRestore}
+                >
+                  Khôi phục
+                </p>
+              </DropdownMenuItem>
+            </div>
+          ) : null}
         </DropdownMenuContent>
       </DropdownMenu>
       <DialogContent className="sm:max-w-[450px]">
         <DialogHeader>
-          <DialogTitle>Bạn có chắc muốn xóa?</DialogTitle>
+          <DialogTitle>Bạn có chắc muốn xóa {forceDelete ? " vĩnh viễn" : ""}?</DialogTitle>
           <DialogDescription>
             Hành động này không thể được hoàn tác. Bạn có chắc chắn muốn xóa
-            vĩnh viễn hóa đơn <span className="text-blue-600">#{checkKey}</span>
+            {forceDelete ? " vĩnh viễn " : ""} hóa đơn <span className="text-blue-600">#{checkKey}</span>
             ?
           </DialogDescription>
         </DialogHeader>
@@ -94,7 +139,7 @@ const RowActions = ({ id, checkKey, applyFilter }) => {
           </DialogClose>
           <DialogClose asChild>
             <Button variant="destructive" onClick={onDelete} disabled={loading}>
-              {loading ? <Loader2 className="animate-spin" /> : "Xóa"}
+              {loading ? <Loader2 className="animate-spin" /> : `Xóa ${forceDelete ? "vĩnh viễn" : ""}`}
             </Button>
           </DialogClose>
         </DialogFooter>

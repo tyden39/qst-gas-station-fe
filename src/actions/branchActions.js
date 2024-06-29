@@ -1,6 +1,7 @@
 import axiosInstance from "actions/axiosInstance"
 import axios from "axios"
 import { API_PATHS } from "constants/api-paths"
+import { handleError } from "lib/api"
 import { convertToQueryString } from "lib/utils"
 import { AUTH_CONFIG } from "routers/config"
 
@@ -127,10 +128,11 @@ export const edit = async (id, formData) => {
   }
 }
 
-export const deleteOne = async (id) => {
+export const deleteOne = async (id, force) => {
   try {
     const response = await axiosInstance.delete(
-      `${API_PATHS.BRANCH_DELETE}/${id}`
+      `${API_PATHS.BRANCH_DELETE}/${id}`,
+      {data: {force}}
     )
     return response.status
   } catch (error) {
@@ -139,7 +141,6 @@ export const deleteOne = async (id) => {
       localStorage.removeItem(AUTH_CONFIG.USER_STORAGE_NAME)
       window.location.href = '/login'
     }
-    if (!axios.isAxiosError(error)) console.error(error)
     return axios.isAxiosError(error)
       ? error.response?.data || {
           status: -1,
@@ -150,6 +151,17 @@ export const deleteOne = async (id) => {
           message:
             "Lỗi hệ thống, vui lòng liên hệ quản trị viên để biết thêm chi tiết!",
         }
+  }
+}
+
+export const restoreOne = async (id) => {
+  try {
+    const response = await axiosInstance.post(
+      `${API_PATHS.BRANCH_RESTORE}/${id}`
+    )
+    return response.status
+  } catch (error) {
+    return handleError(error)
   }
 }
 
@@ -166,7 +178,6 @@ export const fetchOne = async (id) => {
       localStorage.removeItem(AUTH_CONFIG.USER_STORAGE_NAME)
       window.location.href = '/login'
     }
-    if (!axios.isAxiosError(error)) console.error(error)
     return axios.isAxiosError(error)
       ? error.response?.data || {
           status: -1,

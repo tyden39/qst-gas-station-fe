@@ -3,6 +3,7 @@ import { convertToQueryString } from "lib/utils"
 import FileSaver from 'file-saver';
 import { API_PATHS } from "constants/api-paths";
 import { AUTH_CONFIG } from "routers/config";
+import { handleError } from "lib/api";
 
 export const fetchOneInvoice = async (id) => {
   try {
@@ -83,10 +84,11 @@ export const handleExport = async (filter, pageMeta, selected) => {
   }
 }
 
-export const deleteInvoice = async (id) => {
+export const deleteInvoice = async (id, force) => {
   try {
     const response = await axiosInstance.delete(
-      `${API_PATHS.INVOICE_DELETE}/${id}`
+      `${API_PATHS.INVOICE_DELETE}/${id}`,
+      {data: {force}}
     )
     return response.status
   } catch (error) {
@@ -95,6 +97,17 @@ export const deleteInvoice = async (id) => {
       localStorage.removeItem(AUTH_CONFIG.USER_STORAGE_NAME)
       window.location.href = '/login'
     }
+  }
+}
+
+export const restore = async (id) => {
+  try {
+    const response = await axiosInstance.post(
+      `${API_PATHS.INVOICE_RESTORE}/${id}`
+    )
+    return response.status
+  } catch (error) {
+    return handleError(error)
   }
 }
 

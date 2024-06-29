@@ -27,13 +27,16 @@ import useInvoice from "zustands/useInvoice"
 import { fetchInvoices } from "../../actions/fuelActions"
 import ExportInvoice from "./components/ExportInvoice"
 import RowActions from "./components/RowActions"
-import { BILL_TYPES } from "./constant"
+import { BILL_TYPES, FUEL_TYPE } from "./constant"
 import InvoiceFilter from "./filter"
 import FilterTags from "./filterTags"
 import { initColumnVisibility, initFilter, initMeta } from "./initial"
 
 export function FuelPage() {
-  const [getPermission, authUser] = useAuth((state) => [state.getPermission, state.user])
+  const [getPermission, authUser] = useAuth((state) => [
+    state.getPermission,
+    state.user,
+  ])
   const allowCreate = getPermission(PATH.FUEL_CREATE)
   const allowEdit = getPermission(PATH.FUEL_EDIT)
 
@@ -214,6 +217,7 @@ export function FuelPage() {
         },
         {
           accessorKey: "Pump_ID",
+          size: 50,
           header: () => (
             <div className="text-center capitalize">Mã vòi bơm</div>
           ),
@@ -238,7 +242,7 @@ export function FuelPage() {
           cell: ({ row }) => (
             <div className="text-center">
               {BILL_TYPES.find(
-                (item) => item.value === row.getValue("Bill_Type")
+                (item) => item.value === row.getValue("Bill_Type").toString()
               )?.label || ""}
             </div>
           ),
@@ -249,7 +253,11 @@ export function FuelPage() {
             <div className="text-center capitalize">Loại nhiên liệu</div>
           ),
           cell: ({ row }) => (
-            <div className="text-center">{row.getValue("Fuel_Type")}</div>
+            <div className="text-center">
+              {FUEL_TYPE.find(
+                (item) => item.value === row.getValue("Fuel_Type").toString()
+              )?.label || ""}
+            </div>
           ),
         },
         {
@@ -297,7 +305,7 @@ export function FuelPage() {
           cell: ({ row }) => {
             const quantity = parseFloat(row.getValue("Quantity"))
 
-            return <div className="text-right font-medium">{quantity} {" "}l</div>
+            return <div className="text-right font-medium">{quantity} l</div>
           },
         },
         {
@@ -340,6 +348,21 @@ export function FuelPage() {
           },
         },
         {
+          accessorKey: "deletedAt",
+          header: () => <div className="text-center">Trạng thái</div>,
+          cell: ({ row }) => {
+            return (
+              <div className="text-center">
+                {row.getValue("deletedAt") ? (
+                  <span className="font-bold text-destructive">Đã xóa</span>
+                ) : (
+                  <span className="font-bold text-green-500">Hoạt động</span>
+                )}
+              </div>
+            )
+          },
+        },
+        {
           id: "actions",
           size: 50,
           enableHiding: false,
@@ -349,12 +372,17 @@ export function FuelPage() {
               <RowActions
                 id={rowValue.id}
                 checkKey={rowValue.Check_Key}
+                userRole={authUser.roles[0]}
                 applyFilter={applyFilter}
               />
             )
           },
         },
-      ].filter((item) => (allowEdit ? true : item.id !== "actions")),
+      ].filter((item) => {
+        const isAdmin = authUser.roles[0] === USER_ROLE.ADMIN
+        if (item.accessorKey === "deletedAt" && !isAdmin) return false
+        return allowEdit ? true : item.id !== "actions"
+      }),
     [
       meta,
       selected,
@@ -363,6 +391,7 @@ export function FuelPage() {
       currentPageSelected.length,
       applyFilter,
       allowEdit,
+      authUser.roles,
     ]
   )
 
@@ -402,7 +431,11 @@ export function FuelPage() {
   })
 
   const onFieldChange = useCallback(
-    (value, name) => setFilter((prev) => ({ ...prev, [name]: value === 'all' ? undefined : value })),
+    (value, name) =>
+      setFilter((prev) => ({
+        ...prev,
+        [name]: value === "all" ? undefined : value,
+      })),
     []
   )
 
@@ -469,9 +502,22 @@ export function FuelPage() {
           searchInputPlaceholder: "Tìm kiếm theo Mã Kiểm Tra",
         }}
       >
-        <InvoiceFilter {...{ authUser, filter, onFieldChange, companyList, branchList, storeList, getBranchList, getStoreList }} />
+        <InvoiceFilter
+          {...{
+            authUser,
+            filter,
+            onFieldChange,
+            companyList,
+            branchList,
+            storeList,
+            getBranchList,
+            getStoreList,
+          }}
+        />
       </PageHeader>
-      <FilterTags {...{activedFilter, applyFilter, companyList, branchList, storeList}} />
+      <FilterTags
+        {...{ activedFilter, applyFilter, companyList, branchList, storeList }}
+      />
       <PageTable {...{ table }} />
       <PagePagination {...{ setMeta, meta, selected }} />
     </div>

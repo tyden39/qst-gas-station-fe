@@ -11,7 +11,7 @@ import PagePagination from "components/pagination"
 import PageTable from "components/table"
 import { buttonVariants } from "components/ui/button"
 import { Skeleton } from "components/ui/skeleton"
-import { USER_ROLES } from "constants/user-roles"
+import { USER_ROLE, USER_ROLES } from "constants/user-roles"
 import { cn } from "lib/utils"
 import { useCallback, useEffect, useMemo, useState } from "react"
 import { Link } from "react-router-dom"
@@ -28,7 +28,7 @@ import FilterTags from "./filterTags"
 import useAuth from "zustands/useAuth"
 
 export function UserPage() {
-  const [authUser] = useAuth((state) => [state.user])
+  const [user] = useAuth((state) => [state.user])
   const [data, setData] = useState([])
   const [meta, setMeta] = useState(initMeta)
 
@@ -152,6 +152,13 @@ export function UserPage() {
         },
       },
       {
+        accessorKey: "deletedAt",
+        header: () => <div className="text-center">Trạng thái</div>,
+        cell: ({ row }) => {
+          return <div className="text-center">{row.getValue("deletedAt") ? <span className="font-bold text-destructive">Đã xóa</span> : <span className="font-bold text-green-500">Hoạt động</span>}</div>
+        },
+      },
+      {
         id: "actions",
         enableHiding: false,
         size: 50,
@@ -162,13 +169,18 @@ export function UserPage() {
             <RowActions
               id={rowValue.id}
               name={rowValue.username}
+              userRole={user.roles[0]}
               applyFilter={applyFilter}
             />
           )
         },
       },
-    ],
-    [applyFilter, meta]
+    ].filter(item => {
+      const isAdmin = user.roles[0] === USER_ROLE.ADMIN
+      if (item.accessorKey === 'deletedAt' && !isAdmin) return false
+      return true
+    }),
+    [applyFilter, meta, user.roles]
   )
 
   const tableColumns = useMemo(
@@ -269,7 +281,7 @@ export function UserPage() {
           searchInputPlaceholder: "Tìm kiếm",
         }}
       >
-        <UserFilter {...{ authUser, filter, onFieldChange, companyList, branchList, storeList, getBranchList, getStoreList }} />
+        <UserFilter {...{ authUser: user, filter, onFieldChange, companyList, branchList, storeList, getBranchList, getStoreList }} />
       </PageHeader>
       <FilterTags {...{activedFilter, applyFilter, companyList, branchList, storeList}} />
       <PageTable {...{ table }} />

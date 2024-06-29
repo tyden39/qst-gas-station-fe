@@ -6,12 +6,14 @@ export const API_PATHS = {
   INVOICE_CREATE: '/invoice/create',
   INVOICE_EDIT: '/invoice/edit',
   INVOICE_DELETE: '/invoice/delete',
+  INVOICE_RESTORE: '/invoice/restore',
   INVOICE_EXPORT_EXCEL: '/invoice/export-excel',
 
   USER_LIST: '/user/list',
   USER_CREATE: '/user/create',
   USER_EDIT: '/user/edit',
   USER_DELETE: '/user/delete',
+  USER_RESTORE: '/user/restore',
   USER_FETCH_ONE: '/user',
 
   LOGGER_LIST: '/logger/list',
@@ -19,6 +21,7 @@ export const API_PATHS = {
   LOGGER_CREATE: '/logger/create',
   LOGGER_EDIT: '/logger/edit',
   LOGGER_DELETE: '/logger/delete',
+  LOGGER_RESTORE: '/logger/restore',
   LOGGER_FETCH_ONE: '/logger',
 
   STORE_LIST: '/store/list',
@@ -26,6 +29,7 @@ export const API_PATHS = {
   STORE_CREATE: '/store/create',
   STORE_EDIT: '/store/edit',
   STORE_DELETE: '/store/delete',
+  STORE_RESTORE: '/store/restore',
   STORE_FETCH_ONE: '/store',
 
   BRANCH_LIST: '/branch/list',
@@ -33,6 +37,7 @@ export const API_PATHS = {
   BRANCH_CREATE: '/branch/create',
   BRANCH_EDIT: '/branch/edit',
   BRANCH_DELETE: '/branch/delete',
+  BRANCH_RESTORE: '/branch/restore',
   BRANCH_FETCH_ONE: '/branch',
 
   COMPANY_LIST: '/company/list',
@@ -40,5 +45,6 @@ export const API_PATHS = {
   COMPANY_CREATE: '/company/create',
   COMPANY_EDIT: '/company/edit',
   COMPANY_DELETE: '/company/delete',
+  COMPANY_RESTORE: '/company/restore',
   COMPANY_FETCH_ONE: '/company',
 }
