@@ -10,7 +10,7 @@ import {
 } from "components/ui/dialog"
 import { useNavigate } from "react-router-dom"
 
-const CreateSuccessConfirm = ({ open, setOpen, onSubmit, onReturn }) => {
+const CreateSuccessConfirm = ({ open, setOpen, onSubmit, onReturn, additionalContent }) => {
   const navigation = useNavigate()
 
   const onOpenChange = (open) => {
@@ -40,8 +40,9 @@ const CreateSuccessConfirm = ({ open, setOpen, onSubmit, onReturn }) => {
           <DialogTitle className="text-center text-4xl">
             Tạo mới thành công
           </DialogTitle>
-          <DialogDescription className="flex justify-center">
+          <DialogDescription className="grid grid-cols-1 justify-self-center justify-items-center">
             <img src="/images/check.png" alt="check" width={100} />
+            {additionalContent ? additionalContent : null}
           </DialogDescription>
         </DialogHeader>
         <DialogFooter className="sm:justify-center items-center">

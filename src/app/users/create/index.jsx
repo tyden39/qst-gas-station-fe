@@ -275,6 +275,8 @@ export default function UserCreatePage() {
     },
   })
 
+  const isValid = form.formState.isValid
+  
   async function onSubmit(values) {
     setLoading(true)
     if (isEdit) {
@@ -418,7 +420,7 @@ export default function UserCreatePage() {
                 >
                   Hủy
                 </Button>
-                <Button disabled={loading || !form.formState.isValid}>
+                <Button disabled={loading || !isValid}>
                   {isEdit ? "Lưu" : "Tạo mới"}
                 </Button>
               </Card>

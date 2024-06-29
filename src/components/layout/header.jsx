@@ -85,7 +85,7 @@ export default function PageHeader({
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="outline" className="ml-auto">
-              Ẩn/Hiện <ChevronDown className="ml-2 h-4 w-4" />
+              Ẩn/Hiện Cột <ChevronDown className="ml-2 h-4 w-4" />
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">

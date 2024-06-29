@@ -4,22 +4,24 @@ import {
   editCompany,
   fetchOneCompany,
 } from "actions/companyActions"
+import CloseConfirm from "components/layout/CloseConfirm"
+import CreateSuccessConfirm from "components/layout/CreateSucessConfirm"
 import { Button } from "components/ui/button"
 import { Card } from "components/ui/card"
 import { Form } from "components/ui/form"
+import { Label } from "components/ui/label"
 import { TOAST } from "components/ui/toast"
 import { useToast } from "components/ui/use-toast"
+import { copyToClipboard } from "lib/string"
 import { cn } from "lib/utils"
 import { ChevronLeft } from "lucide-react"
 import { useEffect, useState } from "react"
 import { Form as RouterForm, useForm } from "react-hook-form"
 import { Link, useLocation, useNavigate, useParams } from "react-router-dom"
+import PATH from "routers/path"
 import { z } from "zod"
 import CreateForm from "./create-form"
 import SkeletonForm from "./skeleton-form"
-import CreateSuccessConfirm from "components/layout/CreateSucessConfirm"
-import PATH from "routers/path"
-import CloseConfirm from "components/layout/CloseConfirm"
 
 const newSchema = z.object({
   name: z
@@ -29,6 +31,7 @@ const newSchema = z.object({
   email: z.string().optional().nullable(),
   address: z.string().optional().nullable(),
   phone: z.string().optional().nullable(),
+  token: z.string().optional().nullable(),
 })
 
 export default function CompanyCreatePage() {
@@ -44,16 +47,44 @@ export default function CompanyCreatePage() {
 
   const form = useForm({
     resolver: zodResolver(newSchema),
-    mode: 'onTouched',
+    mode: "onTouched",
     defaultValues: {},
   })
+
+  const isValid = form.formState.isValid
+  const [token, setToken] = useState()
+  const additionalContent = token ? (
+    <div className="flex flex-col justify-center items-center gap-1.5 mt-2 w-full">
+      <Label className="mt-1.5">Token:</Label>
+      <div
+        className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm overflow-auto text-nowrap cursor-pointer hover:text-accent-foreground"
+        onClick={async () => {
+          try {
+            await copyToClipboard(token)
+            toast({
+              variant: TOAST.SUCCESS,
+              title: "Copy thành công!",
+            })
+          } catch (error) {
+            toast({
+              variant: TOAST.DESTRUCTIVE,
+              title: `Copy thất bại!`,
+              description: error.message
+            })
+          }
+        }}
+      >
+        {token}
+      </div>
+    </div>
+  ) : null
 
   async function onSubmit(values) {
     setLoading(true)
     if (isEdit) {
       const response = await editCompany(params.id, values)
       if (response.status === 200) {
-        form.reset(response.data, { keepDirtyValues: true })
+        form.reset(response.data, { keepDirtyValues: false })
         navigation(PATH.COMPANY)
         toast({
           variant: "success",
@@ -68,7 +99,8 @@ export default function CompanyCreatePage() {
     } else {
       const response = await createCompany(values)
       if (response.status === 201) {
-        form.reset(response.data)
+        form.reset()
+        setToken(response.data.token)
         setOpen(true)
       } else
         toast({
@@ -85,6 +117,7 @@ export default function CompanyCreatePage() {
       setFetchInfoLoading(true)
       const response = await fetchOneCompany(params.id)
       if (response.status === 200) {
+        setToken(response.data.token)
         form.reset(response.data)
       } else
         toast({
@@ -127,7 +160,7 @@ export default function CompanyCreatePage() {
             <SkeletonForm />
           ) : (
             <>
-              <CreateForm {...{ form }} />
+              <CreateForm {...{ form, isEdit, token }} />
               <Card className="col-span-2 p-4 space-x-4 text-right">
                 <Button
                   disabled={loading}
@@ -139,13 +172,15 @@ export default function CompanyCreatePage() {
                 >
                   Hủy
                 </Button>
-                <Button disabled={loading}>{isEdit ? "Lưu" : "Tạo mới"}</Button>
+                <Button disabled={loading || !isValid}>
+                  {isEdit ? "Lưu" : "Tạo mới"}
+                </Button>
               </Card>
             </>
           )}
         </RouterForm>
       </Form>
-      <CreateSuccessConfirm {...{ open, setOpen }} />
+      <CreateSuccessConfirm {...{ open, setOpen, additionalContent }} />
       <CloseConfirm {...{ form }} />
     </div>
   )

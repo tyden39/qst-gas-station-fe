@@ -1,4 +1,7 @@
 import { zodResolver } from "@hookform/resolvers/zod"
+import { fetchSimpleList as fetchBranchSimpleList } from "actions/branchActions"
+import { fetchSimpleList as fetchCompanySimpleList } from "actions/companyActions"
+import { fetchSimpleList as fetchLoggerSimpleList } from "actions/loggerActions"
 import {
   createInvoice,
   editInvoice,
@@ -22,6 +25,7 @@ import PATH from "routers/path"
 import { z } from "zod"
 import FormCreate from "./create-form"
 import SkeletonForm from "./skeleton-form"
+import useAuth from "zustands/useAuth"
 
 const schema = z.object({
   Check_Key: z
@@ -72,8 +76,13 @@ export default function FuelCreatePage() {
   const { toast } = useToast()
   const location = useLocation()
   const params = useParams()
-
+  const user = useAuth(state => state.user)
+  
+  const [companyList, setCompanyList] = useState([])
+  const [branchList, setBranchList] = useState([])
   const [storeList, setStoreList] = useState([])
+  const [loggerList, setLoggerList] = useState([])
+
   const [fetchInfoLoading, setFetchInfoLoading] = useState(false)
   const [open, setOpen] = useState(false)
 
@@ -152,18 +161,51 @@ export default function FuelCreatePage() {
       handleGetEditInvoice()
     }
     const getMetaData = async () => {
+      getCompanhList()
+      getBranchList()
       getStoreList()
+      getLoggerList()
     }
     getMetaData()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
+
+
+  const getCompanhList = async () => {
+    const response = await fetchCompanySimpleList()
+
+    if (response.status === 200) {
+      const companyList = response.data
+      const companySelectList = transformToSelectList(companyList)
+      setCompanyList(companySelectList)
+    }
+  }
+
+  const getBranchList = async (value) => {
+    const response = await fetchBranchSimpleList({ companyId: value })
+    if (response.status === 200) {
+      const branchList = response.data
+      const branchSelectList = transformToSelectList(branchList)
+      setBranchList(branchSelectList)
+    }
+  }
+
   const getStoreList = async (value) => {
     const response = await fetchStoreSimpleList({ branchId: value })
     if (response.status === 200) {
-      const storeList = response.data
-      const storeSelectList = transformToSelectList(storeList)
-      setStoreList(storeSelectList)
+      const resData = response.data
+      const selectList = transformToSelectList(resData)
+      setStoreList(selectList)
+    }
+  }
+
+  const getLoggerList = async (value) => {
+    const response = await fetchLoggerSimpleList({ storeId: value })
+    if (response.status === 200) {
+      const resData = response.data
+      const selectList = transformToSelectList(resData, 'Logger_ID', 'Logger_ID')
+      setLoggerList(selectList)
     }
   }
 
@@ -194,7 +236,7 @@ export default function FuelCreatePage() {
             <SkeletonForm />
           ) : (
             <>
-              <FormCreate {...{ form, storeList }} />
+              <FormCreate {...{ user, form, branchList, companyList, storeList, loggerList, getBranchList, getStoreList, getLoggerList }} />
 
               <Card className="p-4 space-x-4 text-right">
                 <Button

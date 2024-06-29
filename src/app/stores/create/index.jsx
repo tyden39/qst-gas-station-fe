@@ -50,11 +50,7 @@ export default function StoreCreatePage() {
     defaultValues: {},
   })
 
-  // const blocker = useBlocker(
-  //   ({ currentLocation, nextLocation }) =>
-  //     form.formState.isDirty &&
-  //     currentLocation.pathname !== nextLocation.pathname
-  // );
+  const isValid = form.formState.isValid
 
   async function onSubmit(values) {
     setLoading(true)
@@ -174,7 +170,7 @@ export default function StoreCreatePage() {
                 >
                   Hủy
                 </Button>
-                <Button disabled={loading}>{isEdit ? "Lưu" : "Tạo mới"}</Button>
+                <Button disabled={loading || !isValid}>{isEdit ? "Lưu" : "Tạo mới"}</Button>
               </Card>
             </>
           )}

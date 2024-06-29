@@ -319,7 +319,7 @@ export function FuelPage() {
           header: () => <div className="text-center">Cửa hàng</div>,
           cell: ({ row }) => {
             const rowValue = row.original
-            return <div className="text-center">{rowValue.Store?.name}</div>
+            return <div className="text-center">{rowValue.storeName}</div>
           },
         },
         {
@@ -327,7 +327,7 @@ export function FuelPage() {
           header: () => <div className="text-center">Chi Nhánh</div>,
           cell: ({ row }) => {
             const rowValue = row.original
-            return <div className="text-center">{rowValue.Store?.Branch?.name}</div>
+            return <div className="text-center">{rowValue.branchName}</div>
           },
         },
         {
@@ -336,7 +336,7 @@ export function FuelPage() {
           cell: ({ row }) => {
             const rowValue = row.original
 
-            return <div className="text-center">{rowValue.Store?.Branch?.Company?.name}</div>
+            return <div className="text-center">{rowValue.companyName}</div>
           },
         },
         {

@@ -14,6 +14,13 @@ export const API_PATHS = {
   USER_DELETE: '/user/delete',
   USER_FETCH_ONE: '/user',
 
+  LOGGER_LIST: '/logger/list',
+  LOGGER_SIMPLE_LIST: '/logger/simple-list',
+  LOGGER_CREATE: '/logger/create',
+  LOGGER_EDIT: '/logger/edit',
+  LOGGER_DELETE: '/logger/delete',
+  LOGGER_FETCH_ONE: '/logger',
+
   STORE_LIST: '/store/list',
   STORE_SIMPLE_LIST: '/store/simple-list',
   STORE_CREATE: '/store/create',

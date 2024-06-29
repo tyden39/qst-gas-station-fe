@@ -17,6 +17,8 @@ import BranchCreatePage from "app/branches/create"
 import { StorePage } from "app/stores"
 import StoreCreatePage from "app/stores/create"
 import { USER_ROLE } from "constants/user-roles"
+import { LoggerPage } from "app/loggers"
+import LoggerCreatePage from "app/loggers/create"
 
 const privateRoutes = [
   { path: PATH.HOME, component: FuelPage, role: USER_ROLE.READ_ONLY_STORE },
@@ -43,6 +45,10 @@ const privateRoutes = [
   { path: PATH.STORE, component: StorePage, role: USER_ROLE.BRANCH },
   { path: PATH.STORE_CREATE, component: StoreCreatePage, role: USER_ROLE.BRANCH },
   { path: PATH.STORE_EDIT, component: StoreCreatePage, role: USER_ROLE.BRANCH },
+
+  { path: PATH.LOGGER, component: LoggerPage, role: USER_ROLE.STORE },
+  { path: PATH.LOGGER_CREATE, component: LoggerCreatePage, role: USER_ROLE.STORE },
+  { path: PATH.LOGGER_EDIT, component: LoggerCreatePage, role: USER_ROLE.STORE },
 ]
 
 const publicRoutes = [

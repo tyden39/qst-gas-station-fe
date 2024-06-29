@@ -10,11 +10,24 @@ import {
 } from "components/ui/form"
 import { Input } from "components/ui/input"
 import { BILL_TYPES, FUEL_TYPE, PUMP_ID } from "../constant"
+import { USER_ROLE } from "constants/user-roles"
 
 export default function FormCreate({
+  user,
   form,
+  companyList,
+  branchList,
   storeList,
+  getBranchList,
+  getStoreList,
+  getLoggerList,
+  loggerList
 }) {
+  const userRole = user.roles[0]
+  const companyIdValue = form.watch("companyId")
+  const branchIdValue = form.watch("branchId")
+  const storeIdValue = form.watch("storeId")
+
   return (
     <Card className="w-full">
       <CardHeader>
@@ -41,7 +54,7 @@ export default function FormCreate({
               </FormItem>
             )}
           />
-          <FormField
+          {/* <FormField
             control={form.control}
             name="Logger_ID"
             render={({ field }) => (
@@ -55,7 +68,7 @@ export default function FormCreate({
                 <FormMessage />
               </FormItem>
             )}
-          />
+          /> */}
           <FormField
             control={form.control}
             name="Logger_Time"
@@ -192,15 +205,85 @@ export default function FormCreate({
               </FormItem>
             )}
           />
-          <FormSelect
+          {[USER_ROLE.ADMIN].includes(userRole) ? (
+            <FormSelect
               {...{
                 form,
-                label: "Cửa hàng",
+                label: (
+                  <span>
+                    Công ty <span className="text-red-500">*</span>
+                  </span>
+                ),
+                placeholder: "Chọn công ty",
+                name: "companyId",
+                list: companyList,
+                onChange: async (value) => {
+                  await getBranchList(value)
+                  form.resetField("branchId")
+                },
+              }}
+            />
+          ) : null}
+          {[USER_ROLE.ADMIN, USER_ROLE.COMPANY].includes(userRole) ? (
+            <FormSelect
+              {...{
+                form,
+                label: (
+                  <span>
+                    Chi nhánh <span className="text-red-500">*</span>
+                  </span>
+                ),
+                placeholder: "Chọn chi nhánh",
+                name: "branchId",
+                list: branchList,
+                disabled: !companyIdValue,
+                onChange: async (value) => {
+                  await getStoreList(value)
+                  form.resetField("storeId")
+                },
+              }}
+            />
+          ) : null}
+          {[USER_ROLE.ADMIN, USER_ROLE.COMPANY, USER_ROLE.BRANCH].includes(
+            userRole
+          ) ? (
+            <FormSelect
+              {...{
+                form,
+                label: (
+                  <span>
+                    Cửa hàng <span className="text-red-500">*</span>
+                  </span>
+                ),
                 placeholder: "Chọn cửa hàng",
                 name: "storeId",
                 list: storeList,
+                disabled: !branchIdValue || !companyIdValue,
+                onChange: async (value) => {
+                  await getLoggerList(value)
+                  form.resetField("loggerId")
+                },
               }}
             />
+          ) : null}
+          {[USER_ROLE.ADMIN, USER_ROLE.COMPANY, USER_ROLE.BRANCH].includes(
+            userRole
+          ) ? (
+            <FormSelect
+              {...{
+                form,
+                label: (
+                  <span>
+                    Mã logger <span className="text-red-500">*</span>
+                  </span>
+                ),
+                placeholder: "Chọn mã logger",
+                name: "Logger_ID",
+                list: loggerList,
+                disabled: !branchIdValue || !companyIdValue || !storeIdValue,
+              }}
+            />
+          ) : null}
         </div>
       </CardContent>
     </Card>

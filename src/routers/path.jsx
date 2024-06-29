@@ -24,6 +24,10 @@ const PATH = {
   STORE: '/store',
   STORE_CREATE: '/store/create',
   STORE_EDIT: '/store/edit/:id',
+
+  LOGGER: '/logger',
+  LOGGER_CREATE: '/logger/create',
+  LOGGER_EDIT: '/logger/edit/:id',
 }
 
 export default PATH
