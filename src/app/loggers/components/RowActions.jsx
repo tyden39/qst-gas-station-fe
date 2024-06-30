@@ -89,7 +89,7 @@ const RowActions = ({ id, name, applyFilter, userRole }) => {
         <DropdownMenuContent align="end">
           <DropdownMenuItem asChild>
             <Link
-              to={PATH.STORE_EDIT.replace(":id", id)}
+              to={PATH.LOGGER_EDIT.replace(":id", id)}
               className="cursor-pointer"
             >
               Chỉnh sửa
