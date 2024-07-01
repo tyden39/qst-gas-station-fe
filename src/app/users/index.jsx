@@ -6,7 +6,7 @@ import {
   useReactTable,
 } from "@tanstack/react-table"
 
-import PageHeader from "components/layout/header"
+import PageFilter from "components/layout/page-filter"
 import PagePagination from "components/pagination"
 import PageTable from "components/table"
 import { buttonVariants } from "components/ui/button"
@@ -268,7 +268,7 @@ export function UserPage() {
         </Link>
       </div>
 
-      <PageHeader
+      <PageFilter
         {...{
           table,
           filter,
@@ -282,7 +282,7 @@ export function UserPage() {
         }}
       >
         <UserFilter {...{ authUser: user, filter, onFieldChange, companyList, branchList, storeList, getBranchList, getStoreList }} />
-      </PageHeader>
+      </PageFilter>
       <FilterTags {...{activedFilter, applyFilter, companyList, branchList, storeList}} />
       <PageTable {...{ table }} />
       <PagePagination {...{ table, meta, setMeta, applyFilter }} />

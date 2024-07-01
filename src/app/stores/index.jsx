@@ -6,7 +6,7 @@ import {
 import { fetchSimpleList as fetchBranchSimpleList } from "actions/branchActions"
 import { fetchSimpleList as fetchCompanySimpleList } from "actions/companyActions"
 import { fetchAll } from "actions/storeActions"
-import PageHeader from "components/layout/header"
+import PageFilter from "components/layout/page-filter"
 import PagePagination from "components/pagination"
 import PageTable from "components/table"
 import { buttonVariants } from "components/ui/button"
@@ -230,7 +230,7 @@ export function StorePage() {
         </Link>
       </div>
 
-      <PageHeader
+      <PageFilter
         {...{
           table,
           filter,
@@ -244,7 +244,7 @@ export function StorePage() {
         }}
       >
         <StoreFilter {...{ filter, onFieldChange, companyList, branchList, getBranchList }} />
-      </PageHeader>
+      </PageFilter>
       <FilterTags {...{activedFilter, applyFilter, companyList, branchList}} />
       <PageTable {...{ table }} />
       <PagePagination {...{ table, meta, setMeta, applyFilter }} />

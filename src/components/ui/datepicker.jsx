@@ -1,5 +1,5 @@
 import { format } from "date-fns"
-import { Calendar as CalendarIcon } from "lucide-react"
+import { Calendar as CalendarIcon, X } from "lucide-react"
 
 import EllipsisTooltip from "components/EllipsisTooltip"
 import { buttonVariants } from "components/ui/button"
@@ -15,10 +15,15 @@ export function DatePickerWithRange({
   name,
   label,
   placeholder,
+  disabled,
 }) {
-
   const onSelect = (value) => {
     onChangeValue(value, name)
+  }
+
+  const handleClear = (event) => {
+    event.stopPropagation()
+    onSelect()
   }
 
   return (
@@ -45,7 +50,20 @@ export function DatePickerWithRange({
               <span className="text-muted-foreground">{placeholder}</span>
             )}
           </EllipsisTooltip>
-          <CalendarIcon className="h-4 w-4" />
+
+          {date ? (
+            <X
+              className={cn(
+                "h-4 w-4 opacity-50",
+                disabled
+                  ? "cursor-not-allowed"
+                  : "hover:bg-destructive hover:stroke-destructive-foreground hover:opacity-75 rounded cursor-pointer"
+              )}
+              onClick={handleClear}
+            />
+          ) : (
+            <CalendarIcon className="h-4 w-4" />
+          )}
         </div>
       </PopoverTrigger>
       <PopoverContent className="w-auto p-0" align="start">

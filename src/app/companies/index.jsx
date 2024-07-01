@@ -7,7 +7,7 @@ import {
 } from "@tanstack/react-table"
 
 import { fetchAll } from "actions/companyActions"
-import PageHeader from "components/layout/header"
+import PageFilter from "components/layout/page-filter"
 import PagePagination from "components/pagination"
 import PageTable from "components/table"
 import { buttonVariants } from "components/ui/button"
@@ -196,7 +196,7 @@ export function CompanyPage() {
         </Link>
       </div>
 
-      <PageHeader
+      <PageFilter
         {...{
           table,
           filter,
@@ -208,7 +208,7 @@ export function CompanyPage() {
         }}
       >
         {/* Filter here */}
-      </PageHeader>
+      </PageFilter>
       <PageTable {...{ table }} />
       <PagePagination {...{ table, meta, setMeta, applyFilter }} />
     </div>

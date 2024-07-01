@@ -24,7 +24,7 @@ import { useState } from "react"
 import { Link } from "react-router-dom"
 import PATH from "routers/path"
 
-const RowActions = ({ id, checkKey, applyFilter, userRole }) => {
+const RowActions = ({ id, checkKey, refreshData, userRole }) => {
   const { toast } = useToast()
   const [open, setOpen] = useState(false)
   const [loading, setLoading] = useState(false)
@@ -45,7 +45,7 @@ const RowActions = ({ id, checkKey, applyFilter, userRole }) => {
         variant: TOAST.SUCCESS,
         title: "Xóa thành công!",
       })
-      applyFilter()
+      refreshData()
     } else
       toast({
         variant: TOAST.DESTRUCTIVE,
@@ -69,7 +69,7 @@ const RowActions = ({ id, checkKey, applyFilter, userRole }) => {
         variant: TOAST.SUCCESS,
         title: "Khôi phục thành công!",
       })
-      applyFilter()
+      refreshData()
     } else
       toast({
         variant: TOAST.DESTRUCTIVE,

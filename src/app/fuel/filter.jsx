@@ -5,8 +5,48 @@ import { useEffect, useState } from "react"
 import { BILL_TYPES, FUEL_TYPE, PUMP_ID } from "./constant"
 import { USER_ROLE } from "constants/user-roles"
 
-export default function InvoiceFilter({ authUser, filter, onFieldChange, companyList, branchList, storeList }) {
-  
+import { fetchSimpleList as fetchBranchSimpleList } from "actions/branchActions"
+import { fetchSimpleList as fetchCompanySimpleList } from "actions/companyActions"
+import { fetchSimpleList as fetchStoreSimpleList } from "actions/storeActions"
+
+export default function ExtendFilter({ authUser, filter, onFieldChange }) {
+  const [companyList, setCompanyList] = useState([])
+  const [branchList, setBranchList] = useState([])
+  const [storeList, setStoreList] = useState([])
+
+  const getCompanyList = async (value) => {
+    const response = await fetchCompanySimpleList({ companyId: value })
+    if (response.status === 200) {
+      const resData = response.data
+      setCompanyList(resData)
+    }
+  }
+
+  const getBranchList = async (value) => {
+    const response = await fetchBranchSimpleList({ companyId: value })
+    if (response.status === 200) {
+      const branchList = response.data
+      setBranchList(branchList)
+    }
+  }
+
+  const getStoreList = async (value) => {
+    const response = await fetchStoreSimpleList({ branchId: value })
+    if (response.status === 200) {
+      const storeList = response.data
+      setStoreList(storeList)
+    }
+  }
+
+  useEffect(() => {
+    const initialData = async () => {
+      authUser.roles.includes(USER_ROLE.ADMIN) && getCompanyList()
+      authUser.roles.includes(USER_ROLE.COMPANY) && getBranchList()
+      authUser.roles.includes(USER_ROLE.BRANCH) && getStoreList()
+    }
+    initialData()
+  }, [authUser.roles])
+
   const [companies, setCompanies] = useState([])
   const [branches, setBranches] = useState([])
   const [stores, setStores] = useState([])
@@ -86,7 +126,6 @@ export default function InvoiceFilter({ authUser, filter, onFieldChange, company
         value={filter?.pumpId}
         onValueChange={onFieldChange}
         selectList={PUMP_ID}
-        className={"mb-2"}
       />
       {authUser.roles.includes(USER_ROLE.ADMIN) && <FilterSelect
         name="companyId"

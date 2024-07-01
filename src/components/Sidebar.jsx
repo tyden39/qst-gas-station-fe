@@ -9,7 +9,7 @@ import { Button } from "./ui/button"
 import { Tooltip, TooltipContent } from "./ui/tooltip"
 import { Separator } from "./ui/separator"
 
-const Sidebar = () => {
+const Sidebar = ({className}) => {
   const [collapsed, setActivedMenu] = useAppNavigation((state) => [
     state.collapsed,
     state.setActivedMenu,
@@ -27,13 +27,14 @@ const Sidebar = () => {
   return (
     <nav
       className={cn(
-        "min-h-screen overflow-y-scroll border-r transition-all bg-white",
-        collapsed ? "w-12" : "w-64"
+        "border-r transition-all bg-white",
+        collapsed ? "w-12" : "w-64",
+        className
       )}
     >
-      <div className="p-2 border-b text-center bg-[#001C39]">
+      {/* <div className="p-2 border-b text-center bg-[#001C39]">
         <span className="leading-10 text-3xl text-background">QS PECO</span>
-      </div>
+      </div> */}
       <div className="p-2 space-y-2">
         {menu
           .filter(

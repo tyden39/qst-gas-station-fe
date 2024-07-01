@@ -1,5 +1,4 @@
 
-import moment from "moment"
 
 export const initFilter = {
   keyword: "",
@@ -9,7 +8,7 @@ export const initFilter = {
   companyId: null,
   branchId: null,
   storeId: null,
-  billDate: { from: moment().subtract(1, 'M').toDate(), to: new Date() }
+  billDate: null, //{ from: moment().subtract(1, 'M').toDate(), to: new Date() }
 }
 
 export const initMeta = {

@@ -154,7 +154,7 @@ export default function LoggerCreatePage() {
           {"Trở lại danh sách"}
         </Link>
         <h1 className="text-4xl leading-normal mb-3">
-          {isEdit ? "Chỉnh sửa cửa hàng" : "Thêm mới cửa hàng"}
+          {isEdit ? "Chỉnh sửa logger" : "Thêm mới logger"}
         </h1>
       </div>
 

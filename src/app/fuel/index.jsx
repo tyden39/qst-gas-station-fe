@@ -1,35 +1,25 @@
-import {
-  getCoreRowModel,
-  getFilteredRowModel,
-  getPaginationRowModel,
-  getSortedRowModel,
-  useReactTable,
-} from "@tanstack/react-table"
-
-import { fetchSimpleList as fetchBranchSimpleList } from "actions/branchActions"
-import { fetchSimpleList as fetchCompanySimpleList } from "actions/companyActions"
-import { fetchSimpleList as fetchStoreSimpleList } from "actions/storeActions"
-import PageHeader from "components/layout/header"
+import PageFilter from "components/layout/page-filter"
+import TableColumnSelect from "components/layout/table-column-select"
 import PagePagination from "components/pagination"
 import PageTable from "components/table"
 import { buttonVariants } from "components/ui/button"
 import { Checkbox } from "components/ui/checkbox"
-import { Skeleton } from "components/ui/skeleton"
 import { USER_ROLE } from "constants/user-roles"
+import useTable from "hooks/useTable"
+import useTableSelect from "hooks/useTableSelect"
+import useFilter from "hooks/userFilter"
 import { getActiveMenu } from "lib/url"
 import { cn } from "lib/utils"
 import moment from "moment"
-import { useCallback, useEffect, useMemo, useState } from "react"
+import { useMemo } from "react"
 import { Link, useLocation } from "react-router-dom"
 import PATH from "routers/path"
 import useAuth from "zustands/useAuth"
-import useInvoice from "zustands/useInvoice"
 import { fetchInvoices } from "../../actions/fuelActions"
 import ExportInvoice from "./components/ExportInvoice"
 import RowActions from "./components/RowActions"
 import { BILL_TYPES, FUEL_TYPE } from "./constant"
-import InvoiceFilter from "./filter"
-import FilterTags from "./filterTags"
+import ExtendFilter from "./filter"
 import { initColumnVisibility, initFilter, initMeta } from "./initial"
 
 export function FuelPage() {
@@ -43,65 +33,56 @@ export function FuelPage() {
   const location = useLocation()
   const activeMenuName = getActiveMenu(location.pathname)
 
-  const [data, setData] = useState([])
-  const [meta, setMeta] = useState(initMeta)
+  const {
+    filter,
+    meta,
+    data,
+    onFieldChange,
+    setMeta,
+    setFilter,
+    refreshData,
+    loading,
+  } = useFilter({ initFilter, initMeta, action: fetchInvoices })
 
-  const [filter, setFilter] = useState(initFilter)
-  const [activedFilter, setActivedFilter] = useState(initFilter)
-  const [sorting, setSorting] = useState([])
-  const [loading, setLoading] = useState(false)
-  const [columnFilters, setColumnFilters] = useState([])
-  const [columnVisibility, setColumnVisibility] = useState(initColumnVisibility)
-  const [selected, setSelected] = useInvoice((state) => [
-    state.selected,
-    state.setSelected,
-  ])
-  const [currentPageSelected, setCurrentPageSelected] = useState([])
-
-  const [rowSelection, setRowSelection] = useState({})
-
-  const [companyList, setCompanyList] = useState([])
-  const [branchList, setBranchList] = useState([])
-  const [storeList, setStoreList] = useState([])
-
-  const canSubmit = JSON.stringify(filter) !== JSON.stringify(activedFilter)
-
-  const applyFilter = useCallback(
-    (forceFilter) => {
-      setLoading(true)
-      const finalFilter = { ...filter, ...forceFilter }
-      fetchInvoices(finalFilter, meta)
-        .then(({ data, meta }) => {
-          setMeta(meta)
-          setData(data)
-          setFilter(finalFilter)
-          setActivedFilter(finalFilter)
-        })
-        .catch((error) => console.log(error))
-        .finally(() => setLoading(false))
-    },
-    [filter, meta]
-  )
-
-  useEffect(() => {
-    if (
-      data.length > 0 &&
-      currentPageSelected.length > 0 &&
-      !data.map((item) => item.id).includes(currentPageSelected[0])
-    ) {
-      setCurrentPageSelected([])
-    }
-  }, [data, currentPageSelected])
-
-  useEffect(() => {
-    applyFilter()
-    table.setPageSize(meta.pageSize)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [meta.currentPage, meta.pageSize])
+  const { selected, onHeaderChecked, onRowChecked } = useTableSelect({
+    data,
+    meta,
+  })
 
   const columns = useMemo(
     () =>
       [
+        {
+          accessorKey: "select",
+          size: 50,
+          header: () => (
+            <div className="flex justify-center items-center">
+              <Checkbox
+                checked={
+                  selected.length > 0 &&
+                  (selected.length === meta.totalItems || "indeterminate")
+                }
+                onCheckedChange={onHeaderChecked}
+                aria-label="Select all"
+              />
+            </div>
+          ),
+          cell: ({ row }) => {
+            const rowValue = row.original
+
+            return (
+              <div className="flex justify-center items-center">
+                <Checkbox
+                  checked={selected.includes(rowValue.id)}
+                  onCheckedChange={(value) => onRowChecked(value, rowValue)}
+                  aria-label="Select row"
+                />
+              </div>
+            )
+          },
+          enableSorting: false,
+          enableHiding: false,
+        },
         {
           accessorKey: "order",
           size: 50,
@@ -113,79 +94,6 @@ export function FuelPage() {
             return <div className="text-center">{startItem - row.index}</div>
           },
           disableSortBy: true,
-        },
-        {
-          accessorKey: "select",
-          size: 50,
-          header: () => (
-            <div className="text-center">
-              <Checkbox
-                checked={
-                  selected.length > 0 &&
-                  (selected.length === meta.totalItems || "indeterminate")
-                }
-                onCheckedChange={() => {
-                  const value =
-                    selected.length > 0 &&
-                    (selected.length === meta.totalItems || "indeterminate")
-                  let newSelected = []
-                  if (value === "indeterminate") {
-                    if ((currentPageSelected.length ?? 0) < meta.pageSize) {
-                      newSelected = selected.filter(
-                        (item) => !data.map((i) => i.id).includes(item)
-                      )
-                      newSelected = [
-                        ...newSelected,
-                        ...data.map((item) => item.id),
-                      ]
-                      setCurrentPageSelected(data.map((item) => item.id))
-                    } else {
-                      newSelected = selected.filter(
-                        (item) => !data.map((i) => i.id).includes(item)
-                      )
-                      setCurrentPageSelected([])
-                    }
-                  } else if (value) {
-                    newSelected = selected.filter(
-                      (item) => !data.map((i) => i.id).includes(item)
-                    )
-                    setCurrentPageSelected([])
-                  } else {
-                    setCurrentPageSelected(data.map((item) => item.id))
-                    newSelected = [...selected, ...data.map((item) => item.id)]
-                  }
-                  setSelected(newSelected)
-                }}
-                aria-label="Select all"
-              />
-            </div>
-          ),
-          cell: ({ row }) => {
-            const rowValue = row.original
-
-            return (
-              <div className="text-center">
-                <Checkbox
-                  checked={selected.includes(rowValue.id)}
-                  onCheckedChange={(value) => {
-                    setSelected(
-                      value
-                        ? [...selected, rowValue.id]
-                        : selected.filter((item) => item !== rowValue.id)
-                    )
-                    setCurrentPageSelected((prev) =>
-                      value
-                        ? [...prev, rowValue.id]
-                        : prev.filter((item) => item !== rowValue.id)
-                    )
-                  }}
-                  aria-label="Select row"
-                />
-              </div>
-            )
-          },
-          enableSorting: false,
-          enableHiding: false,
         },
         {
           accessorKey: "Check_Key",
@@ -218,9 +126,7 @@ export function FuelPage() {
         {
           accessorKey: "Pump_ID",
           size: 50,
-          header: () => (
-            <div className="text-center capitalize">Mã vòi bơm</div>
-          ),
+          header: () => <div className="text-center capitalize">Vòi bơm</div>,
           cell: ({ row }) => (
             <div className="text-center">{row.getValue("Pump_ID")}</div>
           ),
@@ -373,7 +279,7 @@ export function FuelPage() {
                 id={rowValue.id}
                 checkKey={rowValue.Check_Key}
                 userRole={authUser.roles[0]}
-                applyFilter={applyFilter}
+                refreshData={refreshData}
               />
             )
           },
@@ -386,91 +292,21 @@ export function FuelPage() {
     [
       meta,
       selected,
-      setSelected,
-      data,
-      currentPageSelected.length,
-      applyFilter,
+      refreshData,
       allowEdit,
       authUser.roles,
+      onHeaderChecked,
+      onRowChecked,
     ]
   )
 
-  const tableColumns = useMemo(
-    () =>
-      loading
-        ? columns.map((column) => ({
-            ...column,
-            cell: <Skeleton className={"h-5 w-full"} />,
-          }))
-        : columns,
-    [loading, columns]
-  )
-
-  const tableData = useMemo(
-    () => (loading ? Array(meta.pageSize) : data),
-    [data, loading, meta.pageSize]
-  )
-
-  const table = useReactTable({
-    data: tableData,
-    columns: tableColumns,
-    onSortingChange: setSorting,
-    onColumnFiltersChange: setColumnFilters,
-    getCoreRowModel: getCoreRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
-    getSortedRowModel: getSortedRowModel(),
-    getFilteredRowModel: getFilteredRowModel(),
-    onColumnVisibilityChange: setColumnVisibility,
-    onRowSelectionChange: setRowSelection,
-    state: {
-      sorting,
-      columnFilters,
-      columnVisibility,
-      rowSelection,
-    },
+  const { table } = useTable({
+    columns,
+    loading,
+    initColumnVisibility,
+    data,
+    meta,
   })
-
-  const onFieldChange = useCallback(
-    (value, name) =>
-      setFilter((prev) => ({
-        ...prev,
-        [name]: value === "all" ? undefined : value,
-      })),
-    []
-  )
-
-  const getCompanyList = async (value) => {
-    const response = await fetchCompanySimpleList({ companyId: value })
-    if (response.status === 200) {
-      const resData = response.data
-      setCompanyList(resData)
-    }
-  }
-
-  const getBranchList = async (value) => {
-    const response = await fetchBranchSimpleList({ companyId: value })
-    if (response.status === 200) {
-      const branchList = response.data
-      setBranchList(branchList)
-    }
-  }
-
-  const getStoreList = async (value) => {
-    const response = await fetchStoreSimpleList({ branchId: value })
-    if (response.status === 200) {
-      const storeList = response.data
-      setStoreList(storeList)
-    }
-  }
-
-  useEffect(() => {
-    const initialData = async () => {
-      authUser.roles.includes(USER_ROLE.ADMIN) && getCompanyList()
-      authUser.roles.includes(USER_ROLE.COMPANY) && getBranchList()
-      authUser.roles.includes(USER_ROLE.BRANCH) && getStoreList()
-    }
-    initialData()
-  }, [authUser.roles])
 
   return (
     <div className="w-full">
@@ -486,38 +322,25 @@ export function FuelPage() {
               Tạo Hóa Đơn
             </Link>
           )}
+          <TableColumnSelect {...{ table }} />
         </div>
       </div>
 
-      <PageHeader
+      <PageFilter
         {...{
-          table,
-          filter,
-          initFilter,
-          activedFilter,
-          onFieldChange,
-          applyFilter,
-          loading,
-          canSubmit,
+          setFilter,
           searchInputPlaceholder: "Tìm kiếm theo Mã Kiểm Tra",
         }}
       >
-        <InvoiceFilter
+        <ExtendFilter
           {...{
             authUser,
             filter,
             onFieldChange,
-            companyList,
-            branchList,
-            storeList,
-            getBranchList,
-            getStoreList,
           }}
         />
-      </PageHeader>
-      <FilterTags
-        {...{ activedFilter, applyFilter, companyList, branchList, storeList }}
-      />
+      </PageFilter>
+      
       <PageTable {...{ table }} />
       <PagePagination {...{ setMeta, meta, selected }} />
     </div>

@@ -8,7 +8,7 @@ import {
 
 import { fetchAll } from "actions/branchActions"
 import { fetchSimpleList as fetchCompanySimpleList } from "actions/companyActions"
-import PageHeader from "components/layout/header"
+import PageFilter from "components/layout/page-filter"
 import PagePagination from "components/pagination"
 import PageTable from "components/table"
 import { buttonVariants } from "components/ui/button"
@@ -229,7 +229,7 @@ export function BranchPage() {
         </Link>
       </div>
 
-      <PageHeader
+      <PageFilter
         {...{
           table,
           filter,
@@ -244,7 +244,7 @@ export function BranchPage() {
         }}
       >
         <BranchFilter {...{filter, onFieldChange, companyList}} />
-      </PageHeader>
+      </PageFilter>
       <FilterTags {...{activedFilter, applyFilter, companyList}} />
       <PageTable {...{ table }} />
       <PagePagination {...{ meta, setMeta }} />

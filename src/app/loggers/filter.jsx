@@ -3,7 +3,7 @@ import { DatePickerWithRange } from "components/ui/datepicker"
 // import { transformToSelectList } from "lib/transofrm"
 import { useEffect, useState } from "react"
 
-export default function InvoiceFilter({ filter, onFieldChange, companyList, branchList, storeList }) {
+export default function ExtendFilter({ filter, onFieldChange, companyList, branchList, storeList }) {
   
   const [companies, setCompanies] = useState([])
   const [branches, setBranches] = useState([])

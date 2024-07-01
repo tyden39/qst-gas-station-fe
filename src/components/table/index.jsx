@@ -1,4 +1,6 @@
-import { flexRender } from "@tanstack/react-table"
+import {
+  flexRender
+} from "@tanstack/react-table"
 
 import {
   Table,
@@ -11,6 +13,7 @@ import {
 
 export default function PageTable({ table }) {
   const columns = table.getVisibleLeafColumns()
+
   return (
     <div className="rounded-md border bg-white">
       <Table>
@@ -19,7 +22,10 @@ export default function PageTable({ table }) {
             <TableRow key={headerGroup.id}>
               {headerGroup.headers.map((header) => {
                 return (
-                  <TableHead key={header.id} style={{width: header.getSize()}}>
+                  <TableHead
+                    key={header.id}
+                    style={{ width: header.getSize() }}
+                  >
                     {header.isPlaceholder
                       ? null
                       : flexRender(

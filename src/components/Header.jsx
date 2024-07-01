@@ -1,4 +1,11 @@
-import { User } from "lucide-react"
+import {
+  Building,
+  MapPin,
+  Store,
+  User,
+  UserCheck,
+  UserRoundCheck,
+} from "lucide-react"
 import { Link } from "react-router-dom"
 import PATH from "routers/path"
 import useAuth from "zustands/useAuth"
@@ -10,38 +17,86 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu"
+import { USER_ROLES } from "constants/user-roles"
 
 export default function Header() {
-  const [user] = useAuth(state => [state.user])
+  const [user] = useAuth((state) => [state.user])
   const [logout] = useAuth((state) => [state.logout])
 
   return (
-    <header className="w-full h-fit flex justify-end items-center px-4 py-2 border-b bg-white">
-      {/* chọn cty */}
-      {/* chọn chi nhánh */}
-      {/* chọn cửa hàng */}
+    <header className="w-full flex justify-between h-fit px-6 py-2 border-b bg-primary">
+      <div className="text-center">
+        <span className="leading-10 text-3xl text-background">QS PECO</span>
+      </div>
 
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <div className="flex items-center gap-2 cursor-pointer">
-            <span className="">{user?.username}</span>
-            <Button
-              variant="outline"
-              size="icon"
-              className="overflow-hidden rounded-full"
-            >
-              <User />
-            </Button>
-          </div>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align="end">
-          <DropdownMenuItem className="cursor-pointer" asChild>
-            <Link to={PATH.PROFILES}>Hồ sơ</Link>
-          </DropdownMenuItem>
-          <DropdownMenuSeparator />
-          <DropdownMenuItem className="cursor-pointer" onClick={logout}>Đăng xuất</DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
+      <div className="flex justify-end items-center gap-7 text-background">
+        <span className="flex justify-center items-center gap-1 font-bold">
+          <UserRoundCheck className="h-5 w-5" />
+          {`${
+            USER_ROLES.find((role) => role.value === user?.roles?.[0])?.label
+          }`}
+        </span>
+
+        {user && user.roles?.length > 0 ? (
+          <div className="border-l border-solid h-7" />
+        ) : null}
+        {user && (user.companyId || user.branchId || user.storeId) ? (
+          <>
+            <div className="flex justify-end items-center gap-3.5">
+              {user && user.companyId ? (
+                <span className="flex justify-center items-center gap-1 font-bold">
+                  <Building className="h-5 w-5" />
+                  {`${user?.companyName}`}
+                </span>
+              ) : null}
+              {user && user.branchId ? (
+                <>
+                  -
+                  <span className="flex justify-center items-center gap-1 font-bold">
+                    <MapPin className="h-5 w-5" />
+                    {`${user?.branchName}`}
+                  </span>
+                </>
+              ) : null}
+              {user && user.storeId ? (
+                <>
+                  -
+                  <span className="flex justify-center items-center gap-1 font-bold">
+                    <Store className="h-5 w-5" />
+                    {`${user?.storeName}`}
+                  </span>
+                </>
+              ) : null}
+            </div>
+
+            <div className="border-l border-solid h-7" />
+          </>
+        ) : null}
+
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <div className="flex items-center gap-2 cursor-pointer">
+              <span className="font-bold">{user?.username}</span>
+              <Button
+                variant="outline"
+                size="icon"
+                className="overflow-hidden rounded-full"
+              >
+                <User className="text-black" />
+              </Button>
+            </div>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuItem className="cursor-pointer" asChild>
+              <Link to={PATH.PROFILES}>Hồ sơ</Link>
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem className="cursor-pointer" onClick={logout}>
+              Đăng xuất
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </div>
     </header>
   )
 }

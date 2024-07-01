@@ -39,14 +39,9 @@ export const fetchInvoices = async (filter, pageMeta) => {
       `${API_PATHS.INVOICE_LIST}${queries ? `?${queries}` : ""}`
     )
 
-    const { data, meta } = response.data.data
-    return { data, meta }
+    return response.data
   } catch (error) {
-    if (error.response.status === 401) {
-      localStorage.removeItem(AUTH_CONFIG.ACCESS_TOKEN_STORAGE_NAME)
-      localStorage.removeItem(AUTH_CONFIG.USER_STORAGE_NAME)
-      window.location.href = '/login'
-    }
+    return handleError(error)
   }
 }
 
