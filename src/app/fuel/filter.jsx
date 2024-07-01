@@ -9,7 +9,7 @@ import { fetchSimpleList as fetchBranchSimpleList } from "actions/branchActions"
 import { fetchSimpleList as fetchCompanySimpleList } from "actions/companyActions"
 import { fetchSimpleList as fetchStoreSimpleList } from "actions/storeActions"
 
-export default function ExtendFilter({ authUser, filter, onFieldChange }) {
+export default function AdditionalFilter({ authUser, filter, onFieldChange }) {
   const [companyList, setCompanyList] = useState([])
   const [branchList, setBranchList] = useState([])
   const [storeList, setStoreList] = useState([])
@@ -52,24 +52,28 @@ export default function ExtendFilter({ authUser, filter, onFieldChange }) {
   const [stores, setStores] = useState([])
 
   const onCompanyChange = async (value, name) => {
-    if (filter.companyId !== value){
+    if (filter.companyId !== value) {
       onFieldChange(value, name)
-      onFieldChange(undefined, 'branchId')
+      onFieldChange(undefined, "branchId")
 
-      const brList = value ? branchList.filter(x => x.companyId === value) : branchList
+      const brList = value
+        ? branchList.filter((x) => x.companyId === value)
+        : branchList
       const selectList = transformToSelectList(brList)
       setBranches(selectList)
 
-      onBranchChange(undefined, 'branchId')
+      onBranchChange(undefined, "branchId")
     }
   }
 
   const onBranchChange = (value, name) => {
-    if (filter.branchId !== value){
+    if (filter.branchId !== value) {
       onFieldChange(value, name)
-      onFieldChange(undefined, 'storeId')
+      onFieldChange(undefined, "storeId")
 
-      const stList = value ? storeList.filter(x => x.branchId === value) : storeList
+      const stList = value
+        ? storeList.filter((x) => x.branchId === value)
+        : storeList
       const selectList = transformToSelectList(stList)
       setStores(selectList)
     }
@@ -98,8 +102,8 @@ export default function ExtendFilter({ authUser, filter, onFieldChange }) {
     <>
       <DatePickerWithRange
         name={"billDate"}
-        label='Thời gian ghi log:'
-        placeholder={'Chọn ngày'}
+        label="Thời gian ghi log:"
+        placeholder={"Chọn ngày"}
         date={filter?.billDate}
         onChangeValue={onFieldChange}
       />
@@ -107,14 +111,14 @@ export default function ExtendFilter({ authUser, filter, onFieldChange }) {
         name="billType"
         value={filter?.billType}
         label={"Loại hóa đơn:"}
-        placeholder={'Chọn hóa đơn'}
+        placeholder={"Chọn hóa đơn"}
         onValueChange={onFieldChange}
         selectList={BILL_TYPES}
       />
       <FilterSelect
         name="fuelType"
         label={"Loại nhiên liệu:"}
-        placeholder={'Chọn nhiên liệu'}
+        placeholder={"Chọn nhiên liệu"}
         value={filter?.fuelType}
         onValueChange={onFieldChange}
         selectList={FUEL_TYPE}
@@ -122,35 +126,41 @@ export default function ExtendFilter({ authUser, filter, onFieldChange }) {
       <FilterSelect
         name="pumpId"
         label={"Mã vòi bơm:"}
-        placeholder={'Chọn vòi bơm'}
+        placeholder={"Chọn vòi bơm"}
         value={filter?.pumpId}
         onValueChange={onFieldChange}
         selectList={PUMP_ID}
       />
-      {authUser.roles.includes(USER_ROLE.ADMIN) && <FilterSelect
-        name="companyId"
-        value={filter.companyId}
-        label={"Công ty:"}
-        placeholder="Chọn công ty"
-        onValueChange={onCompanyChange}
-        selectList={companies}
-      />}
-      {authUser.roles.includes(USER_ROLE.COMPANY) && <FilterSelect
-        name="branchId"
-        value={filter.branchId}
-        label={"Chi nhánh:"}
-        placeholder="Chọn chi nhánh"
-        onValueChange={onBranchChange}
-        selectList={branches}
-      />}
-      {authUser.roles.includes(USER_ROLE.BRANCH) && <FilterSelect
-        name="storeId"
-        value={filter.storeId}
-        label={"Cửa hàng:"}
-        placeholder="Chọn cửa hàng"
-        onValueChange={onStoreChange}
-        selectList={stores}
-      />}
+      {authUser.roles.includes(USER_ROLE.ADMIN) && (
+        <FilterSelect
+          name="companyId"
+          value={filter.companyId}
+          label={"Công ty:"}
+          placeholder="Chọn công ty"
+          onValueChange={onCompanyChange}
+          selectList={companies}
+        />
+      )}
+      {authUser.roles.includes(USER_ROLE.COMPANY) && (
+        <FilterSelect
+          name="branchId"
+          value={filter.branchId}
+          label={"Chi nhánh:"}
+          placeholder="Chọn chi nhánh"
+          onValueChange={onBranchChange}
+          selectList={branches}
+        />
+      )}
+      {authUser.roles.includes(USER_ROLE.BRANCH) && (
+        <FilterSelect
+          name="storeId"
+          value={filter.storeId}
+          label={"Cửa hàng:"}
+          placeholder="Chọn cửa hàng"
+          onValueChange={onStoreChange}
+          selectList={stores}
+        />
+      )}
     </>
   )
 }

@@ -1,9 +1,7 @@
 import axiosInstance from "actions/axiosInstance"
-import axios from "axios"
 import { API_PATHS } from "constants/api-paths"
 import { handleError } from "lib/api"
 import { convertToQueryString } from "lib/utils"
-import { AUTH_CONFIG } from "routers/config"
 
 export const fetchUsers = async (filter, pageMeta) => {
   try {
@@ -22,15 +20,9 @@ export const fetchUsers = async (filter, pageMeta) => {
       `${API_PATHS.USER_LIST}${queries ? `?${queries}` : ""}`
     )
 
-    const { data, meta } = response.data.data
-    return { data, meta }
+    return response.data
   } catch (error) {
-    if (error.response.status === 401) {
-      localStorage.removeItem(AUTH_CONFIG.ACCESS_TOKEN_STORAGE_NAME)
-      localStorage.removeItem(AUTH_CONFIG.USER_STORAGE_NAME)
-      window.location.href = '/login'
-    }
-    if (!axios.isAxiosError(error)) console.error(error)
+    return handleError(error)
   }
 }
 
@@ -67,12 +59,7 @@ export const deleteUser = async (id, force) => {
     )
     return response.status
   } catch (error) {
-    if (error.response.status === 401) {
-      localStorage.removeItem(AUTH_CONFIG.ACCESS_TOKEN_STORAGE_NAME)
-      localStorage.removeItem(AUTH_CONFIG.USER_STORAGE_NAME)
-      window.location.href = '/login'
-    }
-    console.log(error)
+    return handleError(error)
   }
 }
 

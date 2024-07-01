@@ -1,28 +1,36 @@
-import { fetchAll } from "actions/loggerActions"
 import PageFilter from "components/layout/page-filter"
 import PagePagination from "components/pagination"
 import PageTable from "components/table"
+import { buttonVariants } from "components/ui/button"
 import { Checkbox } from "components/ui/checkbox"
 import { USER_ROLE } from "constants/user-roles"
 import useTable from "hooks/useTable"
 import useTableSelect from "hooks/useTableSelect"
 import useFilter from "hooks/userFilter"
 import { getActiveMenu } from "lib/url"
+import { cn } from "lib/utils"
 import { useMemo } from "react"
-import { useLocation } from "react-router-dom"
+import { Link, useLocation } from "react-router-dom"
 import PATH from "routers/path"
 import useAuth from "zustands/useAuth"
-import RowActions from "./components/RowActions"
-import { initColumnVisibility, initFilter, initMeta } from "./initial"
+import RowActions from "./row-actions"
+import TableColumnSelect from "./table-column-select"
 
 export function PageList({
   cols,
   actions,
   pageName,
+  pageLabel,
   isSelect,
   additionalFilter,
+  initColumnVisibility,
+  initFilter,
+  initMeta,
+  deleteAction,
+  restoreAction,
+  fetchAction
 }) {
-  const [getPermission, user] = useAuth((state) => [
+  const [getPermission, authUser] = useAuth((state) => [
     state.getPermission,
     state.user,
   ])
@@ -42,7 +50,7 @@ export function PageList({
     setFilter,
     refreshData,
     loading,
-  } = useFilter({ initFilter, initMeta, action: fetchAll })
+  } = useFilter({ initFilter, initMeta, action: fetchAction })
 
   const { selected, onHeaderChecked, onRowChecked } = useTableSelect({
     data,
@@ -97,6 +105,21 @@ export function PageList({
         },
         ...cols,
         {
+          accessorKey: "deletedAt",
+          header: () => <div className="text-center">Trạng thái</div>,
+          cell: ({ row }) => {
+            return (
+              <div className="text-center">
+                {row.getValue("deletedAt") ? (
+                  <span className="font-bold text-destructive">Đã xóa</span>
+                ) : (
+                  <span className="font-bold text-green-500">Hoạt động</span>
+                )}
+              </div>
+            )
+          },
+        },
+        {
           id: "actions",
           size: 50,
           enableHiding: false,
@@ -107,29 +130,38 @@ export function PageList({
               <RowActions
                 id={rowValue.id}
                 name={rowValue.name}
-                userRole={user.roles[0]}
+                userRole={authUser.roles[0]}
                 refreshData={refreshData}
+                deleteAction={deleteAction}
+                restoreAction={restoreAction}
+                pageLabel={pageLabel}
+                pageName={pageName}
               />
             )
           },
         },
       ].filter((item) => {
+        const isAdmin = authUser.roles[0] === USER_ROLE.ADMIN
+
         if (item.accessorKey === "deletedAt" && !isAdmin) return false
         if (item.accessorKey === "select" && !isSelect) return false
 
-        const isAdmin = user.roles[0] === USER_ROLE.ADMIN
         return allowEdit ? true : item.id !== "actions"
       }),
     [
       refreshData,
       meta,
-      user.roles,
+      authUser.roles,
       cols,
       isSelect,
       allowEdit,
       onHeaderChecked,
       onRowChecked,
       selected,
+      deleteAction,
+      pageLabel,
+      pageName,
+      restoreAction,
     ]
   )
 
@@ -147,7 +179,18 @@ export function PageList({
         <h1 className="text-4xl leading-normal ml-3 font-bold">
           {activeMenuName}
         </h1>
-        {actions({ table, allowCreate })}
+        <div className="space-x-2">
+          {actions ? actions({ filter, meta, selected }) : null}
+          {allowCreate && (
+            <Link
+              className={cn(buttonVariants({ variant: "outline" }))}
+              to={PATH[`${pageName.toUpperCase()}_CREATE`]}
+            >
+              Tạo Hóa Đơn
+            </Link>
+          )}
+          <TableColumnSelect {...{ table }} />
+        </div>
       </div>
 
       <PageFilter
@@ -156,11 +199,11 @@ export function PageList({
           searchInputPlaceholder: "Tìm kiếm nhanh",
         }}
       >
-        {additionalFilter({
-          user,
+        {additionalFilter ? additionalFilter({
+          authUser,
           filter,
           onFieldChange,
-        })}
+        }) : null}
       </PageFilter>
 
       <PageTable {...{ table }} />

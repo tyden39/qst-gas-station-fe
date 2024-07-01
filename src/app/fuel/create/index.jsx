@@ -152,7 +152,7 @@ export default function FuelCreatePage() {
         navigation(PATH.FUEL)
         toast({
           variant: TOAST.DESTRUCTIVE,
-          title: `Không tìm thấy hóa đơn với mã #${params.id}`,
+          title: `Không tìm thấy hóa đơn`,
         })
       }
       setFetchInfoLoading(false)
