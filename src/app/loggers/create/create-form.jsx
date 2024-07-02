@@ -18,12 +18,12 @@ export default function CreateForm({
   storeList,
   getBranchList,
   getStoreList,
+  isEdit
 }) {
   const userRole = user.roles[0]
   const companyIdValue = form.watch("companyId")
   const branchIdValue = form.watch("branchId")
-  const storeIdValue = form.watch("storeId")
-  console.log(storeIdValue)
+
   return (
     <Card className="w-full">
       <CardContent>
@@ -37,7 +37,7 @@ export default function CreateForm({
                   Mã logger <span className="text-red-500">*</span>
                 </FormLabel>
                 <FormControl>
-                  <Input placeholder="Nhập Logger ID" {...field} />
+                  <Input disabled={isEdit} placeholder="Nhập Logger ID" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>

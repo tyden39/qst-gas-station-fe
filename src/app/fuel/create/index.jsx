@@ -112,22 +112,17 @@ export default function FuelCreatePage() {
         })
       }
     } else {
-      const { status, data } = await createInvoice(values)
+      const response = await createInvoice(values)
 
-      if (status === 201) {
-        form.reset(data)
+      if (response.status === 201) {
+        form.reset(response.data)
         setOpen(true)
-      } else if (status === 409)
-        toast({
-          variant: TOAST.DESTRUCTIVE,
-          title: "Tạo hóa đơn thất bại!",
-          description: `Đã tồn tại hóa đơn với Mã kiểm tra #${values.Check_Key}!`,
-        })
+      } 
       else
         toast({
           variant: TOAST.DESTRUCTIVE,
           title: "Tạo hóa đơn thất bại!",
-          description: data.message,
+          description: response.message,
         })
     }
   }

@@ -50,7 +50,6 @@ export default function LoggerCreatePage() {
   const form = useForm({
     resolver: zodResolver(newSchema),
     mode: 'onTouched',
-    defaultValues: {},
   })
 
   const isValid = form.formState.isValid
@@ -58,10 +57,9 @@ export default function LoggerCreatePage() {
   async function onSubmit(values) {
     setLoading(true)
     if (isEdit) {
-      const response = await edit('params.id', values)
+      const response = await edit(params.id, values)
       if (response.status === 200) {
-        form.reset(response.data, { keepDirtyValues: true })
-        navigation(PATH.STORE)
+        navigation(PATH.LOGGER)
         toast({
           variant: "success",
           description: "Lưu thông tin thành công!",
@@ -75,7 +73,12 @@ export default function LoggerCreatePage() {
     } else {
       const response = await create(values)
       if (response.status === 201) {
-        form.reset(response.data)
+        form.reset({
+          Logger_ID: '',
+          companyId: '',
+          branchId: '',
+          storeId: '',
+        })
         setOpen(true)
       } else
         toast({
@@ -169,7 +172,7 @@ export default function LoggerCreatePage() {
           ) : (
             <>
               <CreateForm
-                {...{ user, form, branchList, companyList, storeList, getBranchList, getStoreList }}
+                {...{ user, form, branchList, companyList, storeList, getBranchList, getStoreList, isEdit }}
               />
 
               <Card className="col-span-2 p-4 space-x-4 text-right">
