@@ -25,6 +25,7 @@ export default function FormSelect({
 }) {
   const handleClose = async (e, field) => {
     if (!disabled) {
+      if (onChange) onChange(null)
       field.onChange(null)
     }
   }

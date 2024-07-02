@@ -50,8 +50,8 @@ export function CompanyPage() {
     <PageList
       {...{
         cols: columns,
-        pageName: "branch",
-        pageLabel: "chi nhánh",
+        pageName: "company",
+        pageLabel: "công ty",
         deleteAction: deleteCompany,
         restoreAction: restoreOne,
         fetchAction: fetchAll,

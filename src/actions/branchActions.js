@@ -16,22 +16,7 @@ export const fetchSimpleList = async (filter, pageMeta) => {
 
     return response.data
   } catch (error) {
-    if (error.response.status === 401) {
-      localStorage.removeItem(AUTH_CONFIG.ACCESS_TOKEN_STORAGE_NAME)
-      localStorage.removeItem(AUTH_CONFIG.USER_STORAGE_NAME)
-      window.location.href = '/login'
-    }
-    if (!axios.isAxiosError(error)) console.error(error)
-    return axios.isAxiosError(error)
-      ? error.response?.data || {
-          status: -1,
-          message: "Không thể lấy dữ liệu từ máy chủ!",
-        }
-      : {
-          status: -1,
-          message:
-            "Lỗi hệ thống, vui lòng liên hệ quản trị viên để biết thêm chi tiết!",
-        }
+    return handleError(error)
   }
 }
 
@@ -54,22 +39,7 @@ export const fetchAll = async (filter, pageMeta) => {
 
     return response.data
   } catch (error) {
-    if (error.response.status === 401) {
-      localStorage.removeItem(AUTH_CONFIG.ACCESS_TOKEN_STORAGE_NAME)
-      localStorage.removeItem(AUTH_CONFIG.USER_STORAGE_NAME)
-      window.location.href = '/login'
-    }
-    if (!axios.isAxiosError(error)) console.error(error)
-    return axios.isAxiosError(error)
-      ? error.response?.data || {
-          status: -1,
-          message: "Không thể lấy dữ liệu từ máy chủ!",
-        }
-      : {
-          status: -1,
-          message:
-            "Lỗi hệ thống, vui lòng liên hệ quản trị viên để biết thêm chi tiết!",
-        }
+    return handleError(error)
   }
 }
 

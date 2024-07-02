@@ -10,7 +10,7 @@ export default function BranchFilter({ authUser, filter, onFieldChange }) {
 
   const getCompanyList = async (value) => {
     const response = await fetchCompanySimpleList({ companyId: value })
-    if (response.status === 200) {
+    if (response && response.status === 200) {
       const resData = response.data
 
       const selectList = transformToSelectList(resData)

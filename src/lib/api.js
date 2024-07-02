@@ -2,7 +2,7 @@ import axios from 'axios'
 const { AUTH_CONFIG } = require("routers/config")
 
 export const handleError = (error) => {
-  if (error.response.status === 401) {
+  if (error.response?.status === 401) {
     localStorage.removeItem(AUTH_CONFIG.ACCESS_TOKEN_STORAGE_NAME)
     localStorage.removeItem(AUTH_CONFIG.USER_STORAGE_NAME)
     window.location.href = '/login'

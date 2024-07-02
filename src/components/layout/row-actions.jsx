@@ -23,7 +23,16 @@ import { useState } from "react"
 import { Link } from "react-router-dom"
 import PATH from "routers/path"
 
-const RowActions = ({ id, pageName, pageLabel, refreshData, userRole, deleteAction, restoreAction }) => {
+const RowActions = ({
+  id,
+  pageName,
+  pageLabel,
+  refreshData,
+  userRole,
+  deleteAction,
+  restoreAction,
+  isDeleted,
+}) => {
   const { toast } = useToast()
   const [open, setOpen] = useState(false)
   const [loading, setLoading] = useState(false)
@@ -38,7 +47,7 @@ const RowActions = ({ id, pageName, pageLabel, refreshData, userRole, deleteActi
     setLoading(true)
     const force = forceDelete
 
-    const status = await deleteAction(id, force)
+    const {status} = await deleteAction(id, force)
     if (status === 200) {
       toast({
         variant: TOAST.SUCCESS,
@@ -109,25 +118,28 @@ const RowActions = ({ id, pageName, pageLabel, refreshData, userRole, deleteActi
                   Xóa vĩnh viễn
                 </p>
               </DropdownMenuItem>
-              <DropdownMenuItem asChild>
-                <p
-                  className="focus:bg-green-500 focus:text-destructive-foreground cursor-pointer"
-                  onClick={handleRestore}
-                >
-                  Khôi phục
-                </p>
-              </DropdownMenuItem>
+              {isDeleted ? (
+                <DropdownMenuItem asChild>
+                  <p
+                    className="focus:bg-green-500 focus:text-destructive-foreground cursor-pointer"
+                    onClick={handleRestore}
+                  >
+                    Khôi phục
+                  </p>
+                </DropdownMenuItem>
+              ) : null}
             </div>
           ) : null}
         </DropdownMenuContent>
       </DropdownMenu>
       <DialogContent className="sm:max-w-[450px]">
         <DialogHeader>
-          <DialogTitle>Bạn có chắc muốn xóa {forceDelete ? " vĩnh viễn" : ""}?</DialogTitle>
+          <DialogTitle>
+            Bạn có chắc muốn xóa {forceDelete ? " vĩnh viễn" : ""}?
+          </DialogTitle>
           <DialogDescription>
             Hành động này không thể được hoàn tác. Bạn có chắc chắn muốn xóa
-            {forceDelete ? " vĩnh viễn " : ""} {pageLabel.toLowerCase()} này
-            ?
+            {forceDelete ? " vĩnh viễn " : ""} {pageLabel.toLowerCase()} này ?
           </DialogDescription>
         </DialogHeader>
         <DialogFooter>
@@ -138,7 +150,11 @@ const RowActions = ({ id, pageName, pageLabel, refreshData, userRole, deleteActi
           </DialogClose>
           <DialogClose asChild>
             <Button variant="destructive" onClick={onDelete} disabled={loading}>
-              {loading ? <Loader2 className="animate-spin" /> : `Xóa ${forceDelete ? "vĩnh viễn" : ""}`}
+              {loading ? (
+                <Loader2 className="animate-spin" />
+              ) : (
+                `Xóa ${forceDelete ? "vĩnh viễn" : ""}`
+              )}
             </Button>
           </DialogClose>
         </DialogFooter>

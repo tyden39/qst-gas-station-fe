@@ -58,7 +58,7 @@ export default function LoggerCreatePage() {
   async function onSubmit(values) {
     setLoading(true)
     if (isEdit) {
-      const response = await edit(params.id, values)
+      const response = await edit('params.id', values)
       if (response.status === 200) {
         form.reset(response.data, { keepDirtyValues: true })
         navigation(PATH.STORE)

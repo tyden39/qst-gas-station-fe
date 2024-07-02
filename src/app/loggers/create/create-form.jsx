@@ -22,6 +22,8 @@ export default function CreateForm({
   const userRole = user.roles[0]
   const companyIdValue = form.watch("companyId")
   const branchIdValue = form.watch("branchId")
+  const storeIdValue = form.watch("storeId")
+  console.log(storeIdValue)
   return (
     <Card className="w-full">
       <CardContent>
@@ -32,7 +34,7 @@ export default function CreateForm({
             render={({ field }) => (
               <FormItem className="flex flex-col space-y-1.5">
                 <FormLabel>
-                  Logger ID hàng <span className="text-red-500">*</span>
+                  Mã logger <span className="text-red-500">*</span>
                 </FormLabel>
                 <FormControl>
                   <Input placeholder="Nhập Logger ID" {...field} />
@@ -55,7 +57,8 @@ export default function CreateForm({
                 list: companyList,
                 onChange: async (value) => {
                   await getBranchList(value)
-                  form.resetField("branchId")
+                  form.resetField("branchId", {defaultValue: null})
+                  form.resetField("storeId", {defaultValue: null})
                 },
               }}
             />
@@ -75,7 +78,7 @@ export default function CreateForm({
                 disabled: !companyIdValue,
                 onChange: async (value) => {
                   await getStoreList(value)
-                  form.resetField("storeId")
+                  form.resetField("storeId", {defaultValue: null})
                 },
               }}
             />

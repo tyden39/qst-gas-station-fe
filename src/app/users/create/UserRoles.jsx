@@ -125,7 +125,8 @@ export default function UserRoles({
                 list: companyList,
                 onChange: async (value) => {
                   await getBranchList(value)
-                  form.resetField("branchId")
+                  form.resetField("branchId", {defaultValue: null})
+                  form.resetField("storeId", {defaultValue: null})
                 },
               }}
             />
@@ -145,7 +146,7 @@ export default function UserRoles({
                 disabled: !companyIdValue,
                 onChange: async (value) => {
                   await getStoreList(value)
-                  form.resetField("storeId")
+                  form.resetField("storeId", {defaultValue: null})
                 },
               }}
             />

@@ -16,24 +16,24 @@ export default function AdditionalFilter({ authUser, filter, onFieldChange }) {
 
   const getCompanyList = async (value) => {
     const response = await fetchCompanySimpleList({ companyId: value })
-    if (response.status === 200) {
-      const resData = response.data
+    if (response && response?.data) {
+      const resData = response?.data || []
       setCompanyList(resData)
     }
   }
 
   const getBranchList = async (value) => {
     const response = await fetchBranchSimpleList({ companyId: value })
-    if (response.status === 200) {
-      const branchList = response.data
+    if (response && response?.data) {
+      const branchList = response?.data || []
       setBranchList(branchList)
     }
   }
 
   const getStoreList = async (value) => {
     const response = await fetchStoreSimpleList({ branchId: value })
-    if (response.status === 200) {
-      const storeList = response.data
+    if (response && response?.data) {
+      const storeList = response?.data || []
       setStoreList(storeList)
     }
   }

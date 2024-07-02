@@ -2,7 +2,13 @@ import { TOAST } from "components/ui/toast"
 import { useToast } from "components/ui/use-toast"
 import { useCallback, useEffect, useState } from "react"
 
-export default function useFilter({initFilter, initMeta, action}) {
+export default function useFilter({
+  initFilter,
+  initMeta,
+  action,
+  autoRefresh,
+  refreshDelay = 5000,
+}) {
   const { toast } = useToast()
   const [data, setData] = useState([])
   const [meta, setMeta] = useState(initMeta)
@@ -13,30 +19,36 @@ export default function useFilter({initFilter, initMeta, action}) {
     (filter, meta) => {
       action(filter, meta)
         .then((response) => {
-          const { data, meta } = response.data
-          setMeta(meta)
-          setData(data)
+          if (response.status === 200) {
+            const { data, meta } = response.data
+            setMeta(meta)
+            setData(data)
+          } else {
+            toast({
+              variant: TOAST.DESTRUCTIVE,
+              title: "Lấy danh sách thất bại!",
+              description: response.message,
+            })
+          }
         })
-        .catch((error) =>
-          toast({
-            variant: TOAST.DESTRUCTIVE,
-            title: "Lấy danh sách thất bại!",
-            description: error.message,
-          })
-        )
     },
     [action, toast]
   )
 
   useEffect(() => {
-    if (loading) setLoading(false)
-
     const currMeta = {
       currentPage: meta.currentPage,
       pageSize: meta.pageSize,
     }
 
-    applyFilter(filter, currMeta)
+    if (loading) setLoading(false)
+    else applyFilter(filter, currMeta)
+
+    const interval = setInterval(() => {
+      if (autoRefresh) applyFilter(filter, currMeta)
+    }, refreshDelay)
+
+    return () => clearInterval(interval)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [meta.currentPage, meta.pageSize, filter, loading])
 
@@ -65,6 +77,6 @@ export default function useFilter({initFilter, initMeta, action}) {
     onFieldChange,
     setFilter,
     setMeta,
-    refreshData
+    refreshData,
   }
 }

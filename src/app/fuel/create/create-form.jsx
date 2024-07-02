@@ -117,7 +117,7 @@ export default function FormCreate({
               </>
             }
             placeholder={"Chọn loại hóa đơn"}
-            list={BILL_TYPES.slice(1)}
+            list={BILL_TYPES}
           />
           <FormSelect
             form={form}
@@ -128,7 +128,7 @@ export default function FormCreate({
               </>
             }
             placeholder={"Chọn loại nhiên liệu"}
-            list={FUEL_TYPE.slice(1)}
+            list={FUEL_TYPE}
           />
           <FormField
             control={form.control}

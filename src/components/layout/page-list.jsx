@@ -28,7 +28,9 @@ export function PageList({
   initMeta,
   deleteAction,
   restoreAction,
-  fetchAction
+  fetchAction,
+  autoRefresh,
+  refreshDelay,
 }) {
   const [getPermission, authUser] = useAuth((state) => [
     state.getPermission,
@@ -50,7 +52,7 @@ export function PageList({
     setFilter,
     refreshData,
     loading,
-  } = useFilter({ initFilter, initMeta, action: fetchAction })
+  } = useFilter({ initFilter, initMeta, action: fetchAction, refreshDelay, autoRefresh })
 
   const { selected, onHeaderChecked, onRowChecked } = useTableSelect({
     data,
@@ -130,6 +132,7 @@ export function PageList({
               <RowActions
                 id={rowValue.id}
                 name={rowValue.name}
+                isDeleted={Boolean(rowValue.deletedAt)}
                 userRole={authUser.roles[0]}
                 refreshData={refreshData}
                 deleteAction={deleteAction}
@@ -183,10 +186,10 @@ export function PageList({
           {actions ? actions({ filter, meta, selected }) : null}
           {allowCreate && (
             <Link
-              className={cn(buttonVariants({ variant: "outline" }))}
+              className={cn(buttonVariants())}
               to={PATH[`${pageName.toUpperCase()}_CREATE`]}
             >
-              Tạo Hóa Đơn
+              Tạo {pageLabel}
             </Link>
           )}
           <TableColumnSelect {...{ table }} />

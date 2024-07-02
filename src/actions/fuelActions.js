@@ -85,13 +85,9 @@ export const deleteInvoice = async (id, force) => {
       `${API_PATHS.INVOICE_DELETE}/${id}`,
       {data: {force}}
     )
-    return response.status
+    return response
   } catch (error) {
-    if (error.response.status === 401) {
-      localStorage.removeItem(AUTH_CONFIG.ACCESS_TOKEN_STORAGE_NAME)
-      localStorage.removeItem(AUTH_CONFIG.USER_STORAGE_NAME)
-      window.location.href = '/login'
-    }
+    return handleError(error)
   }
 }
 
