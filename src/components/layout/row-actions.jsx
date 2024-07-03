@@ -47,7 +47,7 @@ const RowActions = ({
     setLoading(true)
     const force = forceDelete
 
-    const {status} = await deleteAction(id, force)
+    const { status } = await deleteAction(id, force)
     if (status === 200) {
       toast({
         variant: TOAST.SUCCESS,
@@ -89,9 +89,9 @@ const RowActions = ({
     <Dialog {...{ open, onOpenChange }}>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button variant="ghost" className="h-8 w-full p-0">
+          <Button variant="icon" className="h-4 p-0">
             <span className="sr-only">Open menu</span>
-            <MoreHorizontal className="h-4 w-4" />
+            <MoreHorizontal className="h-4 w-4 opacity-50 hover:opacity-100 cursor-pointer" />
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
@@ -103,13 +103,15 @@ const RowActions = ({
               Chỉnh sửa
             </Link>
           </DropdownMenuItem>
-          <DialogTrigger asChild>
-            <DropdownMenuItem className="focus:bg-destructive focus:text-destructive-foreground cursor-pointer">
-              Xóa
-            </DropdownMenuItem>
-          </DialogTrigger>
+          {isDeleted ? null : (
+            <DialogTrigger asChild>
+              <DropdownMenuItem className="focus:bg-destructive focus:text-destructive-foreground cursor-pointer">
+                Xóa
+              </DropdownMenuItem>
+            </DialogTrigger>
+          )}
           {isAdmin ? (
-            <div>
+            <>
               <DropdownMenuItem asChild>
                 <p
                   className="focus:bg-destructive focus:text-destructive-foreground cursor-pointer"
@@ -128,7 +130,7 @@ const RowActions = ({
                   </p>
                 </DropdownMenuItem>
               ) : null}
-            </div>
+            </>
           ) : null}
         </DropdownMenuContent>
       </DropdownMenu>

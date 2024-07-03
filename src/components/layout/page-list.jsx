@@ -52,12 +52,19 @@ export function PageList({
     setFilter,
     refreshData,
     loading,
-  } = useFilter({ initFilter, initMeta, action: fetchAction, refreshDelay, autoRefresh })
-
-  const { selected, onHeaderChecked, onRowChecked } = useTableSelect({
-    data,
-    meta,
+  } = useFilter({
+    initFilter,
+    initMeta,
+    action: fetchAction,
+    refreshDelay,
+    autoRefresh,
   })
+
+  const { selected, unselected, onHeaderChecked, onRowChecked } =
+    useTableSelect({
+      data,
+      meta,
+    })
 
   const columns = useMemo(
     () =>
@@ -69,8 +76,9 @@ export function PageList({
             <div className="flex justify-center items-center">
               <Checkbox
                 checked={
-                  selected.length > 0 &&
-                  (selected.length === meta.totalItems || "indeterminate")
+                  selected === "all"
+                    ? (unselected.length === 0 ? true : "indeterminate")
+                    : (selected.length === 0 ? false : "indeterminate")
                 }
                 onCheckedChange={onHeaderChecked}
                 aria-label="Select all"
@@ -83,7 +91,10 @@ export function PageList({
             return (
               <div className="flex justify-center items-center">
                 <Checkbox
-                  checked={selected.includes(rowValue.id)}
+                  checked={
+                    (selected === "all" && !unselected.includes(rowValue.id)) ||
+                    selected.includes(rowValue.id)
+                  }
                   onCheckedChange={(value) => onRowChecked(value, rowValue)}
                   aria-label="Select row"
                 />
@@ -122,7 +133,10 @@ export function PageList({
           },
         },
         {
-          id: "actions",
+          accessorKey: "actions",
+          header: ({ table }) => {
+            return <TableColumnSelect {...{ table }} />
+          },
           size: 50,
           enableHiding: false,
           cell: ({ row }) => {
@@ -165,6 +179,7 @@ export function PageList({
       pageLabel,
       pageName,
       restoreAction,
+      unselected,
     ]
   )
 
@@ -183,7 +198,7 @@ export function PageList({
           {activeMenuName}
         </h1>
         <div className="space-x-2">
-          {actions ? actions({ filter, meta, selected }) : null}
+          {actions ? actions({ filter, meta, selected, unselected }) : null}
           {allowCreate && (
             <Link
               className={cn(buttonVariants())}
@@ -192,7 +207,6 @@ export function PageList({
               Tạo {pageLabel}
             </Link>
           )}
-          <TableColumnSelect {...{ table }} />
         </div>
       </div>
 
@@ -202,15 +216,17 @@ export function PageList({
           searchInputPlaceholder: "Tìm kiếm nhanh",
         }}
       >
-        {additionalFilter ? additionalFilter({
-          authUser,
-          filter,
-          onFieldChange,
-        }) : null}
+        {additionalFilter
+          ? additionalFilter({
+              authUser,
+              filter,
+              onFieldChange,
+            })
+          : null}
       </PageFilter>
 
       <PageTable {...{ table }} />
-      <PagePagination {...{ setMeta, meta, selected }} />
+      <PagePagination {...{ setMeta, meta, selected, unselected }} />
     </div>
   )
 }

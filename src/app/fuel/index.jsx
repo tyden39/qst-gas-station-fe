@@ -229,10 +229,10 @@ export function FuelPage() {
   )
 }
 
-const Actions = ({ filter, meta, selected }) => {
+const Actions = ({ filter, meta, selected, unselected }) => {
   return (
     <>
-      <ExportInvoice {...{ filter, meta, selected }} />
+      <ExportInvoice {...{ filter, meta, selected, unselected }} />
     </>
   )
 }

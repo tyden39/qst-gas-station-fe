@@ -13,14 +13,20 @@ export default function PagePaginationCapacity({
   pageSize,
   setMeta,
   selected,
+  unselected,
 }) {
   const startItem = (currentPage - 1) * pageSize
   const endItem = Math.min(startItem + pageSize, totalItems)
+  const selectedNumber = Array.isArray(selected)
+    ? selected.length
+    : unselected.length > 0
+    ? totalItems - unselected.length
+    : totalItems
 
   return (
     <div className="flex items-center gap-2">
-      {selected && selected.length > 0 ? (
-        <span className="pl-2">{`Chọn ${selected.length} trong số ${totalItems} dòng`}</span>
+      {selectedNumber > 0 ? (
+        <span className="pl-2">{`Chọn ${selectedNumber} trong số ${totalItems} dòng`}</span>
       ) : (
         <span className="pl-2">
           {startItem + 1} - {endItem} trong số {totalItems} dòng

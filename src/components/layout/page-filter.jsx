@@ -31,9 +31,7 @@ export default function PageFilter({
   }
 
   return (
-    <Card className="relative mb-4 mt-4 bg-white px-12 pt-7 pb-12 overflow-hidden">
-      <h2 className="mb-2.5 font-medium">Tìm kiếm</h2>
-
+    <Card className="relative my-4 bg-white p-12 overflow-hidden">
       <div
         style={{ maxHeight: showMoreFilter ? "100vh" : `${availableFilterColumn * 40 + (availableFilterColumn - 1) * 20 }px` }}
         className={cn(

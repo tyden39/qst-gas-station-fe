@@ -45,9 +45,8 @@ export const fetchInvoices = async (filter, pageMeta) => {
   }
 }
 
-export const handleExport = async (filter, pageMeta, selected) => {
+export const handleExport = async (filter, pageMeta, selected, unselected) => {
   try {
-    const ids = selected
     const startDate = filter.billDate?.from
     const endDate = filter.billDate?.to
     const newFilter = { ...filter }
@@ -56,7 +55,7 @@ export const handleExport = async (filter, pageMeta, selected) => {
     const { pageSize } = pageMeta
     const page = pageMeta.currentPage
 
-    const params = { startDate, endDate, ...newFilter, page, pageSize, ids }
+    const params = { startDate, endDate, ...newFilter, page, pageSize, selected, unselected }
     const queries = convertToQueryString(params)
 
     const response = await axiosInstance({
@@ -70,12 +69,7 @@ export const handleExport = async (filter, pageMeta, selected) => {
     if (response.status === 200) 
       FileSaver.saveAs(new Blob([response.data]), 'invoices.xlsx')
   } catch (error) {
-    if (error.response.status === 401) {
-      localStorage.removeItem(AUTH_CONFIG.ACCESS_TOKEN_STORAGE_NAME)
-      localStorage.removeItem(AUTH_CONFIG.USER_STORAGE_NAME)
-      window.location.href = '/login'
-    }
-    return 'Xuất excel thất bại'
+    return handleError(error)
   }
 }
 

@@ -1,16 +1,14 @@
 import { Button } from "components/ui/button"
 import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuTrigger } from "components/ui/dropdown-menu"
-import { ChevronDown } from "lucide-react"
+import { EyeOff } from "lucide-react"
 
 export default function TableColumnSelect({table}) {
   return (
     <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button variant="outline" className="">
-            Ẩn/Hiện cột <ChevronDown className="ml-2 h-4 w-4" />
-          </Button>
+          <Button variant="icon" className="p-0 h-4"><EyeOff className="h-4 w-4 cursor-pointer hover:stroke-primary" /></Button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent align="end">
+        <DropdownMenuContent side="left" align="center" className="">
           {table
             .getAllColumns()
             .filter((column) => column.getCanHide())
