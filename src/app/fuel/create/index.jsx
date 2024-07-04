@@ -30,10 +30,10 @@ import useAuth from "zustands/useAuth"
 const schema = z.object({
   Check_Key: z
     .string({ required_error: "Mã kiểm tra không được để trống" })
-    .min(1, "Mã kiểm tra không được để trống"),
+    .min(1, "Mã kiểm tra không được để trống").max(255, 'Mã kiểm tra không được vượt quá 255 ký tự'),
   Logger_ID: z
     .string({ required_error: "Mã logger không được để trống" })
-    .min(1, "Mã logger không được để trống"),
+    .min(1, "Mã logger không được để trống").max(255, 'Mã logger không được vượt quá 255 ký tự'),
   Logger_Time: z.date({
     required_error: "Thời gian ghi log không được để trống",
   }),
@@ -42,7 +42,7 @@ const schema = z.object({
     .min(1, "Mã vòi bơm không được để trống"),
   Bill_No: z
     .string({ required_error: "Mã hóa đơn không được để trống" })
-    .min(1, "Mã hóa đơn không được để trống"),
+    .min(1, "Mã hóa đơn không được để trống").max(255, 'Mã hóa đơn không được vượt quá 255 ký tự'),
   Bill_Type: z
     .string({ required_error: "Loại hóa đơn không được để trống" })
     .min(1, "Loại hóa đơn không được để trống"),

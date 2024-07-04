@@ -17,25 +17,29 @@ import SkeletonForm from "./skeleton-form"
 const editSchema = z.object({
   firstName: z
     .string({ required_error: "Tên không được để trống" })
-    .min(1, "Tên không được để trống"),
+    .min(1, "Tên không được để trống")
+    .max(255, 'Tên không được vượt quá 255 ký tự'),
   lastName: z
     .string({ required_error: "Họ không được để trống" })
-    .min(1, "Họ không được để trống"),
-  email: z.string().optional().nullable(),
-  phone: z.string().optional().nullable(),
+    .min(1, "Họ không được để trống")
+    .max(255, 'Họ không được vượt quá 255 ký tự'),
+  email: z.string().max(255, 'Email không được vượt quá 255 ký tự').optional().nullable(),
+  phone: z.string().max(255, 'Số điện thoại không được vượt quá 255 ký tự').optional().nullable(),
 })
 
 const editSchemaWithPassword = z
   .object({
     firstName: z
       .string({ required_error: "Tên không được để trống" })
-      .min(1, "Tên không được để trống"),
+      .min(1, "Tên không được để trống")
+      .max(255, 'Tên không được vượt quá 255 ký tự'),
     lastName: z
       .string({ required_error: "Họ không được để trống" })
-      .min(1, "Họ không được để trống"),
-    email: z.string().optional().nullable(),
-    phone: z.string().optional().nullable(),
-    password: z.string({ required_error: "Mật khẩu không được để trống" }),
+      .min(1, "Họ không được để trống")
+      .max(255, 'Họ không được vượt quá 255 ký tự'),
+    email: z.string().max(255, 'Email không được vượt quá 255 ký tự').optional().nullable(),
+    phone: z.string().max(255, 'Số điện thoại không được vượt quá 255 ký tự').optional().nullable(),
+    password: z.string({ required_error: "Mật khẩu không được để trống" }).max(255, 'Mật khẩu không được vượt quá 255 ký tự'),
     confirmPassword: z.string(),
   })
   .refine((data) => data.password === data.confirmPassword, {

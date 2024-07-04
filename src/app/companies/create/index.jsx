@@ -26,11 +26,12 @@ import SkeletonForm from "./skeleton-form"
 const newSchema = z.object({
   name: z
     .string({ required_error: "Tên công ty không được để trống" })
-    .min(1, "Tên công ty không được để trống"),
-  taxCode: z.string().optional().nullable(),
-  email: z.string().optional().nullable(),
-  address: z.string().optional().nullable(),
-  phone: z.string().optional().nullable(),
+    .min(1, "Tên công ty không được để trống")
+    .max(255, 'Tên công ty không được vượt quá 255 ký tự'),
+  taxCode: z.string().max(255, 'Mã số thuế không được vượt quá 255 ký tự').optional().nullable(),
+  email: z.string().max(255, 'Email không được vượt quá 255 ký tự').optional().nullable(),
+  address: z.string().max(255, 'Địa chỉ không được vượt quá 255 ký tự').optional().nullable(),
+  phone: z.string().max(255, 'Số điện thoại không được vượt quá 255 ký tự').optional().nullable(),
   token: z.string().optional().nullable(),
 })
 

@@ -1,10 +1,10 @@
+import { USER_ROLES } from "constants/user-roles"
 import {
   Building,
   MapPin,
   Store,
   User,
-  UserCheck,
-  UserRoundCheck,
+  UserRoundCheck
 } from "lucide-react"
 import { Link } from "react-router-dom"
 import PATH from "routers/path"
@@ -17,7 +17,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu"
-import { USER_ROLES } from "constants/user-roles"
 
 export default function Header() {
   const [user] = useAuth((state) => [state.user])

@@ -24,8 +24,9 @@ import useAuth from "zustands/useAuth"
 
 const newSchema = z.object({
   Logger_ID: z
-    .string({ required_error: "Logger ID không được để trống" })
-    .min(1, "Logger ID không được để trống"),
+    .string({ required_error: "Mã logger không được để trống" })
+    .min(1, "Mã logger không được để trống")
+    .max(255, 'Mã logger không được vượt quá 255 ký tự'),
   storeId: z.string().optional().nullable(),
   branchId: z.string().optional().nullable(),
   companyId: z.string().optional().nullable(),

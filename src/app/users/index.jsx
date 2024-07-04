@@ -22,8 +22,8 @@ export function UserPage() {
         header: () => <div className="text-center">Họ và tên</div>,
         cell: ({ row }) => {
           return (
-            <div className="text-center">{`${row.original.firstName || ""} ${
-              row.original.lastName || ""
+            <div className="text-center">{`${row.original.lastName || ""} ${
+              row.original.firstName || ""
             }`}</div>
           )
         },

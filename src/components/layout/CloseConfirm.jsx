@@ -89,7 +89,7 @@ const CloseConfirm = ({ form }) => {
           </DialogClose>
           <DialogClose asChild>
             <Button className="w-[150px]" onClick={handleSubmit}>
-              Ở lại
+              Trở lại
             </Button>
           </DialogClose>
         </DialogFooter>

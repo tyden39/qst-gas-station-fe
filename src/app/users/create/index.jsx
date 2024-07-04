@@ -29,23 +29,27 @@ const newSchema = z
   .object({
     username: z
       .string({ required_error: "Tên đăng nhập không được để trống" })
-      .min(5, "Tên đăng nhập phải >= 5 ký tự"),
+      .min(5, "Tên đăng nhập phải >= 5 ký tự")
+      .max(255, 'Tên đăng nhập không được vượt quá 255 ký tự'),
     password: z
       .string({ required_error: "Mật khẩu không được để trống" })
-      .min(1, "Mật khẩu không được để trống"),
+      .min(1, "Mật khẩu không được để trống")
+      .max(255, 'Mật khẩu không được vượt quá 255 ký tự'),
     confirmPassword: z
       .string({
         required_error: "Nhập lại mật khẩu không được để trống",
       })
       .min(1, "Nhập lại mật khẩu không được để trống"),
     firstName: z
-      .string({ required_error: "Họ không được để trống" })
-      .min(1, "Họ không được để trống"),
-    lastName: z
       .string({ required_error: "Tên không được để trống" })
-      .min(1, "Tên không được để trống"),
-    email: z.string().optional().nullable(),
-    phone: z.string().optional().nullable(),
+      .min(1, "Tên không được để trống")
+      .max(255, 'Tên không được vượt quá 255 ký tự'),
+    lastName: z
+      .string({ required_error: "Họ không được để trống" })
+      .min(1, "Họ không được để trống")
+      .max(255, 'Họ không được vượt quá 255 ký tự'),
+    email: z.string().max(255, 'Email không được vượt quá 255 ký tự').optional().nullable(),
+    phone: z.string().max(255, 'Số điện thoại không được vượt quá 255 ký tự').optional().nullable(),
     roles: z.string({
       required_error: "Vai trò người dùng không được để trống",
     }),
@@ -109,10 +113,10 @@ const newSchema = z
 
 const editSchema = z
   .object({
-    firstName: z.string({ required_error: "Tên không được để trống" }).min(1, "Tên không được để trống"),
-    lastName: z.string({ required_error: "Họ không được để trống" }).min(1, "Họ không được để trống"),
-    email: z.string().optional().nullable(),
-    phone: z.string().optional().nullable(),
+    firstName: z.string({ required_error: "Tên không được để trống" }).min(1, "Tên không được để trống").max(255, 'Tên không được vượt quá 255 ký tự'),
+    lastName: z.string({ required_error: "Họ không được để trống" }).min(1, "Họ không được để trống").max(255, 'Họ không được vượt quá 255 ký tự'),
+    email: z.string().max(255, 'Email không được vượt quá 255 ký tự').optional().nullable(),
+    phone: z.string().max(255, 'Email không được vượt quá 255 ký tự').optional().nullable(),
     roles: z.string({
       required_error: "Vai trò người dùng không được để trống",
     }),
@@ -172,14 +176,14 @@ const editSchema = z
 
 const editSchemaWithPassword = z
   .object({
-    firstName: z.string({ required_error: "Tên không được để trống" }).min(1, "Tên không được để trống"),
-    lastName: z.string({ required_error: "Họ không được để trống" }).min(1, "Họ không được để trống"),
-    email: z.string().optional().nullable(),
-    phone: z.string().optional().nullable(),
+    firstName: z.string({ required_error: "Tên không được để trống" }).min(1, "Tên không được để trống").max(255, 'Tên không được vượt quá 255 ký tự'),
+    lastName: z.string({ required_error: "Họ không được để trống" }).min(1, "Họ không được để trống").max(255, 'Họ không được vượt quá 255 ký tự'),
+    email: z.string().max(255, 'Email không được vượt quá 255 ký tự').optional().nullable(),
+    phone: z.string().max(255, 'Số điện thoại không được vượt quá 255 ký tự').optional().nullable(),
     roles: z.string({
       required_error: "Vai trò người dùng không được để trống",
     }),
-    password: z.string({ required_error: "Mật khẩu không được để trống" }),
+    password: z.string({ required_error: "Mật khẩu không được để trống" }).max(255, 'Mật khẩu không được vượt quá 255 ký tự'),
     confirmPassword: z.string(),
     companyId: z.string().optional().nullable(),
     branchId: z.string().optional().nullable(),
