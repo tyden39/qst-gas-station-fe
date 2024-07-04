@@ -21,7 +21,8 @@ export default function FormCreate({
   getBranchList,
   getStoreList,
   getLoggerList,
-  loggerList
+  loggerList,
+  isEdit
 }) {
   const userRole = user.roles[0]
   const companyIdValue = form.watch("companyId")
@@ -48,6 +49,7 @@ export default function FormCreate({
                     placeholder="Nhập mã kiểm tra"
                     {...field}
                     autoComplete="false"
+                    disabled={isEdit}
                   />
                 </FormControl>
                 <FormMessage />
@@ -217,6 +219,7 @@ export default function FormCreate({
                 placeholder: "Chọn công ty",
                 name: "companyId",
                 list: companyList,
+                disabled: isEdit,
                 onChange: async (value) => {
                   await getBranchList(value)
                   form.resetField("branchId")
@@ -236,7 +239,7 @@ export default function FormCreate({
                 placeholder: "Chọn chi nhánh",
                 name: "branchId",
                 list: branchList,
-                disabled: !companyIdValue,
+                disabled: !companyIdValue || isEdit,
                 onChange: async (value) => {
                   await getStoreList(value)
                   form.resetField("storeId")
@@ -258,7 +261,7 @@ export default function FormCreate({
                 placeholder: "Chọn cửa hàng",
                 name: "storeId",
                 list: storeList,
-                disabled: !branchIdValue || !companyIdValue,
+                disabled: !branchIdValue || !companyIdValue || isEdit,
                 onChange: async (value) => {
                   await getLoggerList(value)
                   form.resetField("loggerId")
@@ -280,7 +283,7 @@ export default function FormCreate({
                 placeholder: "Chọn mã logger",
                 name: "Logger_ID",
                 list: loggerList,
-                disabled: !branchIdValue || !companyIdValue || !storeIdValue,
+                disabled: !branchIdValue || !companyIdValue || !storeIdValue || isEdit,
               }}
             />
           ) : null}
