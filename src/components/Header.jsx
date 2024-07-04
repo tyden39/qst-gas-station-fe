@@ -25,8 +25,9 @@ export default function Header() {
 
   return (
     <header className="w-full flex justify-between h-fit px-6 py-2 border-b bg-primary">
-      <div className="text-center">
-        <span className="leading-10 text-3xl text-background">QS PECO</span>
+      <div className="relative">
+        <img className="absolute -top-[7px] -left-[22px]" alt="logo" src="/logo192.webp" width={85} height={60}/>
+        <span className="leading-10 text-3xl text-background ml-[68px]">QS PECO</span>
       </div>
 
       <div className="flex justify-end items-center gap-7 text-background">
