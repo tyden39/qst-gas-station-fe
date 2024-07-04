@@ -11,14 +11,9 @@ export const fetchOneInvoice = async (id) => {
       `${API_PATHS.INVOICE_FETCH_ONE}/${id}`
     )
 
-    return response
+    return response.data
   } catch (error) {
-    if (error.response.status === 401) {
-      localStorage.removeItem(AUTH_CONFIG.ACCESS_TOKEN_STORAGE_NAME)
-      localStorage.removeItem(AUTH_CONFIG.USER_STORAGE_NAME)
-      window.location.href = '/login'
-    }
-    return error.response
+    return handleError(error)
   }
 }
 
@@ -102,14 +97,9 @@ export const createInvoice = async (formData) => {
       `${API_PATHS.INVOICE_CREATE}`,
       formData
     )
-    return response
+    return response.data
   } catch (error) {
-    if (error.response.status === 401) {
-      localStorage.removeItem(AUTH_CONFIG.ACCESS_TOKEN_STORAGE_NAME)
-      localStorage.removeItem(AUTH_CONFIG.USER_STORAGE_NAME)
-      window.location.href = '/login'
-    }
-    return error.response
+    return handleError(error)
   }
 }
 
@@ -119,13 +109,8 @@ export const editInvoice = async (id, formData) => {
       `${API_PATHS.INVOICE_EDIT}/${id}`,
       formData
     )
-    return response
+    return response.data
   } catch (error) {
-    if (error.response.status === 401) {
-      localStorage.removeItem(AUTH_CONFIG.ACCESS_TOKEN_STORAGE_NAME)
-      localStorage.removeItem(AUTH_CONFIG.USER_STORAGE_NAME)
-      window.location.href = '/login'
-    }
-    return error.response
+    return handleError(error)
   }
 }

@@ -97,18 +97,18 @@ export default function FuelCreatePage() {
 
   async function onSubmit(values) {
     if (isEdit) {
-      const { data } = await editInvoice(params.id, values)
-      if (data.status === 200) {
+      const response = await editInvoice(params.id, values)
+      if (response.status === 200) {
         navigation(PATH.FUEL)
         toast({
           variant: "success",
-          description: "Cập nhật hóa đơn thành công!",
+          title: "Cập nhật hóa đơn thành công!",
         })
       } else {
         toast({
           variant: TOAST.DESTRUCTIVE,
           title: "Cập nhật hóa đơn thất bại!",
-          description: data.message,
+          description: response.message,
         })
       }
     } else {
@@ -130,9 +130,9 @@ export default function FuelCreatePage() {
   useEffect(() => {
     const handleGetEditInvoice = async () => {
       setFetchInfoLoading(true)
-      const { data } = await fetchOneInvoice(params.id)
-      if (data.status === 200) {
-        const resData = data.data
+      const response = await fetchOneInvoice(params.id)
+      if (response.status === 200) {
+        const resData = response.data
         const formData = {
           ...resData,
           Logger_Time: new Date(resData.Logger_Time),
@@ -231,7 +231,7 @@ export default function FuelCreatePage() {
             <SkeletonForm />
           ) : (
             <>
-              <FormCreate {...{ user, form, branchList, companyList, storeList, loggerList, getBranchList, getStoreList, getLoggerList }} />
+              <FormCreate {...{ isEdit, user, form, branchList, companyList, storeList, loggerList, getBranchList, getStoreList, getLoggerList }} />
 
               <Card className="p-4 space-x-4 text-right">
                 <Button
