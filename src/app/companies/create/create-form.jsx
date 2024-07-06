@@ -7,7 +7,6 @@ import {
   FormMessage,
 } from "components/ui/form"
 import { Input } from "components/ui/input"
-import { copyToClipboard } from "lib/string"
 
 export default function CreateForm({ form, isEdit, token, handleCopyToken }) {
   return (
