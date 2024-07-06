@@ -13,6 +13,7 @@ import useAuth from "zustands/useAuth"
 import AccountInfo from "./AccountInfo"
 import UserInfo from "./UserInfo"
 import SkeletonForm from "./skeleton-form"
+import CompanyInfo from "./CompanyInfo"
 
 const editSchema = z.object({
   firstName: z
@@ -113,6 +114,7 @@ export default function ProfilesPage() {
           >
             <div className="col-span-2 space-y-8">
               <UserInfo {...{ form }} />
+              <CompanyInfo {...{form}} />
 
               <Card className="col-span-2 p-4 space-x-4 text-right">
                 <Button type="submit" disabled={!form.formState.isDirty}>
