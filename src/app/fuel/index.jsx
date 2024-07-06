@@ -1,48 +1,66 @@
 import { deleteInvoice, fetchInvoices, restore } from "actions/fuelActions"
 import { PageList } from "components/layout/page-list"
 import moment from "moment"
-import { useMemo } from "react"
+import { useMemo, useState } from "react"
 import ExportInvoice from "./components/ExportInvoice"
 import { BILL_TYPES, FUEL_TYPE } from "./constant"
 import AdditionalFilter from "./filter"
 import { initColumnVisibility, initFilter, initMeta } from "./initial"
+import {
+  ArrowDown,
+  ArrowUp,
+  ArrowUpDown,
+  ChevronDown,
+  ChevronsUpDown,
+  ChevronUp,
+} from "lucide-react"
+import { cn } from "lib/utils"
 
 export function FuelPage() {
-  // const [sorting, setSorting] = useState([])
+  const [sorting, setSorting] = useState([])
 
-  // const handleToggleSorting = (columnId) => {
-  //   setSorting((prevSorting) => {
-  //     const existingIndex = prevSorting.findIndex(
-  //       ([name]) => name === columnId
-  //     );
+  const handleToggleSorting = (columnId) => {
+    setSorting((prevSorting) => {
+      const existingIndex = prevSorting.findIndex(([name]) => name === columnId)
 
-  //     if (existingIndex !== -1) {
-  //       const newSorting = [...prevSorting];
-  //       const [name, direction] = newSorting[existingIndex];
-  //       const newDirection = direction === 'asc' ? 'desc' : 'asc';
-  //       newSorting[existingIndex] = [name, newDirection];
-  //       return newSorting;
-  //     } else {
-  //       return [...prevSorting, [columnId, 'asc']];
-  //     }
-  //   })
-  // }
+      if (existingIndex !== -1) {
+        const newSorting = [...prevSorting]
+        const [name, direction] = newSorting[existingIndex]
+        const newDirection = direction === "asc" ? "desc" : "asc"
+        newSorting[existingIndex] = [name, newDirection]
+        return newSorting
+      } else {
+        return [[columnId, "asc"]]
+      }
+    })
+  }
 
   const columns = useMemo(
     () => [
       {
         accessorKey: "Check_Key",
         header: (header) => {
-          // const columnId = header?.column?.id
+          const columnId = header?.column?.id
+          const sort = sorting.find(([name]) => name === columnId)
           return (
             <div
-              className="flex justify-center items-center gap-1 flex-wrap capitalize cursor-pointer"
-              // onClick={() =>{
-              //   if (header) handleToggleSorting(columnId) 
-              // }}
+              className="group flex justify-center items-center gap-1 capitalize cursor-pointer text-center"
+              onClick={() => {
+                if (header) handleToggleSorting(columnId)
+              }}
             >
               Mã kiểm tra
-              {/* {header ? <ArrowUpDown className="w-4 h-4" /> : null} */}
+              {header ? (
+                sort ? (
+                  sort[1] === "asc" ? (
+                    <ChevronUp className={cn("shrink-0 w-4 h-4")} />
+                  ) : (
+                    <ChevronDown className={cn("shrink-0 w-4 h-4")} />
+                  )
+                ) : (
+                  <ChevronsUpDown className={cn("shrink-0 w-4 h-4")} />
+                )
+              ) : null}
             </div>
           )
         },
@@ -53,11 +71,27 @@ export function FuelPage() {
       {
         accessorKey: "Logger_ID",
         header: (header) => {
+          const columnId = header?.column?.id
+          const sort = sorting.find(([name]) => name === columnId)
           return (
             <div
-              className="text-center capitalize"
+              className="flex justify-center items-center gap-1 capitalize cursor-pointer text-center"
+              onClick={() => {
+                if (header) handleToggleSorting(columnId)
+              }}
             >
               Mã logger
+              {header ? (
+                sort ? (
+                  sort[1] === "asc" ? (
+                    <ChevronUp className={cn("shrink-0 w-4 h-4")} />
+                  ) : (
+                    <ChevronDown className={cn("shrink-0 w-4 h-4")} />
+                  )
+                ) : (
+                  <ChevronsUpDown className={cn("shrink-0 w-4 h-4")} />
+                )
+              ) : null}
             </div>
           )
         },
@@ -67,9 +101,32 @@ export function FuelPage() {
       },
       {
         accessorKey: "Logger_Time",
-        header: () => (
-          <div className="text-center capitalize">Thời gian ghi log</div>
-        ),
+        header: (header) => {
+          const columnId = header?.column?.id
+          const sort = sorting.find(([name]) => name === columnId)
+
+          return (
+            <div
+              className="flex justify-center items-center gap-1 capitalize cursor-pointer text-center"
+              onClick={() => {
+                if (header) handleToggleSorting(columnId)
+              }}
+            >
+              Thời gian ghi log
+              {header ? (
+                sort ? (
+                  sort[1] === "asc" ? (
+                    <ChevronUp className={cn("shrink-0 w-4 h-4")} />
+                  ) : (
+                    <ChevronDown className={cn("shrink-0 w-4 h-4")} />
+                  )
+                ) : (
+                  <ChevronsUpDown className={cn("shrink-0 w-4 h-4")} />
+                )
+              ) : null}
+            </div>
+          )
+        },
         cell: ({ row }) => {
           const formatted = moment(row.getValue("Logger_Time")).format(
             "DD-MM-YYYY HH:mm:ss"
@@ -80,23 +137,93 @@ export function FuelPage() {
       {
         accessorKey: "Pump_ID",
         size: 50,
-        header: () => <div className="text-center capitalize">Vòi bơm</div>,
+        header: (header) => {
+          const columnId = header?.column?.id
+          const sort = sorting.find(([name]) => name === columnId)
+          return (
+            <div
+              className="flex justify-center items-center gap-1 capitalize cursor-pointer text-center"
+              onClick={() => {
+                if (header) handleToggleSorting(columnId)
+              }}
+            >
+              Vòi bơm
+              {header ? (
+                sort ? (
+                  sort[1] === "asc" ? (
+                    <ChevronUp className={cn("shrink-0 w-4 h-4")} />
+                  ) : (
+                    <ChevronDown className={cn("shrink-0 w-4 h-4")} />
+                  )
+                ) : (
+                  <ChevronsUpDown className={cn("shrink-0 w-4 h-4")} />
+                )
+              ) : null}
+            </div>
+          )
+        },
         cell: ({ row }) => (
           <div className="text-center">{row.getValue("Pump_ID")}</div>
         ),
       },
       {
         accessorKey: "Bill_No",
-        header: () => <div className="capitalize text-center">Mã hóa đơn</div>,
+        header: (header) => {
+          const columnId = header?.column?.id
+          const sort = sorting.find(([name]) => name === columnId)
+          return (
+            <div
+              className="flex justify-center items-center gap-1 capitalize cursor-pointer text-center"
+              onClick={() => {
+                if (header) handleToggleSorting(header?.column?.id)
+              }}
+            >
+              Mã hóa đơn
+              {header ? (
+                sort ? (
+                  sort[1] === "asc" ? (
+                    <ChevronUp className={cn("shrink-0 w-4 h-4")} />
+                  ) : (
+                    <ChevronDown className={cn("shrink-0 w-4 h-4")} />
+                  )
+                ) : (
+                  <ChevronsUpDown className={cn("shrink-0 w-4 h-4")} />
+                )
+              ) : null}
+            </div>
+          )
+        },
         cell: ({ row }) => (
           <div className="text-center">{row.getValue("Bill_No")}</div>
         ),
       },
       {
         accessorKey: "Bill_Type",
-        header: () => (
-          <div className="capitalize text-center">Loại hóa đơn</div>
-        ),
+        header: (header) => {
+          const columnId = header?.column?.id
+          const sort = sorting.find(([name]) => name === columnId)
+          return (
+            <div
+              className="flex justify-center items-center gap-1 capitalize cursor-pointer text-center"
+              onClick={() => {
+                if (header) handleToggleSorting(header?.column?.id)
+              }}
+            >
+              Loại hóa đơn
+              {header ? (
+                sort ? (
+                  sort[1] === "asc" ? (
+                    <ChevronUp className={cn("shrink-0 w-4 h-4")} />
+                  ) : (
+                    <ChevronDown className={cn("shrink-0 w-4 h-4")} />
+                  )
+                ) : (
+                  <ChevronsUpDown className={cn("shrink-0 w-4 h-4")} />
+                )
+              ) : null}
+            </div>
+          )
+        },
         cell: ({ row }) => (
           <div className="text-center">
             {BILL_TYPES.find(
@@ -107,9 +234,31 @@ export function FuelPage() {
       },
       {
         accessorKey: "Fuel_Type",
-        header: () => (
-          <div className="text-center capitalize">Loại nhiên liệu</div>
-        ),
+        header: (header) => {
+          const columnId = header?.column?.id
+          const sort = sorting.find(([name]) => name === columnId)
+          return (
+            <div
+              className="flex justify-center items-center gap-1 capitalize cursor-pointer text-center"
+              onClick={() => {
+                if (header) handleToggleSorting(header?.column?.id)
+              }}
+            >
+              Loại nhiên liệu
+              {header ? (
+                sort ? (
+                  sort[1] === "asc" ? (
+                    <ChevronUp className={cn("shrink-0 w-4 h-4")} />
+                  ) : (
+                    <ChevronDown className={cn("shrink-0 w-4 h-4")} />
+                  )
+                ) : (
+                  <ChevronsUpDown className={cn("shrink-0 w-4 h-4")} />
+                )
+              ) : null}
+            </div>
+          )
+        },
         cell: ({ row }) => (
           <div className="text-center">
             {FUEL_TYPE.find(
@@ -120,9 +269,31 @@ export function FuelPage() {
       },
       {
         accessorKey: "Start_Time",
-        header: () => (
-          <div className="text-center capitalize">Thời gian bắt đầu bơm</div>
-        ),
+        header: (header) => {
+          const columnId = header?.column?.id
+          const sort = sorting.find(([name]) => name === columnId)
+          return (
+            <div
+              className="flex justify-center items-center gap-1 capitalize cursor-pointer text-center"
+              onClick={() => {
+                if (header) handleToggleSorting(header?.column?.id)
+              }}
+            >
+              Thời gian bắt đầu bơm
+              {header ? (
+                sort ? (
+                  sort[1] === "asc" ? (
+                    <ChevronUp className={cn("shrink-0 w-4 h-4")} />
+                  ) : (
+                    <ChevronDown className={cn("shrink-0 w-4 h-4")} />
+                  )
+                ) : (
+                  <ChevronsUpDown className={cn("shrink-0 w-4 h-4")} />
+                )
+              ) : null}
+            </div>
+          )
+        },
         cell: ({ row }) => {
           const formatted = moment(row.getValue("Start_Time")).format(
             "DD-MM-YYYY HH:mm:ss"
@@ -132,9 +303,31 @@ export function FuelPage() {
       },
       {
         accessorKey: "End_Time",
-        header: () => (
-          <div className="text-center capitalize">Thời gian kết thúc bơm</div>
-        ),
+        header: (header) => {
+          const columnId = header?.column?.id
+          const sort = sorting.find(([name]) => name === columnId)
+          return (
+            <div
+              className="flex justify-center items-center gap-1 capitalize cursor-pointer text-center"
+              onClick={() => {
+                if (header) handleToggleSorting(header?.column?.id)
+              }}
+            >
+              Thời gian kết thúc bơm
+              {header ? (
+                sort ? (
+                  sort[1] === "asc" ? (
+                    <ChevronUp className={cn("shrink-0 w-4 h-4")} />
+                  ) : (
+                    <ChevronDown className={cn("shrink-0 w-4 h-4")} />
+                  )
+                ) : (
+                  <ChevronsUpDown className={cn("shrink-0 w-4 h-4")} />
+                )
+              ) : null}
+            </div>
+          )
+        },
         cell: ({ row }) => {
           const formatted = moment(row.getValue("End_Time")).format(
             "DD-MM-YYYY HH:mm:ss"
@@ -144,7 +337,31 @@ export function FuelPage() {
       },
       {
         accessorKey: "Unit_Price",
-        header: () => <div className="text-right capitalize">Giá</div>,
+        header: (header) => {
+          const columnId = header?.column?.id
+          const sort = sorting.find(([name]) => name === columnId)
+          return (
+            <div
+              className="flex justify-end text-right items-center gap-1 capitalize cursor-pointer"
+              onClick={() => {
+                if (header) handleToggleSorting(header?.column?.id)
+              }}
+            >
+              Giá
+              {header ? (
+                sort ? (
+                  sort[1] === "asc" ? (
+                    <ChevronUp className={cn("shrink-0 w-4 h-4")} />
+                  ) : (
+                    <ChevronDown className={cn("shrink-0 w-4 h-4")} />
+                  )
+                ) : (
+                  <ChevronsUpDown className={cn("shrink-0 w-4 h-4")} />
+                )
+              ) : null}
+            </div>
+          )
+        },
         cell: ({ row }) => {
           const amount = parseFloat(row.getValue("Unit_Price"))
 
@@ -159,7 +376,31 @@ export function FuelPage() {
       },
       {
         accessorKey: "Quantity",
-        header: () => <div className="text-right capitalize">Số lượng</div>,
+        header: (header) => {
+          const columnId = header?.column?.id
+          const sort = sorting.find(([name]) => name === columnId)
+          return (
+            <div
+              className="flex justify-end text-right items-center gap-1 capitalize cursor-pointer"
+              onClick={() => {
+                if (header) handleToggleSorting(header?.column?.id)
+              }}
+            >
+              Số lượng
+              {header ? (
+                sort ? (
+                  sort[1] === "asc" ? (
+                    <ChevronUp className={cn("shrink-0 w-4 h-4")} />
+                  ) : (
+                    <ChevronDown className={cn("shrink-0 w-4 h-4")} />
+                  )
+                ) : (
+                  <ChevronsUpDown className={cn("shrink-0 w-4 h-4")} />
+                )
+              ) : null}
+            </div>
+          )
+        },
         cell: ({ row }) => {
           const quantity = parseFloat(row.getValue("Quantity"))
 
@@ -168,7 +409,31 @@ export function FuelPage() {
       },
       {
         accessorKey: "Total_Price",
-        header: () => <div className="text-right capitalize">Tổng tiền</div>,
+        header: (header) => {
+          const columnId = header?.column?.id
+          const sort = sorting.find(([name]) => name === columnId)
+          return (
+            <div
+              className="flex justify-end text-right items-center gap-1 capitalize cursor-pointer"
+              onClick={() => {
+                if (header) handleToggleSorting(header?.column?.id)
+              }}
+            >
+              Tổng tiền
+              {header ? (
+                sort ? (
+                  sort[1] === "asc" ? (
+                    <ChevronUp className={cn("shrink-0 w-4 h-4")} />
+                  ) : (
+                    <ChevronDown className={cn("shrink-0 w-4 h-4")} />
+                  )
+                ) : (
+                  <ChevronsUpDown className={cn("shrink-0 w-4 h-4")} />
+                )
+              ) : null}
+            </div>
+          )
+        },
         cell: ({ row }) => {
           const value = parseFloat(row.getValue("Total_Price"))
 
@@ -182,7 +447,31 @@ export function FuelPage() {
       },
       {
         accessorKey: "storeName",
-        header: () => <div className="text-center">Cửa hàng</div>,
+        header: (header) => {
+          const columnId = header?.column?.id
+          const sort = sorting.find(([name]) => name === columnId)
+          return (
+            <div
+              className="flex justify-center items-center gap-1 capitalize cursor-pointer text-center"
+              onClick={() => {
+                if (header) handleToggleSorting(header?.column?.id)
+              }}
+            >
+              Cửa hàng
+              {header ? (
+                sort ? (
+                  sort[1] === "asc" ? (
+                    <ChevronUp className={cn("shrink-0 w-4 h-4")} />
+                  ) : (
+                    <ChevronDown className={cn("shrink-0 w-4 h-4")} />
+                  )
+                ) : (
+                  <ChevronsUpDown className={cn("shrink-0 w-4 h-4")} />
+                )
+              ) : null}
+            </div>
+          )
+        },
         cell: ({ row }) => {
           const rowValue = row.original
           return <div className="text-center">{rowValue.storeName}</div>
@@ -190,7 +479,31 @@ export function FuelPage() {
       },
       {
         accessorKey: "branchName",
-        header: () => <div className="text-center">Chi Nhánh</div>,
+        header: (header) => {
+          const columnId = header?.column?.id
+          const sort = sorting.find(([name]) => name === columnId)
+          return (
+            <div
+              className="flex justify-center items-center gap-1 capitalize cursor-pointer text-center"
+              onClick={() => {
+                if (header) handleToggleSorting(header?.column?.id)
+              }}
+            >
+              Chi Nhánh
+              {header ? (
+                sort ? (
+                  sort[1] === "asc" ? (
+                    <ChevronUp className={cn("shrink-0 w-4 h-4")} />
+                  ) : (
+                    <ChevronDown className={cn("shrink-0 w-4 h-4")} />
+                  )
+                ) : (
+                  <ChevronsUpDown className={cn("shrink-0 w-4 h-4")} />
+                )
+              ) : null}
+            </div>
+          )
+        },
         cell: ({ row }) => {
           const rowValue = row.original
           return <div className="text-center">{rowValue.branchName}</div>
@@ -198,7 +511,31 @@ export function FuelPage() {
       },
       {
         accessorKey: "companyName",
-        header: () => <div className="text-center">Công Ty</div>,
+        header: (header) => {
+          const columnId = header?.column?.id
+          const sort = sorting.find(([name]) => name === columnId)
+          return (
+            <div
+              className="flex justify-center items-center gap-1 capitalize cursor-pointer text-center"
+              onClick={() => {
+                if (header) handleToggleSorting(header?.column?.id)
+              }}
+            >
+              Công Ty
+              {header ? (
+                sort ? (
+                  sort[1] === "asc" ? (
+                    <ChevronUp className={cn("shrink-0 w-4 h-4")} />
+                  ) : (
+                    <ChevronDown className={cn("shrink-0 w-4 h-4")} />
+                  )
+                ) : (
+                  <ChevronsUpDown className={cn("shrink-0 w-4 h-4")} />
+                )
+              ) : null}
+            </div>
+          )
+        },
         cell: ({ row }) => {
           const rowValue = row.original
 
@@ -206,7 +543,7 @@ export function FuelPage() {
         },
       },
     ],
-    []
+    [sorting]
   )
 
   return (
@@ -224,6 +561,7 @@ export function FuelPage() {
         initFilter,
         initMeta,
         isSelect: true,
+        sorting,
       }}
     />
   )

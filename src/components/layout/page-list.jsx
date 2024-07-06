@@ -31,6 +31,7 @@ export function PageList({
   fetchAction,
   autoRefresh,
   refreshDelay,
+  sorting,
 }) {
   const [getPermission, authUser] = useAuth((state) => [
     state.getPermission,
@@ -58,6 +59,7 @@ export function PageList({
     action: fetchAction,
     refreshDelay,
     autoRefresh,
+    sorting,
   })
 
   const { selected, unselected, onHeaderChecked, onRowChecked } =

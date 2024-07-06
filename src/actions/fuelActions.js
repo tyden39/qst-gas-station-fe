@@ -17,17 +17,18 @@ export const fetchOneInvoice = async (id) => {
   }
 }
 
-export const fetchInvoices = async (filter, pageMeta) => {
+export const fetchInvoices = async (filter, pageMeta, sorting) => {
   try {
     const startDate = filter.billDate?.from
     const endDate = filter.billDate?.to
+    const sortBy = JSON.stringify(sorting)
     const newFilter = { ...filter }
     delete newFilter.billDate
 
     const { pageSize } = pageMeta
     const page = pageMeta.currentPage
 
-    const params = { startDate, endDate, ...newFilter, page, pageSize }
+    const params = { startDate, endDate, ...newFilter, page, pageSize, sortBy }
     const queries = convertToQueryString(params)
 
     const response = await axiosInstance.get(

@@ -8,6 +8,7 @@ export default function useFilter({
   action,
   autoRefresh,
   refreshDelay = 5000,
+  sorting
 }) {
   const { toast } = useToast()
   const [data, setData] = useState([])
@@ -17,7 +18,7 @@ export default function useFilter({
 
   const applyFilter = useCallback(
     (filter, meta) => {
-      action(filter, meta)
+      action(filter, meta, sorting)
         .then((response) => {
           if (response.status === 200) {
             const { data, meta } = response.data
@@ -32,7 +33,7 @@ export default function useFilter({
           }
         })
     },
-    [action, toast]
+    [action, toast, sorting]
   )
 
   useEffect(() => {
@@ -42,15 +43,15 @@ export default function useFilter({
     }
 
     if (loading) setLoading(false)
-    else applyFilter(filter, currMeta)
+    else applyFilter(filter, currMeta, sorting)
 
     const interval = setInterval(() => {
-      if (autoRefresh) applyFilter(filter, currMeta)
+      if (autoRefresh) applyFilter(filter, currMeta, sorting)
     }, refreshDelay)
 
     return () => clearInterval(interval)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [meta.currentPage, meta.pageSize, filter, loading])
+  }, [meta.currentPage, meta.pageSize, filter, loading, sorting])
 
   const onFieldChange = useCallback(
     (value, name) =>
