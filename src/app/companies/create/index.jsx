@@ -54,26 +54,29 @@ export default function CompanyCreatePage() {
 
   const isValid = form.formState.isValid
   const [token, setToken] = useState()
+
+  const handleCopyToken = async (token) => {
+    try {
+      await copyToClipboard(token)
+      toast({
+        variant: TOAST.SUCCESS,
+        title: "Copy thành công!",
+      })
+    } catch (error) {
+      toast({
+        variant: TOAST.DESTRUCTIVE,
+        title: `Copy thất bại!`,
+        description: error.message
+      })
+    }
+  }
+
   const additionalContent = token ? (
     <div className="flex flex-col justify-center items-center gap-1.5 mt-2 w-full">
       <Label className="mt-1.5">Token:</Label>
       <div
         className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm overflow-auto text-nowrap cursor-pointer hover:text-accent-foreground"
-        onClick={async () => {
-          try {
-            await copyToClipboard(token)
-            toast({
-              variant: TOAST.SUCCESS,
-              title: "Copy thành công!",
-            })
-          } catch (error) {
-            toast({
-              variant: TOAST.DESTRUCTIVE,
-              title: `Copy thất bại!`,
-              description: error.message
-            })
-          }
-        }}
+        onClick={() => handleCopyToken(token)}
       >
         {token}
       </div>
@@ -161,7 +164,7 @@ export default function CompanyCreatePage() {
             <SkeletonForm />
           ) : (
             <>
-              <CreateForm {...{ form, isEdit, token }} />
+              <CreateForm {...{ form, isEdit, token, handleCopyToken }} />
               <Card className="col-span-2 p-4 space-x-4 text-right">
                 <Button
                   disabled={loading}

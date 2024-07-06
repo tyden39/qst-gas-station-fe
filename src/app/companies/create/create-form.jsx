@@ -7,8 +7,9 @@ import {
   FormMessage,
 } from "components/ui/form"
 import { Input } from "components/ui/input"
+import { copyToClipboard } from "lib/string"
 
-export default function CreateForm({ form, isEdit, token }) {
+export default function CreateForm({ form, isEdit, token, handleCopyToken }) {
   return (
     <Card className="w-full">
       <CardContent>
@@ -90,8 +91,9 @@ export default function CreateForm({ form, isEdit, token }) {
             <FormItem className="space-y-1.5 grid grid-cols-1">
               <FormLabel>Token</FormLabel>
               <p
-                className="rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background cursor-not-allowed opacity-50"
+                className="rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background cursor-pointer opacity-50"
                 style={{ wordWrap: "break-word" }}
+                onClick={()=>handleCopyToken(token)}
               >
                 {token}
               </p>
