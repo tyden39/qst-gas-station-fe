@@ -1,10 +1,11 @@
 import axiosInstance from "actions/axiosInstance"
 import { API_PATHS } from "constants/api-paths"
 import { handleError } from "lib/api"
-import { convertToQueryString } from "lib/utils"
+import { convertSorting, convertToQueryString } from "lib/utils"
 
-export const fetchUsers = async (filter, pageMeta) => {
+export const fetchUsers = async (filter, pageMeta, sorting) => {
   try {
+    const sortBy = JSON.stringify(convertSorting(sorting))
     const startDate = filter.createdAt?.from
     const endDate = filter.createdAt?.to
     const newFilter = { ...filter }
@@ -13,7 +14,7 @@ export const fetchUsers = async (filter, pageMeta) => {
     const { pageSize } = pageMeta
     const page = pageMeta.currentPage
 
-    const params = { startDate, endDate, ...newFilter, page, pageSize }
+    const params = { startDate, endDate, ...newFilter, page, pageSize, sortBy }
     const queries = convertToQueryString(params)
 
     const response = await axiosInstance.get(

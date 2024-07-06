@@ -18,7 +18,7 @@ export function UserPage() {
         ),
       },
       {
-        accessorKey: "name",
+        accessorKey: "firstName",
         header: () => <div className="text-center">Họ và tên</div>,
         cell: ({ row }) => {
           return (
