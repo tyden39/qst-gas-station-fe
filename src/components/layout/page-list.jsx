@@ -9,7 +9,7 @@ import useTableSelect from "hooks/useTableSelect"
 import useFilter from "hooks/userFilter"
 import { getActiveMenu } from "lib/url"
 import { cn } from "lib/utils"
-import { useMemo } from "react"
+import { useMemo, useState } from "react"
 import { Link, useLocation } from "react-router-dom"
 import PATH from "routers/path"
 import useAuth from "zustands/useAuth"
@@ -31,7 +31,6 @@ export function PageList({
   fetchAction,
   autoRefresh,
   refreshDelay,
-  sorting,
 }) {
   const [getPermission, authUser] = useAuth((state) => [
     state.getPermission,
@@ -43,6 +42,8 @@ export function PageList({
 
   const location = useLocation()
   const activeMenuName = getActiveMenu(location.pathname)
+
+  const [sorting, setSorting] = useState([])
 
   const {
     filter,
@@ -104,7 +105,6 @@ export function PageList({
             )
           },
           enableSorting: false,
-          enableHiding: false,
         },
         {
           accessorKey: "order",
@@ -116,11 +116,12 @@ export function PageList({
 
             return <div className="text-center">{startItem - row.index}</div>
           },
-          disableSortBy: true,
+          enableSorting: false,
         },
         ...cols,
         {
           accessorKey: "deletedAt",
+          // enableSorting: false,
           header: () => <div className="text-center">Trạng thái</div>,
           cell: ({ row }) => {
             return (
@@ -140,6 +141,7 @@ export function PageList({
             return <TableColumnSelect {...{ table }} />
           },
           size: 50,
+          enableSorting: false,
           enableHiding: false,
           cell: ({ row }) => {
             const rowValue = row.original
@@ -191,6 +193,8 @@ export function PageList({
     initColumnVisibility,
     data,
     meta,
+    sorting,
+    setSorting,
   })
 
   return (

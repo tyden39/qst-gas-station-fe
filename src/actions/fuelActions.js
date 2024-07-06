@@ -1,9 +1,8 @@
-import axiosInstance from "actions/axiosInstance"
-import { convertToQueryString } from "lib/utils"
-import FileSaver from 'file-saver';
+import axiosInstance from "actions/axiosInstance";
 import { API_PATHS } from "constants/api-paths";
-import { AUTH_CONFIG } from "routers/config";
+import FileSaver from 'file-saver';
 import { handleError } from "lib/api";
+import { convertSorting, convertToQueryString } from "lib/utils";
 
 export const fetchOneInvoice = async (id) => {
   try {
@@ -21,7 +20,7 @@ export const fetchInvoices = async (filter, pageMeta, sorting) => {
   try {
     const startDate = filter.billDate?.from
     const endDate = filter.billDate?.to
-    const sortBy = JSON.stringify(sorting)
+    const sortBy = JSON.stringify(convertSorting(sorting))
     const newFilter = { ...filter }
     delete newFilter.billDate
 

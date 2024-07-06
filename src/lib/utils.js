@@ -14,3 +14,10 @@ export function convertToQueryString(params) {
   }
   return queryStrings.join("&");
 }
+
+export function convertSorting(sorting) {
+  return sorting.map(item => {
+    let order = item.desc ? "desc" : "asc";
+    return [item.id, order];
+});
+}

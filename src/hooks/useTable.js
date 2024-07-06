@@ -1,8 +1,8 @@
-import { getCoreRowModel, useReactTable } from "@tanstack/react-table"
+import { getCoreRowModel, getSortedRowModel, useReactTable } from "@tanstack/react-table"
 import { Skeleton } from "components/ui/skeleton"
 import { useEffect, useMemo, useState } from "react"
 
-export default function useTable({initColumnVisibility, data, loading, columns, meta}) {
+export default function useTable({initColumnVisibility, data, loading, columns, meta, sorting, setSorting}) {
   const [columnVisibility, setColumnVisibility] = useState(initColumnVisibility)
 
   const tableColumns = useMemo(
@@ -26,7 +26,10 @@ export default function useTable({initColumnVisibility, data, loading, columns, 
     columns: tableColumns,
     getCoreRowModel: getCoreRowModel(),
     onColumnVisibilityChange: setColumnVisibility,
+    getSortedRowModel: getSortedRowModel(),
+    onSortingChange: setSorting,
     state: {
+      sorting,
       columnVisibility,
     },
   })
