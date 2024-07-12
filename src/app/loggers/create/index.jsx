@@ -53,7 +53,7 @@ export default function LoggerCreatePage() {
     mode: 'onTouched',
   })
 
-  const isValid = form.formState.isValid
+  const {isValid, isDirty} = form.formState
 
   async function onSubmit(values) {
     setLoading(true)
@@ -146,7 +146,7 @@ export default function LoggerCreatePage() {
   }
 
   return (
-    <div className="w-full">
+    <div className="w-full p-4">
       <div className="">
         <Link
           to={-1}
@@ -187,7 +187,7 @@ export default function LoggerCreatePage() {
                 >
                   Hủy
                 </Button>
-                <Button disabled={loading || !isValid}>{isEdit ? "Lưu" : "Tạo mới"}</Button>
+                <Button disabled={loading || !isValid || !isDirty}>{isEdit ? "Lưu" : "Tạo mới"}</Button>
               </Card>
             </>
           )}

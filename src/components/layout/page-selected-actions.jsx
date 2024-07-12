@@ -9,45 +9,38 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "components/ui/dialog"
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "components/ui/dropdown-menu"
 import { TOAST } from "components/ui/toast"
 import { useToast } from "components/ui/use-toast"
 import { USER_ROLE } from "constants/user-roles"
-import { Loader2, MoreHorizontal } from "lucide-react"
-import { useState } from "react"
-import { Link } from "react-router-dom"
-import PATH from "routers/path"
+import { Loader2 } from "lucide-react"
+import { useCallback, useState } from "react"
 
-const RowActions = ({
-  id,
-  pageName,
-  pageLabel,
+export default function SelectedActions({
   refreshData,
-  userRole,
-  deleteAction,
-  restoreAction,
-  isDeleted,
-}) => {
+  unselected,
+  setUnselected,
+  selected,
+  authUser,
+  restoreBulkAction,
+  deleteBulkAction,
+  setSelected,
+  meta,
+}) {
   const { toast } = useToast()
   const [open, setOpen] = useState(false)
   const [loading, setLoading] = useState(false)
   const [forceDelete, setForceDelete] = useState()
+  const userRole = authUser.roles[0]
   const isAdmin = userRole === USER_ROLE.ADMIN
 
   const onOpenChange = (open) => {
     if (!loading) setOpen(open)
   }
 
-  const onDelete = async () => {
-    setLoading(true)
+  const onDelete = useCallback(async () => {
     const force = forceDelete
 
-    const response = await deleteAction(id, force)
+    const response = await deleteBulkAction(selected, unselected, force)
 
     if (response.status === 200) {
       toast({
@@ -55,25 +48,39 @@ const RowActions = ({
         title: "Xóa thành công!",
       })
       refreshData()
+      if (force || !isAdmin) {
+        setSelected([])
+        setUnselected([])
+      }
     } else
       toast({
         variant: TOAST.DESTRUCTIVE,
         title: "Xóa thất bại!",
-        description: response.message
+        description: response.message,
       })
 
+    setForceDelete(false)
     setOpen(false)
     setLoading(false)
-    setForceDelete(false)
-  }
+  }, [
+    deleteBulkAction,
+    selected,
+    unselected,
+    forceDelete,
+    toast,
+    refreshData,
+    setSelected,
+    isAdmin,
+    setUnselected
+  ])
 
   const handleForceDelete = () => {
     setOpen(true)
     setForceDelete(true)
   }
 
-  const handleRestore = async () => {
-    const {status} = await restoreAction(id)
+  const handleForceRestore = useCallback(async () => {
+    const { status } = await restoreBulkAction(selected, unselected)
     if (status === 200) {
       toast({
         variant: TOAST.SUCCESS,
@@ -85,57 +92,41 @@ const RowActions = ({
         variant: TOAST.DESTRUCTIVE,
         title: "Khôi phục thất bại!",
       })
-  }
+  }, [selected, unselected, refreshData, restoreBulkAction, toast])
 
   return (
     <Dialog {...{ open, onOpenChange }}>
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button variant="icon" className="h-4 p-0">
-            <span className="sr-only">Open menu</span>
-            <MoreHorizontal className="h-4 w-4 opacity-50 hover:opacity-100 cursor-pointer" />
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align="end">
-          <DropdownMenuItem asChild>
-            <Link
-              to={PATH[`${pageName.toUpperCase()}_EDIT`].replace(":id", id)}
-              className="cursor-pointer"
+      <div className="flex items-center gap-2">
+        <span className="mr-2">{`Đã chọn ${selected === 'all' ? meta.totalItems : selected.length}`}</span>
+        <div className="grid grid-cols-3 gap-2 w-[400px]">
+          <DialogTrigger asChild>
+            <Button
+              variant="outline"
+              className="hover:bg-destructive hover:text-white"
             >
-              Chỉnh sửa
-            </Link>
-          </DropdownMenuItem>
-          {isDeleted ? null : (
-            <DialogTrigger asChild>
-              <DropdownMenuItem className="focus:bg-destructive focus:text-destructive-foreground cursor-pointer">
-                Xóa
-              </DropdownMenuItem>
-            </DialogTrigger>
-          )}
+              Xóa
+            </Button>
+          </DialogTrigger>
           {isAdmin ? (
             <>
-              <DropdownMenuItem asChild>
-                <p
-                  className="focus:bg-destructive focus:text-destructive-foreground cursor-pointer"
-                  onClick={handleForceDelete}
-                >
-                  Xóa vĩnh viễn
-                </p>
-              </DropdownMenuItem>
-              {isDeleted ? (
-                <DropdownMenuItem asChild>
-                  <p
-                    className="focus:bg-green-500 focus:text-destructive-foreground cursor-pointer"
-                    onClick={handleRestore}
-                  >
-                    Khôi phục
-                  </p>
-                </DropdownMenuItem>
-              ) : null}
+              <Button
+                variant="outline"
+                className="hover:bg-destructive hover:text-white"
+                onClick={handleForceDelete}
+              >
+                Xóa vĩnh viễn
+              </Button>
+              <Button
+                variant="outline"
+                className="hover:bg-green-500 hover:text-white"
+                onClick={handleForceRestore}
+              >
+                Khôi phục
+              </Button>
             </>
           ) : null}
-        </DropdownMenuContent>
-      </DropdownMenu>
+        </div>
+      </div>
       <DialogContent className="sm:max-w-[450px]">
         <DialogHeader>
           <DialogTitle>
@@ -143,7 +134,7 @@ const RowActions = ({
           </DialogTitle>
           <DialogDescription>
             Hành động này không thể được hoàn tác. Bạn có chắc chắn muốn xóa
-            {forceDelete ? " vĩnh viễn " : ""} {pageLabel.toLowerCase()} này ?
+            {forceDelete ? " vĩnh viễn " : ""} những bản ghi này ?
           </DialogDescription>
         </DialogHeader>
         <DialogFooter>
@@ -166,5 +157,3 @@ const RowActions = ({
     </Dialog>
   )
 }
-
-export default RowActions

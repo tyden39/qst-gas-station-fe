@@ -2,7 +2,8 @@ import { Button } from "components/ui/button"
 import { format } from "date-fns"
 import { X } from "lucide-react"
 
-export default function FilterTags({ applyFilter, activedFilter, companyList, branchList }) {
+export default function FilterTags({ applyFilter, activedFilter, initExtra }) {
+  const { companyList, branchList } = initExtra
   
   const deleteFilter = (filterName) => {
     const newFilter = { ...activedFilter, [filterName]: null }

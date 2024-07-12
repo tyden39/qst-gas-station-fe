@@ -1,50 +1,16 @@
 import { FilterSelect } from "components/FilterSelect"
-import { DatePickerWithRange } from "components/ui/datepicker"
 import { USER_ROLE } from "constants/user-roles"
 import { transformToSelectList } from "lib/transofrm"
 import { useEffect, useState } from "react"
 
-import { fetchSimpleList as fetchBranchSimpleList } from "actions/branchActions"
-import { fetchSimpleList as fetchCompanySimpleList } from "actions/companyActions"
-import { fetchSimpleList as fetchStoreSimpleList } from "actions/storeActions"
-
-export default function AdditionalFilter({ authUser, filter, onFieldChange }) {
-  const [companyList, setCompanyList] = useState([])
-  const [branchList, setBranchList] = useState([])
-  const [storeList, setStoreList] = useState([])
-
-  const getCompanyList = async (value) => {
-    const response = await fetchCompanySimpleList({ companyId: value })
-    if (response.status === 200) {
-      const resData = response.data
-      setCompanyList(resData)
-    }
-  }
-
-  const getBranchList = async (value) => {
-    const response = await fetchBranchSimpleList({ companyId: value })
-    if (response.status === 200) {
-      const branchList = response.data
-      setBranchList(branchList)
-    }
-  }
-
-  const getStoreList = async (value) => {
-    const response = await fetchStoreSimpleList({ branchId: value })
-    if (response.status === 200) {
-      const storeList = response.data
-      setStoreList(storeList)
-    }
-  }
-
-  useEffect(() => {
-    const initialData = async () => {
-      authUser.roles.includes(USER_ROLE.ADMIN) && getCompanyList()
-      authUser.roles.includes(USER_ROLE.COMPANY) && getBranchList()
-      authUser.roles.includes(USER_ROLE.BRANCH) && getStoreList()
-    }
-    initialData()
-  }, [authUser.roles])
+export default function StructureFilter({
+  authUser,
+  filter,
+  onFieldChange,
+  initExtra,
+  applyFilter,
+}) {
+  const { companyList, branchList, storeList } = initExtra
 
   const [companies, setCompanies] = useState([])
   const [branches, setBranches] = useState([])
@@ -52,34 +18,37 @@ export default function AdditionalFilter({ authUser, filter, onFieldChange }) {
 
   const onCompanyChange = async (value, name) => {
     if (filter.companyId !== value) {
-      onFieldChange(value, name)
-      onFieldChange(undefined, "branchId")
-
       const brList = value
         ? branchList.filter((x) => x.companyId === value)
         : branchList
-      const selectList = transformToSelectList(brList)
-      setBranches(selectList)
+      const stList = value
+        ? storeList.filter((x) => x.companyId === value)
+        : storeList
+      setBranches(transformToSelectList(brList))
+      setStores(transformToSelectList(stList))
 
-      onBranchChange(undefined, "branchId")
+      applyFilter({
+        newFilter: { companyId: value, branchId: null, storeId: null },
+      })
     }
   }
 
   const onBranchChange = (value, name) => {
     if (filter.branchId !== value) {
-      onFieldChange(value, name)
-      onFieldChange(undefined, "storeId")
-
       const stList = value
         ? storeList.filter((x) => x.branchId === value)
         : storeList
       const selectList = transformToSelectList(stList)
       setStores(selectList)
+      applyFilter({ newFilter: { branchId: value, storeId: null } })
     }
   }
 
   const onStoreChange = (value, name) => {
-    if (filter.storeId !== value) onFieldChange(value, name)
+    if (filter.storeId !== value) {
+      onFieldChange(value, name)
+      applyFilter({ newFilter: { storeId: value } })
+    }
   }
 
   useEffect(() => {
@@ -99,14 +68,6 @@ export default function AdditionalFilter({ authUser, filter, onFieldChange }) {
 
   return (
     <>
-      <DatePickerWithRange
-        className={"col-span-2"}
-        name={"createdAt"}
-        label="Ngày tạo:"
-        placeholder={"Chọn ngày"}
-        date={filter.createdAt}
-        onChangeValue={onFieldChange}
-      />
       {authUser.roles.includes(USER_ROLE.ADMIN) && (
         <FilterSelect
           name="companyId"

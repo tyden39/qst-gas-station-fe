@@ -2,7 +2,8 @@ import { Button } from "components/ui/button"
 import { format } from "date-fns"
 import { X } from "lucide-react"
 
-export default function FilterTags({ activedFilter, applyFilter, companyList, branchList, storeList }) {
+export default function FilterTags({ activedFilter, applyFilter, initExtra}) {
+  const { companyList, branchList, storeList } = initExtra
   const deleteFilter = (filterName) => {
     const newFilter = { ...activedFilter, [filterName]: null }
     applyFilter(newFilter)
@@ -11,8 +12,8 @@ export default function FilterTags({ activedFilter, applyFilter, companyList, br
   return (
     <div className="mb-2 -mt-2 flex gap-2 flex-wrap">
       {activedFilter.createdAt ? (
-        <div className="border border-solid bg-primary-foreground text-sm py-1 px-2 rounded w-fit flex items-center gap-1">
-          <span className="font-medium">Thời gian ghi log:</span>
+        <div className="text-sm py-1 px-2 rounded w-fit flex items-center gap-1">
+          <span className="font-medium text-muted-foreground">Thời gian ghi log:</span>
           {activedFilter.createdAt?.to ? (
             <>
               {format(activedFilter.createdAt?.from, "dd-MM-yyyy")} -{" "}
@@ -32,8 +33,8 @@ export default function FilterTags({ activedFilter, applyFilter, companyList, br
       ) : null}
 
       {activedFilter.companyId ? (
-        <div className="border border-solid bg-primary-foreground text-sm py-1 px-2 rounded w-fit flex items-center gap-1">
-          <span className="font-medium">Công ty:</span>
+        <div className="text-sm py-1 px-2 rounded w-fit flex items-center gap-1">
+          <span className="font-medium text-muted-foreground">Công ty:</span>
           <span className="">
             {companyList.find((x) => x.id === activedFilter.companyId)?.name}
           </span>
@@ -48,8 +49,8 @@ export default function FilterTags({ activedFilter, applyFilter, companyList, br
       ) : null}
 
       {activedFilter.branchId ? (
-        <div className="border border-solid bg-primary-foreground text-sm py-1 px-2 rounded w-fit flex items-center gap-1">
-          <span className="font-medium">Công ty:</span>
+        <div className="text-sm py-1 px-2 rounded w-fit flex items-center gap-1">
+          <span className="font-medium text-muted-foreground">Công ty:</span>
           <span className="">
             {branchList.find((x) => x.id === activedFilter.branchId)?.name}
           </span>
@@ -64,8 +65,8 @@ export default function FilterTags({ activedFilter, applyFilter, companyList, br
       ) : null}
 
       {activedFilter.storeId ? (
-        <div className="border border-solid bg-primary-foreground text-sm py-1 px-2 rounded w-fit flex items-center gap-1">
-          <span className="font-medium">Công ty:</span>
+        <div className="text-sm py-1 px-2 rounded w-fit flex items-center gap-1">
+          <span className="font-medium text-muted-foreground">Công ty:</span>
           <span className="">
             {storeList.find((x) => x.id === activedFilter.storeId)?.name}
           </span>

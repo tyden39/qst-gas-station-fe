@@ -75,7 +75,7 @@ export default function CreateForm({
                 placeholder: "Chọn chi nhánh",
                 name: "branchId",
                 list: branchList,
-                disabled: !companyIdValue,
+                disabled: ![USER_ROLE.COMPANY].includes(userRole) && !companyIdValue,
                 onChange: async (value) => {
                   await getStoreList(value)
                   form.resetField("storeId", {defaultValue: null})
@@ -97,7 +97,7 @@ export default function CreateForm({
                 placeholder: "Chọn cửa hàng",
                 name: "storeId",
                 list: storeList,
-                disabled: !branchIdValue || !companyIdValue,
+                disabled: (!branchIdValue) && ![USER_ROLE.BRANCH].includes(userRole),
               }}
             />
           ) : null}

@@ -3,48 +3,9 @@ import { DatePickerWithRange } from "components/ui/datepicker"
 import { USER_ROLE } from "constants/user-roles"
 import { transformToSelectList } from "lib/transofrm"
 import { useEffect, useState } from "react"
-import { fetchSimpleList as fetchBranchSimpleList } from "actions/branchActions"
-import { fetchSimpleList as fetchCompanySimpleList } from "actions/companyActions"
-import { fetchSimpleList as fetchStoreSimpleList } from "actions/storeActions"
 
-export default function UserFilter({ authUser, filter, onFieldChange }) {
-  const [companyList, setCompanyList] = useState([])
-  const [branchList, setBranchList] = useState([])
-  const [storeList, setStoreList] = useState([])
-
-  const getCompanyList = async (value) => {
-    const response = await fetchCompanySimpleList({ companyId: value })
-    if (response.status === 200) {
-      const resData = response.data
-      setCompanyList(resData)
-    }
-  }
-
-  const getBranchList = async (value) => {
-    const response = await fetchBranchSimpleList({ companyId: value })
-    if (response.status === 200) {
-      const branchList = response.data
-      setBranchList(branchList)
-    }
-  }
-
-  const getStoreList = async (value) => {
-    const response = await fetchStoreSimpleList({ branchId: value })
-    if (response.status === 200) {
-      const storeList = response.data
-      setStoreList(storeList)
-    }
-  }
-
-  useEffect(() => {
-    const initialData = async () => {
-      authUser.roles.includes(USER_ROLE.ADMIN) && getCompanyList()
-      authUser.roles.includes(USER_ROLE.COMPANY) && getBranchList()
-      authUser.roles.includes(USER_ROLE.BRANCH) && getStoreList()
-    }
-    initialData()
-  }, [authUser.roles])
-
+export default function UserFilter({ authUser, filter, onFieldChange, initExtra }) {
+  const {companyList, branchList, storeList} = initExtra
   const [companies, setCompanies] = useState([])
   const [branches, setBranches] = useState([])
   const [stores, setStores] = useState([])
@@ -99,6 +60,7 @@ export default function UserFilter({ authUser, filter, onFieldChange }) {
   return (
     <>
       <DatePickerWithRange
+        className={"col-span-2"}
         name={"createdAt"}
         label="Ngày tạo:"
         date={filter.createdAt}

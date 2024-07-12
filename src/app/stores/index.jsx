@@ -1,11 +1,14 @@
 
-import { fetchAll, deleteOne, restore } from "actions/storeActions"
+import { deleteOne, fetchAll, restore } from "actions/storeActions"
 import { PageList } from "components/layout/page-list"
+import useInitStructure from "hooks/useInitStructure"
 import { useMemo } from "react"
 import StoreFilter from "./filter"
 import { initColumnVisibility, initFilter, initMeta } from "./initial"
 
 export function StorePage() {
+  const initExtra = useInitStructure(false, true)
+  
   const columns = useMemo(
     () => [
       {
@@ -68,7 +71,8 @@ export function StorePage() {
         fetchAction: fetchAll,
         initColumnVisibility,
         initFilter,
-        initMeta
+        initMeta,
+        initExtra,
       }}
     />
   )

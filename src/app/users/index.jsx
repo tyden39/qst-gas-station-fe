@@ -6,8 +6,11 @@ import UserFilter from "./filter"
 import { initColumnVisibility, initFilter, initMeta } from "./initial"
 
 import { PageList } from "components/layout/page-list"
+import useInitStructure from "hooks/useInitStructure"
 
 export function UserPage() {
+  const initExtra = useInitStructure()
+
   const columns = useMemo(
     () => [
       {
@@ -38,11 +41,11 @@ export function UserPage() {
       {
         accessorKey: "phone",
         header: () => <div className="">Số Điện Thoại</div>,
-        cell: ({ row }) => <div className="">{row.getValue("phone")}</div>,
+        cell: ({ row }) => <div className="text-center">{row.getValue("phone")}</div>,
       },
       {
         accessorKey: "roles",
-        header: () => <div className="text-center">Vai trò người dùng</div>,
+        header: () => <div className="text-center">Vai trò</div>,
         cell: ({ row }) => {
           return <div className="text-center">{USER_ROLES.find(item => item.value === (row.getValue("roles")?.[0]))?.label}</div>
         },
@@ -84,7 +87,8 @@ export function UserPage() {
         fetchAction: fetchUsers,
         initColumnVisibility,
         initFilter,
-        initMeta
+        initMeta,
+        initExtra,
       }}
     />
   )

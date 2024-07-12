@@ -68,6 +68,18 @@ export const handleExport = async (filter, pageMeta, selected, unselected) => {
   }
 }
 
+export const deleteBulk = async (selected, unselected, force) => {
+  try {
+    const response = await axiosInstance.delete(
+      `${API_PATHS.INVOICE_DELETE_BULK}`,
+      {data: {force, selected, unselected}}
+    )
+    return response
+  } catch (error) {
+    return handleError(error)
+  }
+}
+
 export const deleteInvoice = async (id, force) => {
   try {
     const response = await axiosInstance.delete(
@@ -85,7 +97,19 @@ export const restore = async (id) => {
     const response = await axiosInstance.post(
       `${API_PATHS.INVOICE_RESTORE}/${id}`
     )
-    return response.status
+    return response.data
+  } catch (error) {
+    return handleError(error)
+  }
+}
+
+export const restoreBulk = async (selected, unselected) => {
+  try {
+    const response = await axiosInstance.post(
+      `${API_PATHS.INVOICE_RESTORE_BULK}`,
+      {selected, unselected}
+    )
+    return response.data
   } catch (error) {
     return handleError(error)
   }

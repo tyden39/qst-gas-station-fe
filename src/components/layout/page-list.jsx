@@ -15,6 +15,8 @@ import PATH from "routers/path"
 import useAuth from "zustands/useAuth"
 import RowActions from "./row-actions"
 import TableColumnSelect from "./table-column-select"
+import SelectedActions from "./page-selected-actions"
+import moment from "moment"
 
 export function PageList({
   cols,
@@ -23,6 +25,7 @@ export function PageList({
   pageLabel,
   isSelect,
   additionalFilter,
+  strutureFilter,
   initColumnVisibility,
   initFilter,
   initMeta,
@@ -31,6 +34,11 @@ export function PageList({
   fetchAction,
   autoRefresh,
   refreshDelay,
+  initExtra,
+  searchInputPlaceholder,
+  restoreBulkAction,
+  deleteBulkAction,
+  filtersNotCount,
 }) {
   const [getPermission, authUser] = useAuth((state) => [
     state.getPermission,
@@ -47,6 +55,7 @@ export function PageList({
 
   const {
     filter,
+    activedFilter,
     meta,
     data,
     onFieldChange,
@@ -54,6 +63,7 @@ export function PageList({
     setFilter,
     refreshData,
     loading,
+    applyFilter,
   } = useFilter({
     initFilter,
     initMeta,
@@ -63,11 +73,17 @@ export function PageList({
     sorting,
   })
 
-  const { selected, unselected, onHeaderChecked, onRowChecked } =
-    useTableSelect({
-      data,
-      meta,
-    })
+  const {
+    selected,
+    unselected,
+    onHeaderChecked,
+    onRowChecked,
+    setSelected,
+    setUnselected,
+  } = useTableSelect({
+    data,
+    meta,
+  })
 
   const columns = useMemo(
     () =>
@@ -80,8 +96,12 @@ export function PageList({
               <Checkbox
                 checked={
                   selected === "all"
-                    ? (unselected.length === 0 ? true : "indeterminate")
-                    : (selected.length === 0 ? false : "indeterminate")
+                    ? unselected.length === 0
+                      ? true
+                      : "indeterminate"
+                    : selected.length === 0
+                    ? false
+                    : "indeterminate"
                 }
                 onCheckedChange={onHeaderChecked}
                 aria-label="Select all"
@@ -104,6 +124,7 @@ export function PageList({
               </div>
             )
           },
+          enableHiding: false,
           enableSorting: false,
         },
         {
@@ -120,8 +141,18 @@ export function PageList({
         },
         ...cols,
         {
+          accessorKey: "createdAt",
+          enableHiding: false,
+          header: () => <div className="text-center">Ngày tạo</div>,
+          cell: ({ row }) => {
+            const formatted = moment(row.getValue("createdAt")).format(
+              "DD-MM-YYYY HH:mm:ss"
+            )
+            return <div className="text-center">{formatted}</div>
+          },
+        },
+        {
           accessorKey: "deletedAt",
-          // enableSorting: false,
           header: () => <div className="text-center">Trạng thái</div>,
           cell: ({ row }) => {
             return (
@@ -198,11 +229,21 @@ export function PageList({
   })
 
   return (
-    <div className="w-full">
-      <div className="flex justify-between items-center">
-        <h1 className="text-4xl leading-normal ml-3 font-bold">
-          {activeMenuName}
-        </h1>
+    <div className="w-full h-full flex flex-col">
+      {strutureFilter ? (
+        <div className="grid grid-cols-3 gap-2 mt-2 mx-4">
+          {strutureFilter({
+            authUser,
+            filter,
+            onFieldChange,
+            initExtra,
+            applyFilter,
+          })}
+        </div>
+      ) : null}
+
+      <div className="flex justify-between items-center flex-shrink-0 mt-3 mx-4">
+        <h1 className="text-4xl leading-normal font-bold">{activeMenuName}</h1>
         <div className="space-x-2">
           {actions ? actions({ filter, meta, selected, unselected }) : null}
           {allowCreate && (
@@ -216,20 +257,47 @@ export function PageList({
         </div>
       </div>
 
-      <PageFilter
-        {...{
-          setFilter,
-          searchInputPlaceholder: "Tìm kiếm nhanh",
-        }}
+      <div
+        className={cn(
+          "relative border-t mt-3 py-2 px-4 overflow-hidden",
+          "flex gap-2 items-center",
+          "flex-shrink-0",
+          "bg-white"
+        )}
       >
-        {additionalFilter
-          ? additionalFilter({
+        {selected && selected.length > 0 ? (
+          <SelectedActions
+            {...{
+              selected,
+              unselected,
+              setSelected,
+              setUnselected,
+              refreshData,
               authUser,
+              restoreBulkAction,
+              deleteBulkAction,
+              meta,
+            }}
+          />
+        ) : (
+          <PageFilter
+            {...{
               filter,
+              setFilter,
+              initFilter,
+              applyFilter,
+              activedFilter,
+              initExtra,
+              searchInputPlaceholder:
+                searchInputPlaceholder ?? "Tìm kiếm nhanh",
+              additionalFilter,
+              authUser,
               onFieldChange,
-            })
-          : null}
-      </PageFilter>
+              filtersNotCount,
+            }}
+          ></PageFilter>
+        )}
+      </div>
 
       <PageTable {...{ table }} />
       <PagePagination {...{ setMeta, meta, selected, unselected }} />

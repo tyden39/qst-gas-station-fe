@@ -8,22 +8,25 @@ export default function useFilter({
   action,
   autoRefresh,
   refreshDelay = 5000,
-  sorting
+  sorting,
 }) {
   const { toast } = useToast()
   const [data, setData] = useState([])
   const [meta, setMeta] = useState(initMeta)
   const [filter, setFilter] = useState(initFilter)
+  const [activedFilter, setactivedFilter] = useState(initFilter)
   const [loading, setLoading] = useState(false)
 
   const applyFilter = useCallback(
-    (filter, meta) => {
-      action(filter, meta, sorting)
-        .then((response) => {
+    ({newFilter, newMeta}) => {
+      action({...filter, ...newFilter}, { ...meta, ...newMeta }, sorting).then(
+        (response) => {
           if (response.status === 200) {
             const { data, meta } = response.data
             setMeta(meta)
             setData(data)
+            setFilter({...filter, ...newFilter})
+            setactivedFilter({...filter, ...newFilter})
           } else {
             toast({
               variant: TOAST.DESTRUCTIVE,
@@ -31,9 +34,10 @@ export default function useFilter({
               description: response.message,
             })
           }
-        })
+        }
+      )
     },
-    [action, toast, sorting]
+    [action, toast, filter, meta, sorting]
   )
 
   useEffect(() => {
@@ -43,15 +47,15 @@ export default function useFilter({
     }
 
     if (loading) setLoading(false)
-    else applyFilter(filter, currMeta, sorting)
+    else applyFilter({newMeta: currMeta})
 
-    const interval = setInterval(() => {
-      if (autoRefresh) applyFilter(filter, currMeta, sorting)
-    }, refreshDelay)
+    // const interval = setInterval(() => {
+    //   if (autoRefresh) applyFilter(filter, currMeta, sorting)
+    // }, refreshDelay)
 
-    return () => clearInterval(interval)
+    // return () => clearInterval(interval)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [meta.currentPage, meta.pageSize, filter, loading, sorting])
+  }, [meta.currentPage, meta.pageSize, loading, sorting])
 
   const onFieldChange = useCallback(
     (value, name) =>
@@ -67,17 +71,19 @@ export default function useFilter({
       currentPage: meta.currentPage,
       pageSize: meta.pageSize,
     }
-    applyFilter(filter, currMeta)
+    applyFilter({newFilter: filter, newMeta: currMeta})
   }, [filter, meta, applyFilter])
 
   return {
     loading,
     filter,
+    activedFilter,
     meta,
     data,
     onFieldChange,
     setFilter,
     setMeta,
     refreshData,
+    applyFilter
   }
 }

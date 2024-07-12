@@ -1,28 +1,22 @@
-import { deleteInvoice, fetchInvoices, restore } from "actions/fuelActions"
+import {
+  deleteBulk,
+  deleteInvoice,
+  fetchInvoices,
+  restore,
+  restoreBulk,
+} from "actions/fuelActions"
 import { PageList } from "components/layout/page-list"
+import useInitStructure from "hooks/useInitStructure"
 import moment from "moment"
 import { useMemo } from "react"
 import ExportInvoice from "./components/ExportInvoice"
 import { BILL_TYPES, FUEL_TYPE } from "./constant"
 import AdditionalFilter from "./filter"
 import { initColumnVisibility, initFilter, initMeta } from "./initial"
+import StructureFilter from "./structure-filter"
 
 export function FuelPage() {
-  // const handleToggleSorting = (columnId) => {
-  //   setSorting((prevSorting) => {
-  //     const existingIndex = prevSorting.findIndex(([name]) => name === columnId)
-
-  //     if (existingIndex !== -1) {
-  //       const newSorting = [...prevSorting]
-  //       const [name, direction] = newSorting[existingIndex]
-  //       const newDirection = direction === "asc" ? "desc" : "asc"
-  //       newSorting[existingIndex] = [name, newDirection]
-  //       return newSorting
-  //     } else {
-  //       return [[columnId, "asc"]]
-  //     }
-  //   })
-  // }
+  const initExtra = useInitStructure()
 
   const columns = useMemo(
     () => [
@@ -55,7 +49,9 @@ export function FuelPage() {
         size: 50,
         header: (header) => "Vòi bơm",
         cell: ({ row }) => (
-          <div className="text-center">{row.getValue("Pump_ID")}</div>
+          <div className="text-center">
+            {Number(row.getValue("Pump_ID")) + 1}
+          </div>
         ),
       },
       {
@@ -81,9 +77,7 @@ export function FuelPage() {
         header: (header) => "Loại nhiên liệu",
         cell: ({ row }) => (
           <div className="text-center">
-            {FUEL_TYPE.find(
-              (item) => item.value === row.getValue("Fuel_Type").toString()
-            )?.label || ""}
+            {row.getValue("Fuel_Type") ?? ""}
           </div>
         ),
       },
@@ -110,7 +104,7 @@ export function FuelPage() {
       {
         accessorKey: "Unit_Price",
         align: "right",
-        header: (header) => 'Giá',
+        header: (header) => "Giá",
         cell: ({ row }) => {
           const amount = parseFloat(row.getValue("Unit_Price"))
 
@@ -178,22 +172,28 @@ export function FuelPage() {
   )
 
   return (
-    <PageList
-      {...{
-        cols: columns,
-        actions: Actions,
-        additionalFilter: AdditionalFilter,
-        pageName: "fuel",
-        pageLabel: "hóa đơn",
-        deleteAction: deleteInvoice,
-        restoreAction: restore,
-        fetchAction: fetchInvoices,
-        initColumnVisibility,
-        initFilter,
-        initMeta,
-        isSelect: true,
-      }}
-    />
+      <PageList
+        {...{
+          cols: columns,
+          actions: Actions,
+          additionalFilter: AdditionalFilter,
+          strutureFilter: StructureFilter,
+          pageName: "fuel",
+          pageLabel: "hóa đơn",
+          deleteAction: deleteInvoice,
+          deleteBulkAction: deleteBulk,
+          restoreBulkAction: restoreBulk,
+          restoreAction: restore,
+          fetchAction: fetchInvoices,
+          initColumnVisibility,
+          initFilter,
+          initMeta,
+          isSelect: true,
+          initExtra,
+          searchInputPlaceholder: "Tìm kiếm Mã kiểm tra | Mã logger",
+          filtersNotCount: ['companyId', 'branchId', 'storeId']
+        }}
+      />
   )
 }
 

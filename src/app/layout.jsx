@@ -25,7 +25,7 @@ export default function Layout() {
       <Header />
       <div className="flex" style={{height: viewportHeight - 57}}>
         <Sidebar />
-        <section className="p-4 flex-1 overflow-scroll">
+        <section className="flex-1 overflow-scroll">
           <Outlet />
         </section>
       </div>

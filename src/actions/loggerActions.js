@@ -73,7 +73,7 @@ export const deleteOne = async (id, force) => {
       `${API_PATHS.LOGGER_DELETE}/${id}`,
       {data: {force}}
     )
-    return response.status
+    return response.data
   } catch (error) {
     return handleError(error)
   }
@@ -84,7 +84,7 @@ export const restore = async (id) => {
     const response = await axiosInstance.post(
       `${API_PATHS.LOGGER_RESTORE}/${id}`
     )
-    return response.status
+    return response.data
   } catch (error) {
     return handleError(error)
   }

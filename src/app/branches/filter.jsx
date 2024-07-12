@@ -28,6 +28,7 @@ export default function BranchFilter({ authUser, filter, onFieldChange }) {
   return (
     <>
       <DatePickerWithRange
+        className={"col-span-2"}
         name={"createdAt"}
         label="Ngày tạo:"
         placeholder="Chọn ngày"

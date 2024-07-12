@@ -105,23 +105,9 @@ export const deleteOne = async (id, force) => {
       `${API_PATHS.BRANCH_DELETE}/${id}`,
       {data: {force}}
     )
-    return response.status
+    return response.data
   } catch (error) {
-    if (error.response.status === 401) {
-      localStorage.removeItem(AUTH_CONFIG.ACCESS_TOKEN_STORAGE_NAME)
-      localStorage.removeItem(AUTH_CONFIG.USER_STORAGE_NAME)
-      window.location.href = '/login'
-    }
-    return axios.isAxiosError(error)
-      ? error.response?.data || {
-          status: -1,
-          message: "Không thể lấy dữ liệu từ máy chủ!",
-        }
-      : {
-          status: -1,
-          message:
-            "Lỗi hệ thống, vui lòng liên hệ quản trị viên để biết thêm chi tiết!",
-        }
+    return handleError(error)
   }
 }
 
@@ -130,7 +116,7 @@ export const restoreOne = async (id) => {
     const response = await axiosInstance.post(
       `${API_PATHS.BRANCH_RESTORE}/${id}`
     )
-    return response.status
+    return response.data
   } catch (error) {
     return handleError(error)
   }

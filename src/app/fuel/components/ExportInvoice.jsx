@@ -75,7 +75,7 @@ export default function ExportInvoice({ filter, meta, selected, unselected }) {
           <p>
             - Loại nhiên liệu:{" "}
             <span className="font-bold">
-              {FUEL_TYPE.find((item) => item.value === fuelType)?.label}
+              {fuelType}
             </span>
           </p>
           <p>

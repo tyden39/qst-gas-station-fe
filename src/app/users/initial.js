@@ -1,5 +1,6 @@
 export const initFilter = {
   keyword: "",
+  createdAt: null,
   companyId: null,
   branchId: null,
   storeId: null,

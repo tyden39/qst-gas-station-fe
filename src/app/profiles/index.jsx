@@ -14,6 +14,7 @@ import AccountInfo from "./AccountInfo"
 import UserInfo from "./UserInfo"
 import SkeletonForm from "./skeleton-form"
 import CompanyInfo from "./CompanyInfo"
+import { USER_ROLE } from "constants/user-roles"
 
 const editSchema = z.object({
   firstName: z
@@ -53,6 +54,10 @@ export default function ProfilesPage() {
   const { toast } = useToast()
   const [fetchInfoLoading, setFetchInfoLoading] = useState(false)
   const [isChangePassword, setIsChangePassword] = useState(false)
+  const [authUser] = useAuth((state) => [
+    state.user,
+  ])
+  const isCompanyPermission = authUser.roles[0] === USER_ROLE.COMPANY
 
   const form = useForm({
     resolver: zodResolver(
@@ -99,7 +104,7 @@ export default function ProfilesPage() {
   }, [user])
 
   return (
-    <div className="w-full">
+    <div className="w-full p-4">
       <div className="">
         <h1 className="text-4xl leading-normal mb-3">Hồ sơ người dùng</h1>
       </div>
@@ -114,10 +119,10 @@ export default function ProfilesPage() {
           >
             <div className="col-span-2 space-y-8">
               <UserInfo {...{ form }} />
-              <CompanyInfo {...{form}} />
+              {isCompanyPermission ? <CompanyInfo {...{form}} /> : []}
 
               <Card className="col-span-2 p-4 space-x-4 text-right">
-                <Button type="submit" disabled={!form.formState.isDirty}>
+                <Button type="submit" disabled={!form.formState.isDirty || !form.formState.isValid}>
                   Lưu
                 </Button>
               </Card>

@@ -6,7 +6,9 @@ export const API_PATHS = {
   INVOICE_CREATE: '/invoice/create',
   INVOICE_EDIT: '/invoice/edit',
   INVOICE_DELETE: '/invoice/delete',
+  INVOICE_DELETE_BULK: '/invoice/deleteBulk',
   INVOICE_RESTORE: '/invoice/restore',
+  INVOICE_RESTORE_BULK: '/invoice/restoreBulk',
   INVOICE_EXPORT_EXCEL: '/invoice/export-excel',
 
   USER_LIST: '/user/list',

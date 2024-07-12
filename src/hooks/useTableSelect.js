@@ -35,5 +35,5 @@ export default function useTableSelect({ data, meta }) {
     [selected]
   )
 
-  return { selected, unselected, onHeaderChecked, onRowChecked }
+  return { selected, unselected, onHeaderChecked, onRowChecked, setSelected, setUnselected }
 }

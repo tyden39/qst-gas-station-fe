@@ -73,7 +73,7 @@ export const deleteCompany = async (id, force) => {
       `${API_PATHS.COMPANY_DELETE}/${id}`,
       { data: { force } }
     )
-    return response.status
+    return response.data
   } catch (error) {
     return handleError(error)
   }
@@ -96,7 +96,7 @@ export const restoreOne = async (id) => {
     const response = await axiosInstance.post(
       `${API_PATHS.COMPANY_RESTORE}/${id}`
     )
-    return response.status
+    return response.data
   } catch (error) {
     return handleError(error)
   }

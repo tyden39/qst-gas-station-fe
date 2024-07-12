@@ -222,7 +222,9 @@ export default function FormCreate({
                 disabled: isEdit,
                 onChange: async (value) => {
                   await getBranchList(value)
-                  form.resetField("branchId")
+                  form.resetField("branchId", {defaultValue: null})
+                  form.resetField("storeId", {defaultValue: null})
+                  form.resetField("Logger_ID", {defaultValue: null})
                 },
               }}
             />
@@ -242,7 +244,8 @@ export default function FormCreate({
                 disabled: !companyIdValue || isEdit,
                 onChange: async (value) => {
                   await getStoreList(value)
-                  form.resetField("storeId")
+                  form.resetField("storeId", {defaultValue: null})
+                  form.resetField("Logger_ID", {defaultValue: null})
                 },
               }}
             />
@@ -264,7 +267,7 @@ export default function FormCreate({
                 disabled: !branchIdValue || !companyIdValue || isEdit,
                 onChange: async (value) => {
                   await getLoggerList(value)
-                  form.resetField("loggerId")
+                  form.resetField("Logger_ID", {defaultValue: null})
                 },
               }}
             />

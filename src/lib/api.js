@@ -14,7 +14,7 @@ export const handleError = (error) => {
       }
     : {
         status: -1,
-        message:
+        message: 
           "Lỗi hệ thống, vui lòng liên hệ quản trị viên để biết thêm chi tiết!",
       }
 }

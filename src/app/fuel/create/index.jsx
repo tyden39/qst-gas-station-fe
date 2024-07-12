@@ -93,7 +93,7 @@ export default function FuelCreatePage() {
     mode: "onTouched",
   })
 
-  const isValid = form.formState.isValid
+  const {isValid, isDirty} = form.formState
 
   async function onSubmit(values) {
     if (isEdit) {
@@ -205,7 +205,7 @@ export default function FuelCreatePage() {
   }
 
   return (
-    <div className="w-full">
+    <div className="w-full p-4">
       <div className="mb-3">
         <Link
           to={-1}
@@ -243,7 +243,7 @@ export default function FuelCreatePage() {
                 >
                   Hủy
                 </Button>
-                <Button disabled={!isValid} type="submit">
+                <Button disabled={!isValid || !isDirty} type="submit">
                   {isEdit ? "Lưu" : "Tạo mới"}
                 </Button>
               </Card>

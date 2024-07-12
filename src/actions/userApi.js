@@ -58,7 +58,7 @@ export const deleteUser = async (id, force) => {
       `${API_PATHS.USER_DELETE}/${id}`,
       {data: {force}}
     )
-    return response.status
+    return response.data
   } catch (error) {
     return handleError(error)
   }
@@ -82,7 +82,7 @@ export const restore = async (id) => {
     const response = await axiosInstance.post(
       `${API_PATHS.USER_RESTORE}/${id}`
     )
-    return response.status
+    return response.data
   } catch (error) {
     return handleError(error)
   }

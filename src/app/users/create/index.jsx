@@ -279,7 +279,7 @@ export default function UserCreatePage() {
     },
   })
 
-  const isValid = form.formState.isValid
+  const {isValid, isDirty} = form.formState
   
   async function onSubmit(values) {
     setLoading(true)
@@ -368,7 +368,7 @@ export default function UserCreatePage() {
   }
 
   return (
-    <div className="w-full">
+    <div className="w-full p-4">
       <div className="">
         <Link
           to={-1}
@@ -424,7 +424,7 @@ export default function UserCreatePage() {
                 >
                   Hủy
                 </Button>
-                <Button disabled={loading || !isValid}>
+                <Button disabled={loading || !isValid || !isDirty}>
                   {isEdit ? "Lưu" : "Tạo mới"}
                 </Button>
               </Card>

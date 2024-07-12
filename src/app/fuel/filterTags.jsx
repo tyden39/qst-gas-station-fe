@@ -3,25 +3,32 @@ import { format } from "date-fns"
 import { X } from "lucide-react"
 import { BILL_TYPES, FUEL_TYPE, PUMP_ID } from "./constant"
 
-export default function FilterTags({ activedFilter, applyFilter, companyList, branchList, storeList }) {
+export default function FilterTags({ activedFilter, applyFilter, initExtra }) {
+  const { companyList, branchList, storeList } = initExtra
   const deleteFilter = (filterName) => {
-    const newFilter = { ...activedFilter, [filterName]: null }
-    applyFilter(newFilter)
+    const newFilter = activedFilter
+      ? { ...activedFilter, [filterName]: null }
+      : undefined
+    applyFilter(newFilter ? { newFilter } : undefined)
   }
 
   return (
-    <div className="mb-2 -mt-2 flex gap-2 flex-wrap">
-      {activedFilter.billDate ? (
-        <div className="border border-solid bg-primary-foreground text-sm py-1 px-2 rounded w-fit flex items-center gap-1">
-          <span className="font-medium">Thời gian ghi log:</span>
-          {activedFilter.billDate?.to ? (
-            <>
-              {format(activedFilter.billDate?.from, "dd-MM-yyyy")} -{" "}
-              {format(activedFilter.billDate?.to, "dd-MM-yyyy")}
-            </>
-          ) : (
-            format(activedFilter.billDate?.from, "dd-MM-yyyy")
-          )}
+    <div className="flex gap-2 flex-wrap">
+      {activedFilter?.billDate ? (
+        <div className="text-sm py-1 px-2 rounded w-fit flex items-center gap-1">
+          <span className="font-medium text-muted-foreground">
+            Thời gian ghi log:
+          </span>
+          <span className="text-blue-600">
+            {activedFilter?.billDate?.to ? (
+              <>
+                {format(activedFilter?.billDate?.from, "dd-MM-yyyy")} -{" "}
+                {format(activedFilter?.billDate?.to, "dd-MM-yyyy")}
+              </>
+            ) : (
+              format(activedFilter?.billDate?.from, "dd-MM-yyyy")
+            )}
+          </span>
           <Button
             variant="ghost"
             className="group p-0.5 h-fit hover:bg-destructive -mr-1"
@@ -32,10 +39,12 @@ export default function FilterTags({ activedFilter, applyFilter, companyList, br
         </div>
       ) : null}
 
-      {activedFilter.billType ? (
-        <div className="border border-solid bg-primary-foreground text-sm py-1 px-2 rounded w-fit flex items-center gap-1">
-          <span className="font-medium">Loại hóa đơn:</span>
-          {BILL_TYPES.find((x) => x.value === activedFilter.billType)?.label}
+      {activedFilter?.billType ? (
+        <div className="text-sm py-1 px-2 rounded w-fit flex items-center gap-1">
+          <span className="font-medium  text-muted-foreground">
+            Loại hóa đơn:
+          </span>
+          {BILL_TYPES.find((x) => x.value === activedFilter?.billType)?.label}
           <Button
             variant="ghost"
             className="group p-0.5 h-fit hover:bg-destructive -mr-1"
@@ -46,11 +55,13 @@ export default function FilterTags({ activedFilter, applyFilter, companyList, br
         </div>
       ) : null}
 
-      {activedFilter.fuelType ? (
-        <div className="border border-solid bg-primary-foreground text-sm py-1 px-2 rounded w-fit flex items-center gap-1">
-          <span className="font-medium">Loại nhiên liệu:</span>
+      {activedFilter?.fuelType ? (
+        <div className="text-sm py-1 px-2 rounded w-fit flex items-center gap-1">
+          <span className="font-medium  text-muted-foreground">
+            Loại nhiên liệu:
+          </span>
           <span className="">
-            {FUEL_TYPE.find((x) => x.value === activedFilter.fuelType)?.label}
+            {FUEL_TYPE.find((x) => x.value === activedFilter?.fuelType)?.label}
           </span>
           <Button
             variant="ghost"
@@ -62,11 +73,13 @@ export default function FilterTags({ activedFilter, applyFilter, companyList, br
         </div>
       ) : null}
 
-      {activedFilter.pumpId ? (
-        <div className="border border-solid bg-primary-foreground text-sm py-1 px-2 rounded w-fit flex items-center gap-1">
-          <span className="font-medium">Mã vòi bơm:</span>
+      {activedFilter?.pumpId ? (
+        <div className="text-sm py-1 px-2 rounded w-fit flex items-center gap-1">
+          <span className="font-medium  text-muted-foreground">
+            Mã vòi bơm:
+          </span>
           <span className="">
-            {PUMP_ID.find((x) => x.value === activedFilter.pumpId)?.label}
+            {PUMP_ID.find((x) => x.value === activedFilter?.pumpId)?.label}
           </span>
           <Button
             variant="ghost"
@@ -78,11 +91,11 @@ export default function FilterTags({ activedFilter, applyFilter, companyList, br
         </div>
       ) : null}
 
-      {activedFilter.companyId ? (
-        <div className="border border-solid bg-primary-foreground text-sm py-1 px-2 rounded w-fit flex items-center gap-1">
-          <span className="font-medium">Công ty:</span>
+      {activedFilter?.companyId ? (
+        <div className="text-sm py-1 px-2 rounded w-fit flex items-center gap-1">
+          <span className="font-medium  text-muted-foreground">Công ty:</span>
           <span className="">
-            {companyList.find((x) => x.id === activedFilter.companyId)?.name}
+            {companyList.find((x) => x.id === activedFilter?.companyId)?.name}
           </span>
           <Button
             variant="ghost"
@@ -94,11 +107,11 @@ export default function FilterTags({ activedFilter, applyFilter, companyList, br
         </div>
       ) : null}
 
-      {activedFilter.branchId ? (
-        <div className="border border-solid bg-primary-foreground text-sm py-1 px-2 rounded w-fit flex items-center gap-1">
-          <span className="font-medium">Công ty:</span>
+      {activedFilter?.branchId ? (
+        <div className="text-sm py-1 px-2 rounded w-fit flex items-center gap-1">
+          <span className="font-medium  text-muted-foreground">Công ty:</span>
           <span className="">
-            {branchList.find((x) => x.id === activedFilter.branchId)?.name}
+            {branchList.find((x) => x.id === activedFilter?.branchId)?.name}
           </span>
           <Button
             variant="ghost"
@@ -110,11 +123,11 @@ export default function FilterTags({ activedFilter, applyFilter, companyList, br
         </div>
       ) : null}
 
-      {activedFilter.storeId ? (
-        <div className="border border-solid bg-primary-foreground text-sm py-1 px-2 rounded w-fit flex items-center gap-1">
-          <span className="font-medium">Công ty:</span>
+      {activedFilter?.storeId ? (
+        <div className="text-sm py-1 px-2 rounded w-fit flex items-center gap-1">
+          <span className="font-medium  text-muted-foreground">Công ty:</span>
           <span className="">
-            {storeList.find((x) => x.id === activedFilter.storeId)?.name}
+            {storeList.find((x) => x.id === activedFilter?.storeId)?.name}
           </span>
           <Button
             variant="ghost"

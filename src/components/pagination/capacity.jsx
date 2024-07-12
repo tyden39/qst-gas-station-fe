@@ -15,8 +15,8 @@ export default function PagePaginationCapacity({
   selected,
   unselected,
 }) {
-  const startItem = (currentPage - 1) * pageSize
-  const endItem = Math.min(startItem + pageSize, totalItems)
+  const startItem = totalItems - (currentPage - 1) * pageSize
+  const endItem = Math.max(startItem - pageSize + 1, 1)
   const selectedNumber = Array.isArray(selected)
     ? selected.length
     : unselected.length > 0
@@ -29,7 +29,7 @@ export default function PagePaginationCapacity({
         <span className="pl-2">{`Chọn ${selectedNumber} trong số ${totalItems} dòng`}</span>
       ) : (
         <span className="pl-2">
-          {startItem + 1} - {endItem} trong số {totalItems} dòng
+          {startItem} - {endItem} trong số {totalItems} dòng
         </span>
       )}
 

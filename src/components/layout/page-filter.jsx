@@ -1,28 +1,66 @@
-import { ChevronDown, ChevronUp, Search } from "lucide-react"
-
-import { Card } from "components/ui/card"
+import { Filter, Search, X } from "lucide-react"
+import { PopoverClose } from "@radix-ui/react-popover"
+import { Badge } from "components/ui/badge"
+import { Button } from "components/ui/button"
 import { Input } from "components/ui/input"
-import { Tooltip, TooltipContent, TooltipTrigger } from "components/ui/tooltip"
+import { Popover, PopoverContent, PopoverTrigger } from "components/ui/popover"
 import { cn } from "lib/utils"
 import { useCallback, useRef, useState } from "react"
 
 export default function PageFilter({
-  children,
+  onFieldChange,
+  authUser,
+  filter,
+  activedFilter,
   setFilter,
-  availableFilterColumn = 1,
+  initFilter,
+  applyFilter,
+  initExtra,
   searchInputPlaceholder,
+  additionalFilter,
+  filtersNotCount = [],
 }) {
-  const [showMoreFilter, setShowMoreFilter] = useState(false)
+  const [openPopover, setOpenPopover] = useState()
+  const onPopoverChange = (open) => {
+    setOpenPopover(open)
+    if (open)
+      setFilter((prev) => ({ ...prev, ...initFilter, ...activedFilter }))
+  }
+
+  function countActiveFilters(filter, activedFilter) {
+    let activeFilterCount = 0
+    const filterWithourKeyword = { ...filter }
+    const activedFilterWithourKeyword = { ...activedFilter }
+
+    const keysToDelete = [...filtersNotCount, "keyword"]
+    keysToDelete.forEach((key) => {
+      delete filterWithourKeyword[key]
+      delete activedFilterWithourKeyword[key]
+    })
+
+    for (let key in activedFilterWithourKeyword) {
+      if (
+        !filterWithourKeyword.hasOwnProperty(key) ||
+        filterWithourKeyword[key] !== activedFilterWithourKeyword[key]
+      ) {
+        activeFilterCount++
+      }
+    }
+
+    return activeFilterCount
+  }
+
+  const activedFiltersCount = countActiveFilters(initFilter, activedFilter)
 
   const debounceRef = useRef(null)
   const debouncedSubmit = useCallback(
     (value) => {
       if (debounceRef.current) clearTimeout(debounceRef.current)
       debounceRef.current = setTimeout(() => {
-        setFilter(prev => ({ ...prev, keyword: value }))
+        applyFilter({ newFilter: { keyword: value } })
       }, 300)
     },
-    [setFilter]
+    [applyFilter]
   )
 
   const handleChangeKeyword = (e) => {
@@ -30,15 +68,18 @@ export default function PageFilter({
     debouncedSubmit(val)
   }
 
+  const resetFilter = () => {
+    applyFilter({ newFilter: initFilter })
+  }
+
   return (
-    <Card className="relative my-4 bg-white p-12 overflow-hidden">
+    <>
       <div
-        style={{ maxHeight: showMoreFilter ? "100vh" : `${availableFilterColumn * 40 + (availableFilterColumn - 1) * 20 }px` }}
         className={cn(
-          "grid grid-cols-2 gap-y-5 gap-x-6 transition-[max-height,margin] duration-200 delay-0 overflow-hidden"
+          "w-[320px] transition-[max-height,margin] duration-200 delay-0 overflow-hidden"
         )}
       >
-        <div className="relative col-span-2">
+        <div className="relative">
           <Search size={16} className="absolute top-3 left-3 text-gray-500" />
           <Input
             name="keyword"
@@ -48,20 +89,75 @@ export default function PageFilter({
             className="pl-8"
           />
         </div>
-        {children}
       </div>
+      {additionalFilter ? (
+        <div className="flex items-center gap-2">
+          <Popover {...{ open: openPopover, onOpenChange: onPopoverChange }}>
+            <PopoverTrigger asChild>
+              <Button variant="outline" className="relative gap-2">
+                {activedFilter && activedFiltersCount > 0 ? (
+                  <Badge
+                    variant="destructive"
+                    className={
+                      "absolute -top-1.5 -right-1.5 text-[10px] leading-none px-1"
+                    }
+                  >
+                    {activedFiltersCount}
+                  </Badge>
+                ) : null}
+                <Filter className="w-4 h-4" />
+                Lọc
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-[560px] p-5">
+              <div className="grid gap-4">
+                <div className="flex justify-between mb-1">
+                  <h4 className="font-medium leading-none text-xl">
+                    Lọc hóa đơn
+                  </h4>
+                  <PopoverClose className="">
+                    <X className="w-4 h-4" />
+                  </PopoverClose>
+                </div>
+                <div className="grid grid-cols-2 gap-x-2 gap-y-3">
+                  {additionalFilter
+                    ? additionalFilter({
+                        authUser,
+                        filter,
+                        onFieldChange,
+                        initExtra,
+                      })
+                    : null}
+                </div>
+                <div className="flex gap-2 justify-end mt-2">
+                  <PopoverClose className="" asChild>
+                    <Button
+                      variant="link"
+                      className="hover:no-underline"
+                      onClick={resetFilter}
+                    >
+                      Bộ lọc mặt định
+                    </Button>
+                  </PopoverClose>
+                  <PopoverClose className="" asChild>
+                    <Button onClick={applyFilter}>Lọc</Button>
+                  </PopoverClose>
+                </div>
+              </div>
+            </PopoverContent>
+          </Popover>
 
-      {children ? <Tooltip>
-        <TooltipTrigger asChild>
-          <div
-            className="absolute left-0 bottom-0 w-full flex justify-center items-center p-2.5 transition-colors hover:bg-[linear-gradient(to_bottom,rgba(255,255,255,1)_20%,rgba(0,49,92,0.05)_70%,rgba(0,49,92,0.1)_100%)] cursor-pointer"
-            onClick={() => setShowMoreFilter((prev) => !prev)}
-          >
-            {showMoreFilter ? <ChevronUp className="stroke-muted-foreground" /> : <ChevronDown className="stroke-muted-foreground" />}
-          </div>
-        </TooltipTrigger>
-        <TooltipContent>{showMoreFilter ? 'Ẩn bớt' : 'Hiện thêm' }</TooltipContent>
-      </Tooltip> : null}
-    </Card>
+          {activedFilter && activedFiltersCount > 0 ? (
+            <Button
+              variant="ghost"
+              className="text-primary hover:text-destructive hover:bg-destructive-foreground"
+              onClick={resetFilter}
+            >
+              Xóa bộ lọc
+            </Button>
+          ) : null}
+        </div>
+      ) : null}
+    </>
   )
 }
