@@ -1,4 +1,4 @@
-Run frontend and backend (port 3010) and login with these accounts: 
+Run frontend (port 3000) and backend (port 3010) and login with these accounts: 
 
 admin - 123 (admin role)
 
