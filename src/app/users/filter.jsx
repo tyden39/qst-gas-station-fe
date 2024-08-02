@@ -13,7 +13,7 @@ export default function UserFilter({ authUser, filter, onFieldChange, initExtra 
   const onCompanyChange = async (value, name) => {
     if (filter.companyId !== value) {
       onFieldChange(value, name)
-      onFieldChange(undefined, "branchId")
+      onFieldChange(null, "branchId")
 
       const brList = value
         ? branchList.filter((x) => x.companyId === value)
@@ -21,14 +21,14 @@ export default function UserFilter({ authUser, filter, onFieldChange, initExtra 
       const selectList = transformToSelectList(brList)
       setBranches(selectList)
 
-      onBranchChange(undefined, "branchId")
+      onBranchChange(null, "branchId")
     }
   }
 
   const onBranchChange = (value, name) => {
     if (filter.branchId !== value) {
       onFieldChange(value, name)
-      onFieldChange(undefined, "storeId")
+      onFieldChange(null, "storeId")
 
       const stList = value
         ? storeList.filter((x) => x.branchId === value)

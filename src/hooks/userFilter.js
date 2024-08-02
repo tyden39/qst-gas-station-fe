@@ -1,6 +1,7 @@
 import { TOAST } from "components/ui/toast"
 import { useToast } from "components/ui/use-toast"
 import { useCallback, useEffect, useState } from "react"
+import { useSearchParams } from "react-router-dom"
 
 export default function useFilter({
   initFilter,
@@ -17,6 +18,8 @@ export default function useFilter({
   const [activedFilter, setactivedFilter] = useState(initFilter)
   const [loading, setLoading] = useState(false)
 
+  const [searchParams, setSearchParams] = useSearchParams();
+  
   const applyFilter = useCallback(
     ({newFilter, newMeta}) => {
       action({...filter, ...newFilter}, { ...meta, ...newMeta }, sorting).then(
@@ -27,6 +30,12 @@ export default function useFilter({
             setData(data)
             setFilter({...filter, ...newFilter})
             setactivedFilter({...filter, ...newFilter})
+
+            const truthyFilter = Object.fromEntries(
+              Object.entries({...filter, ...newFilter}).filter(([key, value]) => value)
+            )
+            if (Object.keys(truthyFilter).length !== 0)
+              setSearchParams(truthyFilter)
           } else {
             toast({
               variant: TOAST.DESTRUCTIVE,
@@ -37,7 +46,7 @@ export default function useFilter({
         }
       )
     },
-    [action, toast, filter, meta, sorting]
+    [action, toast, filter, meta, sorting, setSearchParams]
   )
 
   useEffect(() => {
@@ -46,8 +55,16 @@ export default function useFilter({
       pageSize: meta.pageSize,
     }
 
+    const queryParams = {};
+
+    for (const [key, value] of searchParams.entries()) {
+      queryParams[key] = value;
+    }
+
+    const initFilter = searchParams.size > 0 ? {newFilter: queryParams,newMeta: currMeta} : {newMeta: currMeta}
+
     if (loading) setLoading(false)
-    else applyFilter({newMeta: currMeta})
+    else applyFilter(initFilter)
 
     // const interval = setInterval(() => {
     //   if (autoRefresh) applyFilter(filter, currMeta, sorting)

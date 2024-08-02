@@ -35,28 +35,22 @@ export default function UserRoles({
   const handleRoleChange = (value, field) => {
     switch (value) {
       case USER_ROLE.ADMIN:
-        form.reset({
-          roles: value,
-          companyId: null,
-          branchId: null,
-          storeId: null,
-        })
+        field.onChange(value)
+        form.resetField('companyId', null)
+        form.resetField('branchId', null)
+        form.resetField('storeId', null)
         break
       case USER_ROLE.COMPANY:
-        form.reset({
-          roles: value,
-          companyId: null,
-          branchId: null,
-          storeId: null,
-        })
+        field.onChange(value)
+        form.resetField('companyId', null)
+        form.resetField('branchId', null)
+        form.resetField('storeId', null)
         break
       case USER_ROLE.BRANCH:
-        form.reset({
-          roles: value,
-          companyId: null,
-          branchId: null,
-          storeId: null,
-        })
+        field.onChange(value)
+        form.resetField('companyId', null)
+        form.resetField('branchId', null)
+        form.resetField('storeId', null)
         break
       default:
         field.onChange(value)

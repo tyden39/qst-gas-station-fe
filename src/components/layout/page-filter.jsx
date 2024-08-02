@@ -29,19 +29,19 @@ export default function PageFilter({
 
   function countActiveFilters(filter, activedFilter) {
     let activeFilterCount = 0
-    const filterWithourKeyword = { ...filter }
+    const filterWithoutKeyword = { ...filter }
     const activedFilterWithourKeyword = { ...activedFilter }
 
     const keysToDelete = [...filtersNotCount, "keyword"]
     keysToDelete.forEach((key) => {
-      delete filterWithourKeyword[key]
+      delete filterWithoutKeyword[key]
       delete activedFilterWithourKeyword[key]
     })
 
     for (let key in activedFilterWithourKeyword) {
       if (
-        !filterWithourKeyword.hasOwnProperty(key) ||
-        filterWithourKeyword[key] !== activedFilterWithourKeyword[key]
+        !filterWithoutKeyword.hasOwnProperty(key) ||
+        filterWithoutKeyword[key] !== activedFilterWithourKeyword[key]
       ) {
         activeFilterCount++
       }

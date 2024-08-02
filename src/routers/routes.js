@@ -31,7 +31,7 @@ const privateRoutes = [
   { path: PATH.FUEL_FILES, component: FuelFilesPage, role: USER_ROLE.READ_ONLY_STORE },
 
   { path: PATH.USER, component: UserPage, role: USER_ROLE.STORE },
-  { path: PATH.USER_CREATE, component: UserCreatePage, role: USER_ROLE.STORE },
+  { path: PATH.USER_CREATE, component: UserCreatePage, role: USER_ROLE.COMPANY },
   { path: PATH.USER_EDIT, component: UserCreatePage, role: USER_ROLE.STORE },
 
   { path: PATH.COMPANY, component: CompanyPage, role: USER_ROLE.ADMIN },

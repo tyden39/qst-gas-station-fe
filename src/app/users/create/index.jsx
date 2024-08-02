@@ -30,7 +30,10 @@ const newSchema = z
     username: z
       .string({ required_error: "Tên đăng nhập không được để trống" })
       .min(5, "Tên đăng nhập phải >= 5 ký tự")
-      .max(255, 'Tên đăng nhập không được vượt quá 255 ký tự'),
+      .max(255, 'Tên đăng nhập không được vượt quá 255 ký tự')
+      .refine(value => !/\s/.test(value), {
+        message: 'Tên đăng nhập không được có khoảng trống',
+      }),
     password: z
       .string({ required_error: "Mật khẩu không được để trống" })
       .min(1, "Mật khẩu không được để trống")
@@ -254,7 +257,8 @@ export default function UserCreatePage() {
     () => USER_ROLES.filter((item) => user?.roles?.includes(item.value)),
     [user.roles]
   )
-
+  const upperCompanyRole = ['000', '001'].includes(user?.roles?.[0])
+  
   const [companyList, setCompanyList] = useState([])
   const [branchList, setBranchList] = useState([])
   const [storeList, setStoreList] = useState([])
@@ -301,7 +305,7 @@ export default function UserCreatePage() {
     } else {
       const response = await create(values)
       if (response.status === 201) {
-        form.reset(response.data)
+        form.reset({...response.data, roles: response.data.roles?.[0]})
         setOpen(true)
       } else
         toast({
@@ -331,7 +335,9 @@ export default function UserCreatePage() {
       handleGetEditUser()
     }
     const getMetaData = async () => {
-      getCompanhList()
+      const isAdmin = user?.roles?.[0] === USER_ROLE.ADMIN
+      if (isAdmin) getCompanhList()
+      else getCompanhList(user.companyId)
       getBranchList()
       getStoreList()
     }
@@ -339,8 +345,8 @@ export default function UserCreatePage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  const getCompanhList = async () => {
-    const response = await fetchCompanySimpleList()
+  const getCompanhList = async (value) => {
+    const response = await fetchCompanySimpleList({ companyId: value })
 
     if (response.status === 200) {
       const companyList = response.data
@@ -396,7 +402,7 @@ export default function UserCreatePage() {
             <>
               <div className="col-span-2 space-y-8">
                 <UserInfo {...{ form }} />
-                <UserRoles
+                {upperCompanyRole ? <UserRoles
                   {...{
                     form,
                     roles,
@@ -406,7 +412,7 @@ export default function UserCreatePage() {
                     getBranchList,
                     getStoreList,
                   }}
-                />
+                /> : null}
               </div>
               <div className="">
                 <AccountInfo
