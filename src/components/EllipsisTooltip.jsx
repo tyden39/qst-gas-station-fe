@@ -7,24 +7,34 @@ import {
 } from "components/ui/tooltip"
 import { cn } from "lib/utils"
 
-function EllipsisTooltip({ children, className, content }) {
+function EllipsisTooltip({ children, className, content, type }) {
   const [open, setOpen] = useState(false)
   const [showTooltip, setShowTooltip] = useState(false)
   const textRef = useRef(null)
 
   useEffect(() => {
     const textElement = textRef.current
-    if (textElement && textElement.offsetWidth < textElement.scrollWidth) {
-      setShowTooltip(true)
+
+    if (type === 'vertical') {
+      if (textElement && textElement.offsetHeight < textElement.scrollHeight) {
+        setShowTooltip(true)
+      } else {
+        setShowTooltip(false)
+      }
     } else {
-      setShowTooltip(false)
+      if (textElement && textElement.offsetWidth < textElement.scrollWidth) {
+        setShowTooltip(true)
+      } else {
+        setShowTooltip(false)
+      }
     }
   }, [children])
 
   return (
     <div
       className={cn(
-        "overflow-hidden text-ellipsis whitespace-nowrap",
+        "overflow-hidden text-ellipsis",
+        type === 'vertical' ? 'ellipsis-two-line' : 'whitespace-nowrap',
         className
       )}
     >
@@ -32,7 +42,7 @@ function EllipsisTooltip({ children, className, content }) {
         <Tooltip open={open} delayDuration={300}>
           <TooltipTrigger asChild>
             <div
-              className="w-full overflow-hidden text-ellipsis whitespace-nowrap hover:cursor-pointer"
+              className={cn("w-full overflow-hidden text-ellipsis hover:cursor-pointer", type === 'vertical' ? 'ellipsis-two-line' : 'whitespace-nowrap')}
               onMouseEnter={() => {if (showTooltip) setOpen(true)}}
               onMouseLeave={() => {if (showTooltip) setOpen(false)}}
               ref={textRef}
@@ -40,7 +50,7 @@ function EllipsisTooltip({ children, className, content }) {
               {children}
             </div>
           </TooltipTrigger>
-          <TooltipContent>{content || children}</TooltipContent>
+          <TooltipContent className="max-w-[500px] text-wrap">{content || children}</TooltipContent>
         </Tooltip>
       </TooltipProvider>
     </div>

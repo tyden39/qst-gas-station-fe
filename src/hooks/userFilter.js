@@ -15,13 +15,15 @@ export default function useFilter({
   const [data, setData] = useState([])
   const [meta, setMeta] = useState(initMeta)
   const [filter, setFilter] = useState(initFilter)
-  const [activedFilter, setactivedFilter] = useState(initFilter)
+  const [activedFilter, setActivedFilter] = useState(initFilter)
   const [loading, setLoading] = useState(false)
+  const [initLoading, setInitLoading] = useState(true)
 
-  const [searchParams, setSearchParams] = useSearchParams();
-  
+  const [searchParams, setSearchParams] = useSearchParams()
+
   const applyFilter = useCallback(
     ({newFilter, newMeta}) => {
+      setLoading(true)
       action({...filter, ...newFilter}, { ...meta, ...newMeta }, sorting).then(
         (response) => {
           if (response.status === 200) {
@@ -29,10 +31,15 @@ export default function useFilter({
             setMeta(meta)
             setData(data)
             setFilter({...filter, ...newFilter})
-            setactivedFilter({...filter, ...newFilter})
+
+            setActivedFilter({...filter, ...newFilter})
+
+            const currMeta =  {...meta, ...newMeta}
+            delete currMeta.totalItems
+            delete currMeta.totalPages
 
             const truthyFilter = Object.fromEntries(
-              Object.entries({...filter, ...newFilter}).filter(([key, value]) => value)
+              Object.entries({...filter, ...newFilter, ...currMeta}).filter(([key, value]) => value)
             )
             if (Object.keys(truthyFilter).length !== 0)
               setSearchParams(truthyFilter)
@@ -44,9 +51,12 @@ export default function useFilter({
             })
           }
         }
-      )
+      ).finally(() => {
+        setLoading(false)
+        if (initLoading) setInitLoading(false)
+      })
     },
-    [action, toast, filter, meta, sorting, setSearchParams]
+    [action, toast, filter, meta, sorting, initLoading, setSearchParams]
   )
 
   useEffect(() => {
@@ -55,16 +65,19 @@ export default function useFilter({
       pageSize: meta.pageSize,
     }
 
-    const queryParams = {};
+    const queryParams = {}
 
     for (const [key, value] of searchParams.entries()) {
-      queryParams[key] = value;
+      queryParams[key] = value
     }
 
-    const initFilter = searchParams.size > 0 ? {newFilter: queryParams,newMeta: currMeta} : {newMeta: currMeta}
+    const newFilter = {...queryParams}
+    delete newFilter.currentPage
+    delete newFilter.pageSize
 
-    if (loading) setLoading(false)
-    else applyFilter(initFilter)
+    const initFilter = searchParams.size > 0 ? {newFilter ,newMeta: currMeta} : {newMeta: currMeta}
+
+    applyFilter(initFilter)
 
     // const interval = setInterval(() => {
     //   if (autoRefresh) applyFilter(filter, currMeta, sorting)
@@ -72,7 +85,7 @@ export default function useFilter({
 
     // return () => clearInterval(interval)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [meta.currentPage, meta.pageSize, loading, sorting])
+  }, [meta.currentPage, meta.pageSize, sorting])
 
   const onFieldChange = useCallback(
     (value, name) =>
@@ -101,6 +114,7 @@ export default function useFilter({
     setFilter,
     setMeta,
     refreshData,
-    applyFilter
+    applyFilter,
+    initLoading
   }
 }

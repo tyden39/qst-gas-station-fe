@@ -10,10 +10,11 @@ import useInitStructure from "hooks/useInitStructure"
 import moment from "moment"
 import { useMemo } from "react"
 import ExportInvoice from "./components/ExportInvoice"
-import { BILL_TYPES, FUEL_TYPE } from "./constant"
+import { BILL_TYPES } from "./constant"
 import AdditionalFilter from "./filter"
 import { initColumnVisibility, initFilter, initMeta } from "./initial"
 import StructureFilter from "./structure-filter"
+import EllipsisTooltip from "components/EllipsisTooltip"
 
 export function FuelPage() {
   const initExtra = useInitStructure()
@@ -41,7 +42,13 @@ export function FuelPage() {
           const formatted = moment(row.getValue("Logger_Time")).format(
             "DD-MM-YYYY HH:mm:ss"
           )
-          return <div className="text-center">{formatted}</div>
+          return (
+            <div className="text-center">
+              <EllipsisTooltip type="vertical" content={formatted}>
+                {formatted}
+              </EllipsisTooltip>
+            </div>
+          )
         },
       },
       {
@@ -77,7 +84,12 @@ export function FuelPage() {
         header: (header) => "Loại nhiên liệu",
         cell: ({ row }) => (
           <div className="text-center">
-            {row.getValue("Fuel_Type") ?? ""}
+            <EllipsisTooltip
+              type="vertical"
+              content={row.getValue("Fuel_Type") ?? ""}
+            >
+              {row.getValue("Fuel_Type") ?? ""}
+            </EllipsisTooltip>
           </div>
         ),
       },
@@ -88,7 +100,13 @@ export function FuelPage() {
           const formatted = moment(row.getValue("Start_Time")).format(
             "DD-MM-YYYY HH:mm:ss"
           )
-          return <div className="text-center">{formatted}</div>
+          return (
+            <div className="text-center">
+              <EllipsisTooltip type="vertical" content={formatted}>
+                {formatted}
+              </EllipsisTooltip>
+            </div>
+          )
         },
       },
       {
@@ -98,7 +116,13 @@ export function FuelPage() {
           const formatted = moment(row.getValue("End_Time")).format(
             "DD-MM-YYYY HH:mm:ss"
           )
-          return <div className="text-center">{formatted}</div>
+          return (
+            <div className="text-center">
+              <EllipsisTooltip type="vertical" content={formatted}>
+                {formatted}
+              </EllipsisTooltip>
+            </div>
+          )
         },
       },
       {
@@ -147,7 +171,13 @@ export function FuelPage() {
         header: (header) => "Cửa hàng",
         cell: ({ row }) => {
           const rowValue = row.original
-          return <div className="text-center">{rowValue.storeName}</div>
+          return (
+            <div className="text-center">
+              <EllipsisTooltip type="vertical" content={rowValue.storeName}>
+                {rowValue.storeName}
+              </EllipsisTooltip>
+            </div>
+          )
         },
       },
       {
@@ -155,7 +185,13 @@ export function FuelPage() {
         header: (header) => "Chi Nhánh",
         cell: ({ row }) => {
           const rowValue = row.original
-          return <div className="text-center">{rowValue.branchName}</div>
+          return (
+            <div className="text-center">
+              <EllipsisTooltip type="vertical" content={rowValue.branchName}>
+                {rowValue.branchName}
+              </EllipsisTooltip>
+            </div>
+          )
         },
       },
       {
@@ -164,7 +200,13 @@ export function FuelPage() {
         cell: ({ row }) => {
           const rowValue = row.original
 
-          return <div className="text-center">{rowValue.companyName}</div>
+          return (
+            <div className="text-center">
+              <EllipsisTooltip type="vertical" content={rowValue.companyName}>
+                {rowValue.companyName}
+              </EllipsisTooltip>
+            </div>
+          )
         },
       },
     ],
@@ -172,28 +214,29 @@ export function FuelPage() {
   )
 
   return (
-      <PageList
-        {...{
-          cols: columns,
-          actions: Actions,
-          additionalFilter: AdditionalFilter,
-          strutureFilter: StructureFilter,
-          pageName: "fuel",
-          pageLabel: "hóa đơn",
-          deleteAction: deleteInvoice,
-          deleteBulkAction: deleteBulk,
-          restoreBulkAction: restoreBulk,
-          restoreAction: restore,
-          fetchAction: fetchInvoices,
-          initColumnVisibility,
-          initFilter,
-          initMeta,
-          isSelect: true,
-          initExtra,
-          searchInputPlaceholder: "Tìm kiếm Mã kiểm tra | Mã logger",
-          filtersNotCount: ['companyId', 'branchId', 'storeId']
-        }}
-      />
+    <PageList
+      {...{
+        cols: columns,
+        actions: Actions,
+        additionalFilter: AdditionalFilter,
+        strutureFilter: StructureFilter,
+        pageName: "fuel",
+        pageLabel: "hóa đơn",
+        deleteAction: deleteInvoice,
+        deleteBulkAction: deleteBulk,
+        restoreBulkAction: restoreBulk,
+        restoreAction: restore,
+        fetchAction: fetchInvoices,
+        initColumnVisibility,
+        initFilter,
+        initMeta,
+        isSelect: true,
+        initExtra,
+        searchInputPlaceholder: "Tìm kiếm Mã kiểm tra | Mã logger",
+        filtersNotCount: ["companyId", "branchId", "storeId"],
+        showRefresh: true,
+      }}
+    />
   )
 }
 

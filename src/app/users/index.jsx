@@ -1,5 +1,4 @@
-
-import { deleteUser, fetchUsers, restore, } from "actions/userApi"
+import { deleteUser, fetchUsers, restore } from "actions/userApi"
 import { USER_ROLES } from "constants/user-roles"
 import { useMemo } from "react"
 import UserFilter from "./filter"
@@ -7,6 +6,7 @@ import { initColumnVisibility, initFilter, initMeta } from "./initial"
 
 import { PageList } from "components/layout/page-list"
 import useInitStructure from "hooks/useInitStructure"
+import EllipsisTooltip from "components/EllipsisTooltip"
 
 export function UserPage() {
   const initExtra = useInitStructure()
@@ -41,34 +41,67 @@ export function UserPage() {
       {
         accessorKey: "phone",
         header: () => <div className="">Số Điện Thoại</div>,
-        cell: ({ row }) => <div className="text-center">{row.getValue("phone")}</div>,
+        cell: ({ row }) => (
+          <div className="text-center">{row.getValue("phone")}</div>
+        ),
       },
       {
         accessorKey: "roles",
         header: () => <div className="text-center">Vai trò</div>,
         cell: ({ row }) => {
-          return <div className="text-center">{USER_ROLES.find(item => item.value === (row.getValue("roles")?.[0]))?.label}</div>
+          const role = USER_ROLES.find(
+            (item) => item.value === row.getValue("roles")?.[0]
+          )?.label
+          return (
+            <div className="text-center">
+              <EllipsisTooltip type="vertical" content={role}>
+                {role}
+              </EllipsisTooltip>
+            </div>
+          )
         },
       },
       {
         accessorKey: "storeName",
-        header: () => <div className="text-center">Cửa hàng</div>,
-        cell: ({ row }) => (
-          <div className="text-center">{row.getValue("storeName")}</div>
-        ),
+        header: (header) => "Cửa hàng",
+        cell: ({ row }) => {
+          const rowValue = row.original
+          return (
+            <div className="text-center">
+              <EllipsisTooltip type="vertical" content={rowValue.storeName}>
+                {rowValue.storeName}
+              </EllipsisTooltip>
+            </div>
+          )
+        },
       },
       {
         accessorKey: "branchName",
-        header: () => <div className="text-center">Chi Nhánh</div>,
-        cell: ({ row }) => (
-          <div className="text-center">{row.getValue("branchName")}</div>
-        ),
+        header: (header) => "Chi Nhánh",
+        cell: ({ row }) => {
+          const rowValue = row.original
+          return (
+            <div className="text-center">
+              <EllipsisTooltip type="vertical" content={rowValue.branchName}>
+                {rowValue.branchName}
+              </EllipsisTooltip>
+            </div>
+          )
+        },
       },
       {
         accessorKey: "companyName",
-        header: () => <div className="text-center">Công Ty</div>,
+        header: (header) => "Công Ty",
         cell: ({ row }) => {
-          return <div className="text-center">{row.getValue("companyName")}</div>
+          const rowValue = row.original
+
+          return (
+            <div className="text-center">
+              <EllipsisTooltip type="vertical" content={rowValue.companyName}>
+                {rowValue.companyName}
+              </EllipsisTooltip>
+            </div>
+          )
         },
       },
     ],

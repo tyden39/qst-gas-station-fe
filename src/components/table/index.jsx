@@ -11,7 +11,7 @@ import {
 import { cn } from "lib/utils"
 import { ChevronDown, ChevronsUpDown, ChevronUp } from "lucide-react"
 
-export default function PageTable({ table }) {
+export default function PageTable({ table, loading }) {
   const columns = table.getVisibleLeafColumns()
 
   return (
@@ -72,7 +72,7 @@ export default function PageTable({ table }) {
           </TableRow>
         ))}
       </TableHeader>
-      <TableBody>
+      <TableBody className={cn(loading ? "opacity-50" : "opacity-100")}>
         {table.getRowModel().rows?.length ? (
           table.getRowModel().rows.map((row) => (
             <TableRow

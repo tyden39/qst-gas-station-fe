@@ -1,7 +1,7 @@
 import PageFilter from "components/layout/page-filter"
 import PagePagination from "components/pagination"
 import PageTable from "components/table"
-import { buttonVariants } from "components/ui/button"
+import { Button, buttonVariants } from "components/ui/button"
 import { Checkbox } from "components/ui/checkbox"
 import { USER_ROLE } from "constants/user-roles"
 import useTable from "hooks/useTable"
@@ -17,6 +17,8 @@ import RowActions from "./row-actions"
 import TableColumnSelect from "./table-column-select"
 import SelectedActions from "./page-selected-actions"
 import moment from "moment"
+import ButtonRefresh from "./ButtonRefresh"
+import EllipsisTooltip from "components/EllipsisTooltip"
 
 export function PageList({
   cols,
@@ -39,6 +41,7 @@ export function PageList({
   restoreBulkAction,
   deleteBulkAction,
   filtersNotCount,
+  showRefresh,
 }) {
   const [getPermission, authUser] = useAuth((state) => [
     state.getPermission,
@@ -63,6 +66,7 @@ export function PageList({
     setFilter,
     refreshData,
     loading,
+    initLoading,
     applyFilter,
   } = useFilter({
     initFilter,
@@ -148,7 +152,13 @@ export function PageList({
             const formatted = moment(row.getValue("createdAt")).format(
               "DD-MM-YYYY HH:mm:ss"
             )
-            return <div className="text-center">{formatted}</div>
+            return (
+              <div className="text-center">
+                <EllipsisTooltip type="vertical" content={formatted}>
+                  {formatted}
+                </EllipsisTooltip>
+              </div>
+            )
           },
         },
         {
@@ -169,7 +179,7 @@ export function PageList({
         {
           accessorKey: "actions",
           header: ({ table }) => {
-            return <TableColumnSelect {...{ table }} />
+            return <TableColumnSelect {...{ table, pageName }} />
           },
           size: 50,
           enableSorting: false,
@@ -220,18 +230,19 @@ export function PageList({
 
   const { table } = useTable({
     columns,
-    loading,
+    loading: initLoading,
     initColumnVisibility,
     data,
     meta,
     sorting,
     setSorting,
+    pageName,
   })
 
   return (
     <div className="w-full h-full flex flex-col">
       {strutureFilter ? (
-        <div className="grid grid-cols-3 gap-2 mt-2 mx-4">
+        <div className="grid grid-cols-3 gap-2 mt-2 mx-4 max-w-[1632px]">
           {strutureFilter({
             authUser,
             filter,
@@ -244,7 +255,7 @@ export function PageList({
 
       <div className="flex justify-between items-center flex-shrink-0 mt-3 mx-4">
         <h1 className="text-4xl leading-normal font-bold">{activeMenuName}</h1>
-        <div className="space-x-2">
+        <div className="space-x-2 flex">
           {actions ? actions({ filter, meta, selected, unselected }) : null}
           {allowCreate && (
             <Link
@@ -254,6 +265,7 @@ export function PageList({
               Tạo {pageLabel}
             </Link>
           )}
+          {showRefresh && <ButtonRefresh applyFilter={applyFilter} />}
         </div>
       </div>
 
@@ -299,7 +311,7 @@ export function PageList({
         )}
       </div>
 
-      <PageTable {...{ table }} />
+      <PageTable {...{ table, loading }} />
       <PagePagination {...{ setMeta, meta, selected, unselected }} />
     </div>
   )

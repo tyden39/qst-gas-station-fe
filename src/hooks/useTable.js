@@ -2,8 +2,9 @@ import { getCoreRowModel, getSortedRowModel, useReactTable } from "@tanstack/rea
 import { Skeleton } from "components/ui/skeleton"
 import { useEffect, useMemo, useState } from "react"
 
-export default function useTable({initColumnVisibility, data, loading, columns, meta, sorting, setSorting}) {
-  const [columnVisibility, setColumnVisibility] = useState(initColumnVisibility)
+export default function useTable({initColumnVisibility, data, loading, columns, meta, sorting, setSorting, pageName}) {
+  const savedVisibleColumns = JSON.parse(localStorage.getItem(`${pageName}ColumnVisibility`))
+  const [columnVisibility, setColumnVisibility] = useState({...initColumnVisibility, ...savedVisibleColumns})
 
   const tableColumns = useMemo(
     () =>

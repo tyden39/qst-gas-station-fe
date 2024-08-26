@@ -141,7 +141,7 @@ export default function CompanyCreatePage() {
     <div className="w-full p-4">
       <div className="">
         <Link
-          to={-1}
+          to={PATH.COMPANY}
           className={cn(
             "flex items-center gap-1 hover:underline text-sm text-slate-500"
           )}
