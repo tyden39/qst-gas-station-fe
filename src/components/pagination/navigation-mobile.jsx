@@ -24,7 +24,7 @@ export default function PagePaginationNavigationMobile({
       <SelectContent>
         <SelectGroup>
           {Array.from({ length: totalPages }, (v, i) => i + 1).map((item) => (
-            <SelectItem value={item}>Trang {item}</SelectItem>
+            <SelectItem key={`mobile-pagination-item-${item}`} value={item}>Trang {item}</SelectItem>
           ))}
         </SelectGroup>
       </SelectContent>

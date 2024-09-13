@@ -7,7 +7,7 @@ import { Checkbox } from "components/ui/checkbox"
 import { USER_ROLE } from "constants/user-roles"
 import useTable from "hooks/useTable"
 import useTableSelect from "hooks/useTableSelect"
-import useFilter from "hooks/userFilter"
+import useFilter from "hooks/useFilter"
 import { getActiveMenu } from "lib/url"
 import { cn } from "lib/utils"
 import moment from "moment"
@@ -60,6 +60,7 @@ export function PageList({
     filter,
     activedFilter,
     meta,
+    metaFeedback,
     data,
     onFieldChange,
     setMeta,
@@ -75,6 +76,7 @@ export function PageList({
     refreshDelay,
     autoRefresh,
     sorting,
+    setSorting
   })
 
   const {
@@ -86,7 +88,7 @@ export function PageList({
     setUnselected,
   } = useTableSelect({
     data,
-    meta,
+    meta: {...meta, ...metaFeedback},
   })
 
   const columns = useMemo(
@@ -136,7 +138,8 @@ export function PageList({
           size: 50,
           header: () => <div className="text-center">STT</div>,
           cell: ({ row }) => {
-            const { currentPage, pageSize, totalItems } = meta
+            const { currentPage, pageSize } = meta
+            const {totalItems} = metaFeedback
             const startItem = totalItems - (currentPage - 1) * pageSize
 
             return <div className="text-center">{startItem - row.index}</div>
@@ -212,6 +215,7 @@ export function PageList({
     [
       refreshData,
       meta,
+      metaFeedback,
       authUser.roles,
       cols,
       isSelect,
@@ -232,7 +236,7 @@ export function PageList({
     loading: initLoading,
     initColumnVisibility,
     data,
-    meta,
+    meta: {...meta, ...metaFeedback},
     sorting,
     setSorting,
     pageName,
@@ -247,7 +251,7 @@ export function PageList({
             filter,
             onFieldChange,
             initExtra,
-            applyFilter,
+            setFilter,
           })}
         </div>
       ) : null}
@@ -255,7 +259,7 @@ export function PageList({
       <div className="flex flex-wrap max-sm:justify-center justify-between items-center gap-2 flex-shrink-0 mt-3 mx-4">
         <h1 className="text-4xl leading-normal font-bold max-sm:text-2xl max-sm:w-full max-sm:text-center">{activeMenuName}</h1>
         <div className="space-x-2 flex">
-          {actions ? actions({ filter, meta, selected, unselected }) : null}
+          {actions ? actions({ filter, meta: {...meta, ...metaFeedback}, selected, unselected }) : null}
           {allowCreate && (
             <Link
               className={cn(buttonVariants(), "max-sm:px-2 max-sm:py-1 max-sm:h-8")}
@@ -289,6 +293,7 @@ export function PageList({
               restoreBulkAction,
               deleteBulkAction,
               meta,
+              metaFeedback,
             }}
           />
         ) : (
@@ -312,7 +317,7 @@ export function PageList({
       </div>
 
       <PageTable {...{ table, loading }} />
-      <PagePagination {...{ setMeta, meta, selected, unselected }} />
+      <PagePagination {...{ setMeta, meta, metaFeedback, selected, unselected }} />
     </div>
   )
 }

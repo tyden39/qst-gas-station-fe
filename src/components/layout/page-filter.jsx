@@ -13,8 +13,8 @@ export default function PageFilter({
   filter,
   activedFilter,
   setFilter,
-  initFilter,
   applyFilter,
+  initFilter,
   initExtra,
   searchInputPlaceholder,
   additionalFilter,
@@ -57,10 +57,10 @@ export default function PageFilter({
     (value) => {
       if (debounceRef.current) clearTimeout(debounceRef.current)
       debounceRef.current = setTimeout(() => {
-        applyFilter({ newFilter: { keyword: value } })
+        setFilter(prev => ({ ...prev, keyword: value }))
       }, 300)
     },
-    [applyFilter]
+    [setFilter]
   )
 
   const handleChangeKeyword = (e) => {
@@ -69,7 +69,7 @@ export default function PageFilter({
   }
 
   const resetFilter = () => {
-    applyFilter({ newFilter: initFilter })
+    setFilter(initFilter)
   }
 
   return (

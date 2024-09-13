@@ -8,7 +8,7 @@ export default function StructureFilter({
   filter,
   onFieldChange,
   initExtra,
-  applyFilter,
+  setFilter,
 }) {
   const { companyList, branchList, storeList } = initExtra
 
@@ -27,9 +27,7 @@ export default function StructureFilter({
       setBranches(transformToSelectList(brList))
       setStores(transformToSelectList(stList))
 
-      applyFilter({
-        newFilter: { companyId: value, branchId: null, storeId: null },
-      })
+      setFilter(prev => ({ ...prev, companyId: value, branchId: null, storeId: null }))
     }
   }
 
@@ -40,14 +38,14 @@ export default function StructureFilter({
         : storeList
       const selectList = transformToSelectList(stList)
       setStores(selectList)
-      applyFilter({ newFilter: { branchId: value, storeId: null } })
+      setFilter(prev => ({ ...prev, branchId: value, storeId: null }))
     }
   }
 
   const onStoreChange = (value, name) => {
     if (filter.storeId !== value) {
       onFieldChange(value, name)
-      applyFilter({ newFilter: { storeId: value } })
+      setFilter(prev => ({ ...prev, storeId: value }))
     }
   }
 

@@ -19,7 +19,7 @@ const refreshList = [
   { id: 1, label: "Tự động làm mới", value: REFRESH_OPTIONS.AUTO_REFRESH },
 ]
 
-export default function ButtonRefresh({applyFilter}) {
+export default function ButtonRefresh({ applyFilter }) {
   const [refreshOption, setRefreshOption] = useState(refreshList[0])
   const [isAuto, setIsAuto] = useState(false)
   const autoRef = useRef()
@@ -31,16 +31,17 @@ export default function ButtonRefresh({applyFilter}) {
       clearInterval(autoRef.current)
       autoRef.current = null
       setIsAuto(false)
-    }
+    } else toggleRefresh(value)
   }
 
-  const toggleRefresh = () => {
+  const toggleRefresh = (option) => {
     let newAuto = isAuto
-    
-    if (refreshOption.value === REFRESH_OPTIONS.AUTO_REFRESH) {
+    const newRefreshOption = option ?? refreshOption
+
+    if (newRefreshOption.value === REFRESH_OPTIONS.AUTO_REFRESH) {
       newAuto = !newAuto
       setIsAuto(newAuto)
-    } else applyFilter({}, {})
+    } else applyFilter()
 
     if (autoRef.current) {
       clearInterval(autoRef.current)
@@ -48,16 +49,20 @@ export default function ButtonRefresh({applyFilter}) {
     }
 
     if (newAuto) {
-      applyFilter({}, {})
+      applyFilter()
       autoRef.current = setInterval(() => {
-        applyFilter({}, {})
+        applyFilter()
       }, 1000)
-    } 
+    }
   }
 
   return (
     <div className="relative">
-      <Button variant="outline" className="gap-1 pr-10 max-sm:pl-2 max-sm:py-1 max-sm:h-8" onClick={toggleRefresh}>
+      <Button
+        variant="outline"
+        className="gap-1 pr-10 max-sm:pl-2 max-sm:py-1 max-sm:h-8"
+        onClick={() => toggleRefresh()}
+      >
         <RotateCw size={16} className={cn(isAuto ? "animate-spin" : "")} />
         <span className="">{refreshOption.label}</span>
       </Button>

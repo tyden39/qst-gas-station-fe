@@ -25,6 +25,7 @@ export default function SelectedActions({
   deleteBulkAction,
   setSelected,
   meta,
+  metaFeedback
 }) {
   const { toast } = useToast()
   const [open, setOpen] = useState(false)
@@ -74,11 +75,6 @@ export default function SelectedActions({
     setUnselected
   ])
 
-  const handleForceDelete = () => {
-    setOpen(true)
-    setForceDelete(true)
-  }
-
   const handleForceRestore = useCallback(async () => {
     const { status } = await restoreBulkAction(selected, unselected)
     if (status === 200) {
@@ -97,7 +93,7 @@ export default function SelectedActions({
   return (
     <Dialog {...{ open, onOpenChange }}>
       <div className="flex items-center gap-2">
-        <span className="mr-2 max-sm:text-sm max-sm:text-nowrap">{`Đã chọn ${selected === 'all' ? meta.totalItems : selected.length}`}</span>
+        <span className="mr-2 max-sm:text-sm max-sm:text-nowrap">{`Đã chọn ${selected === 'all' ? metaFeedback.totalItems : selected.length}`}</span>
         <div className="flex gap-2 w-[400px] max-sm:w-fit">
           <DialogTrigger asChild>
             <Button

@@ -18,7 +18,7 @@ export default function useTable({initColumnVisibility, data, loading, columns, 
   )
 
   const tableData = useMemo(
-    () => (loading ? Array(5) : data),
+    () => (loading ? Array.from({ length: 5 }, (v, i) => i + 1) : data),
     [data, loading]
   )
 
