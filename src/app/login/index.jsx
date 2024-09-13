@@ -52,9 +52,9 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col justify-start items-center gap-10">
-      <h1 className="mt-20 text-8xl text-[#001C39] tracking-wider font-bold">QS PECO</h1>
-      <Card className="w-[400px] py-6">
+    <div className="h-screen flex flex-col justify-start items-center gap-10 max-sm:px-2">
+      <h1 className="mt-20 text-8xl text-[#001C39] tracking-wider font-bold max-sm:mt-10 max-sm:text-5xl">QS PECO</h1>
+      <Card className="w-[400px] py-6 max-sm:w-full mx-2">
         <CardHeader className="text-center">
           <CardTitle className="text-4xl">Login</CardTitle>
         </CardHeader>

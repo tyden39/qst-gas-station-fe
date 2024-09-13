@@ -149,14 +149,14 @@ export default function CompanyCreatePage() {
           <ChevronLeft size={14} />
           {"Trở lại danh sách"}
         </Link>
-        <h1 className="text-4xl leading-normal mb-3">
+        <h1 className="text-4xl leading-normal mb-3 max-sm:text-2xl max-sm:text-center max-sm:mt-2">
           {isEdit ? "Chỉnh sửa công ty" : "Thêm mới công ty"}
         </h1>
       </div>
 
       <Form {...form}>
         <RouterForm
-          className="grid grid-cols-1 gap-y-8 w-[800px] mx-auto"
+          className="grid grid-cols-1 gap-y-8 w-[800px] mx-auto max-sm:w-full"
           onSubmit={form.handleSubmit(onSubmit)}
           autoComplete="off"
         >

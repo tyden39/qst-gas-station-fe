@@ -385,14 +385,14 @@ export default function UserCreatePage() {
           <ChevronLeft size={14} />
           {"Trở lại danh sách"}
         </Link>
-        <h1 className="text-4xl leading-normal mb-3">
+        <h1 className="text-4xl leading-normal mb-3 max-sm:text-2xl max-sm:text-center max-sm:mt-2">
           {isEdit ? "Chỉnh sửa người dùng" : "Thêm mới người dùng"}
         </h1>
       </div>
 
       <Form {...form}>
         <RouterForm
-          className="grid grid-cols-3 gap-8"
+          className="grid grid-cols-3 gap-8 max-sm:grid-cols-1"
           onSubmit={form.handleSubmit(onSubmit)}
           autoComplete="off"
         >
@@ -400,7 +400,7 @@ export default function UserCreatePage() {
             <SkeletonForm />
           ) : (
             <>
-              <div className="col-span-2 space-y-8">
+              <div className="sm:col-span-2 space-y-8">
                 <UserInfo {...{ form }} />
                 {upperCompanyRole ? <UserRoles
                   {...{
@@ -419,7 +419,7 @@ export default function UserCreatePage() {
                   {...{ form, isEdit, isChangePassword, setIsChangePassword }}
                 />
               </div>
-              <Card className="col-span-2 p-4 space-x-4 text-right">
+              <Card className="sm:col-span-2 p-4 space-x-4 text-right">
                 <Button
                   disabled={loading}
                   variant="outline"

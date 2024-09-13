@@ -97,6 +97,10 @@ export default function LoggerCreatePage() {
       const response = await fetchOne(params.id)
       if (response.status === 200) {
         form.reset(response.data)
+
+        getCompanhList()
+        getBranchList(response.data.companyId)
+        getStoreList(response.data.branchId)
       } else
         toast({
           variant: TOAST.DESTRUCTIVE,
@@ -105,15 +109,16 @@ export default function LoggerCreatePage() {
         })
       setFetchInfoLoading(false)
     }
+
     const getMetaData = async () => {
       getCompanhList()
       getBranchList()
       getStoreList()
     }
+
     if (isEdit && params.id) {
       handleGetEditData()
-    }
-    getMetaData()
+    } else getMetaData()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
@@ -157,14 +162,14 @@ export default function LoggerCreatePage() {
           <ChevronLeft size={14} />
           {"Trở lại danh sách"}
         </Link>
-        <h1 className="text-4xl leading-normal mb-3">
+        <h1 className="text-4xl leading-normal mb-3 max-sm:text-2xl max-sm:text-center max-sm:mt-2">
           {isEdit ? "Chỉnh sửa logger" : "Thêm mới logger"}
         </h1>
       </div>
 
       <Form {...form}>
         <RouterForm
-          className="grid grid-cols-1 gap-y-8 w-[800px] mx-auto"
+          className="grid grid-cols-1 gap-y-8 w-[800px] mx-auto max-sm:w-full"
           onSubmit={form.handleSubmit(onSubmit)}
           autoComplete="off"
         >

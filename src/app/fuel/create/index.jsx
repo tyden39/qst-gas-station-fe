@@ -143,6 +143,11 @@ export default function FuelCreatePage() {
           Bill_Type: `${resData.Bill_Type}`,
         }
         form.reset(formData)
+
+        getCompanhList()
+        getBranchList(response.data.companyId)
+        getStoreList(response.data.branchId)
+        getLoggerList(response.data.storeId)
       } else {
         navigation(PATH.FUEL)
         toast({
@@ -164,8 +169,6 @@ export default function FuelCreatePage() {
     getMetaData()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
-
-
 
   const getCompanhList = async () => {
     const response = await fetchCompanySimpleList()
@@ -223,7 +226,7 @@ export default function FuelCreatePage() {
 
       <Form {...form}>
         <form
-          className="grid grid-cols-1 gap-8 w-[800px] mx-auto"
+          className="grid grid-cols-1 gap-8 w-[800px] mx-auto max-sm:w-full"
           onSubmit={form.handleSubmit(onSubmit)}
           autoComplete="off"
         >

@@ -24,11 +24,11 @@ export default function PagePaginationCapacity({
     : totalItems
 
   return (
-    <div className="flex items-center gap-2">
+    <div className="flex items-center gap-2 w-full max-sm:grid max-sm:grid-cols-1">
       {selectedNumber > 0 ? (
-        <span className="pl-2">{`Chọn ${selectedNumber} trong số ${totalItems} dòng`}</span>
+        <span className="pl-2 max-sm:hidden">{`Chọn ${selectedNumber} trong số ${totalItems} dòng`}</span>
       ) : (
-        <span className="pl-2">
+        <span className="pl-2 max-sm:hidden">
           {startItem} - {endItem} trong số {totalItems} dòng
         </span>
       )}
@@ -47,15 +47,23 @@ export default function PagePaginationCapacity({
           }))
         }}
       >
-        <SelectTrigger className="w-[150px]">
+        <SelectTrigger className="w-[150px] max-sm:w-full">
           <SelectValue />
         </SelectTrigger>
         <SelectContent>
           <SelectGroup>
-            <SelectItem value={10}>10 dòng/trang</SelectItem>
-            <SelectItem value={20}>20 dòng/trang</SelectItem>
-            <SelectItem value={50}>50 dòng/trang</SelectItem>
-            <SelectItem value={100}>100 dòng/trang</SelectItem>
+            <SelectItem value={10}>
+              <span className="">10 dòng/trang</span>
+            </SelectItem>
+            <SelectItem value={20}>
+              <span className="">20 dòng/trang</span>
+            </SelectItem>
+            <SelectItem value={50}>
+              <span className="">50 dòng/trang</span>
+            </SelectItem>
+            <SelectItem value={100}>
+              <span className="">100 dòng/trang</span>
+            </SelectItem>
           </SelectGroup>
         </SelectContent>
       </Select>

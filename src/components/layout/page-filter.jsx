@@ -94,7 +94,7 @@ export default function PageFilter({
         <div className="flex items-center gap-2">
           <Popover {...{ open: openPopover, onOpenChange: onPopoverChange }}>
             <PopoverTrigger asChild>
-              <Button variant="outline" className="relative gap-2">
+              <Button variant="outline" className="relative gap-2 max-sm:h-10 max-sm:px-4">
                 {activedFilter && activedFiltersCount > 0 ? (
                   <Badge
                     variant="destructive"
@@ -109,7 +109,7 @@ export default function PageFilter({
                 Lọc
               </Button>
             </PopoverTrigger>
-            <PopoverContent className="w-[560px] p-5">
+            <PopoverContent className="w-[560px] max-sm:w-screen p-5">
               <div className="grid gap-4">
                 <div className="flex justify-between mb-1">
                   <h4 className="font-medium leading-none text-xl">
@@ -119,7 +119,7 @@ export default function PageFilter({
                     <X className="w-4 h-4" />
                   </PopoverClose>
                 </div>
-                <div className="grid grid-cols-2 gap-x-2 gap-y-3">
+                <div className="grid grid-cols-2 max-sm:grid-cols-1 gap-x-2 gap-y-3">
                   {additionalFilter
                     ? additionalFilter({
                         authUser,

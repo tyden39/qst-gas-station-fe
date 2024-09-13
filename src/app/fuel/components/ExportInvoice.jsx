@@ -50,7 +50,7 @@ export default function ExportInvoice({ filter, meta, selected, unselected }) {
   return (
     <Dialog {...{ open, onOpenChange }}>
       <DialogTrigger asChild>
-        <Button>Xuất Excel</Button>
+        <Button className="max-sm:px-2 max-sm:py-1 max-sm:h-8">Xuất Excel</Button>
       </DialogTrigger>
       <DialogContent>
         <DialogTitle className="text-center text-3xl">Xuất Excel</DialogTitle>

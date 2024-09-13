@@ -60,7 +60,7 @@ export default function UserFilter({ authUser, filter, onFieldChange, initExtra 
   return (
     <>
       <DatePickerWithRange
-        className={"col-span-2"}
+        className={"sm:col-span-2"}
         name={"createdAt"}
         label="Ngày tạo:"
         date={filter.createdAt}

@@ -17,7 +17,11 @@ export function UserPage() {
         accessorKey: "username",
         header: () => <div className="text-center">Tên đăng nhập</div>,
         cell: ({ row }) => (
-          <div className="text-center">{row.getValue("username")}</div>
+          <div className="text-center">
+            <EllipsisTooltip type="vertical" content={row.getValue("username")}>
+              {row.getValue("username")}
+            </EllipsisTooltip>
+          </div>
         ),
       },
       {
@@ -25,9 +29,18 @@ export function UserPage() {
         header: () => <div className="text-center">Họ và tên</div>,
         cell: ({ row }) => {
           return (
-            <div className="text-center">{`${row.original.lastName || ""} ${
-              row.original.firstName || ""
-            }`}</div>
+            <div className="text-center">
+              <EllipsisTooltip
+                type="vertical"
+                content={`${row.original.lastName || ""} ${
+                  row.original.firstName || ""
+                }`}
+              >
+                {`${row.original.lastName || ""} ${
+                  row.original.firstName || ""
+                }`}
+              </EllipsisTooltip>
+            </div>
           )
         },
       },

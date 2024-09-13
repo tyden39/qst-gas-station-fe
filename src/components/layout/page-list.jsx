@@ -1,7 +1,8 @@
+import EllipsisTooltip from "components/EllipsisTooltip"
 import PageFilter from "components/layout/page-filter"
 import PagePagination from "components/pagination"
 import PageTable from "components/table"
-import { Button, buttonVariants } from "components/ui/button"
+import { buttonVariants } from "components/ui/button"
 import { Checkbox } from "components/ui/checkbox"
 import { USER_ROLE } from "constants/user-roles"
 import useTable from "hooks/useTable"
@@ -9,16 +10,15 @@ import useTableSelect from "hooks/useTableSelect"
 import useFilter from "hooks/userFilter"
 import { getActiveMenu } from "lib/url"
 import { cn } from "lib/utils"
+import moment from "moment"
 import { useMemo, useState } from "react"
 import { Link, useLocation } from "react-router-dom"
 import PATH from "routers/path"
 import useAuth from "zustands/useAuth"
+import ButtonRefresh from "./ButtonRefresh"
+import SelectedActions from "./page-selected-actions"
 import RowActions from "./row-actions"
 import TableColumnSelect from "./table-column-select"
-import SelectedActions from "./page-selected-actions"
-import moment from "moment"
-import ButtonRefresh from "./ButtonRefresh"
-import EllipsisTooltip from "components/EllipsisTooltip"
 
 export function PageList({
   cols,
@@ -146,7 +146,6 @@ export function PageList({
         ...cols,
         {
           accessorKey: "createdAt",
-          enableHiding: false,
           header: () => <div className="text-center">Ngày tạo</div>,
           cell: ({ row }) => {
             const formatted = moment(row.getValue("createdAt")).format(
@@ -253,13 +252,13 @@ export function PageList({
         </div>
       ) : null}
 
-      <div className="flex justify-between items-center flex-shrink-0 mt-3 mx-4">
-        <h1 className="text-4xl leading-normal font-bold">{activeMenuName}</h1>
+      <div className="flex flex-wrap max-sm:justify-center justify-between items-center gap-2 flex-shrink-0 mt-3 mx-4">
+        <h1 className="text-4xl leading-normal font-bold max-sm:text-2xl max-sm:w-full max-sm:text-center">{activeMenuName}</h1>
         <div className="space-x-2 flex">
           {actions ? actions({ filter, meta, selected, unselected }) : null}
           {allowCreate && (
             <Link
-              className={cn(buttonVariants())}
+              className={cn(buttonVariants(), "max-sm:px-2 max-sm:py-1 max-sm:h-8")}
               to={PATH[`${pageName.toUpperCase()}_CREATE`]}
             >
               Tạo {pageLabel}
@@ -274,7 +273,8 @@ export function PageList({
           "relative border-t mt-3 py-2 px-4 overflow-hidden",
           "flex gap-2 items-center",
           "flex-shrink-0",
-          "bg-white"
+          "bg-white",
+          "max-sm:px-2"
         )}
       >
         {selected && selected.length > 0 ? (

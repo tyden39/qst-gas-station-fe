@@ -57,17 +57,17 @@ export default function ButtonRefresh({applyFilter}) {
 
   return (
     <div className="relative">
-      <Button variant="outline" className="gap-1 pr-10" onClick={toggleRefresh}>
+      <Button variant="outline" className="gap-1 pr-10 max-sm:pl-2 max-sm:py-1 max-sm:h-8" onClick={toggleRefresh}>
         <RotateCw size={16} className={cn(isAuto ? "animate-spin" : "")} />
         <span className="">{refreshOption.label}</span>
       </Button>
 
-      <div className="absolute top-0 right-0 ">
+      <div className="absolute top-0 right-0">
         <Select
           onValueChange={onValueChange}
           defaultValue={refreshOption.value}
         >
-          <SelectTrigger className="rounded-l-none px-2"></SelectTrigger>
+          <SelectTrigger className="rounded-l-none px-2 max-sm:py-1 max-sm:text-xs max-sm:h-8 max-sm:w-fit"></SelectTrigger>
           <SelectContent>
             {refreshList.map((refreshOption) => (
               <SelectItem key={refreshOption.value} value={refreshOption}>

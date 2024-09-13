@@ -28,7 +28,7 @@ function EllipsisTooltip({ children, className, content, type }) {
         setShowTooltip(false)
       }
     }
-  }, [children])
+  }, [children, type])
 
   return (
     <div
@@ -42,7 +42,7 @@ function EllipsisTooltip({ children, className, content, type }) {
         <Tooltip open={open} delayDuration={300}>
           <TooltipTrigger asChild>
             <div
-              className={cn("w-full overflow-hidden text-ellipsis hover:cursor-pointer", type === 'vertical' ? 'ellipsis-two-line' : 'whitespace-nowrap')}
+              className={cn("w-full overflow-hidden text-ellipsis", type === 'vertical' ? 'ellipsis-two-line' : 'whitespace-nowrap', showTooltip ? "hover:cursor-pointer" : "")}
               onMouseEnter={() => {if (showTooltip) setOpen(true)}}
               onMouseLeave={() => {if (showTooltip) setOpen(false)}}
               ref={textRef}
@@ -50,7 +50,7 @@ function EllipsisTooltip({ children, className, content, type }) {
               {children}
             </div>
           </TooltipTrigger>
-          <TooltipContent className="max-w-[500px] text-wrap">{content || children}</TooltipContent>
+          <TooltipContent className="max-w-[500px]">{content || children}</TooltipContent>
         </Tooltip>
       </TooltipProvider>
     </div>

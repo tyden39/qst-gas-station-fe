@@ -1,21 +1,25 @@
-
 import { deleteOne, fetchAll, restore } from "actions/storeActions"
 import { PageList } from "components/layout/page-list"
 import useInitStructure from "hooks/useInitStructure"
 import { useMemo } from "react"
 import StoreFilter from "./filter"
 import { initColumnVisibility, initFilter, initMeta } from "./initial"
+import EllipsisTooltip from "components/EllipsisTooltip"
 
 export function StorePage() {
   const initExtra = useInitStructure(false, true)
-  
+
   const columns = useMemo(
     () => [
       {
         accessorKey: "name",
         header: () => <div className="text-center">Tên cửa hàng</div>,
         cell: ({ row }) => (
-          <div className="text-center">{row.getValue("name")}</div>
+          <div className="text-center">
+            <EllipsisTooltip type="vertical" content={row.getValue("name")}>
+              {row.getValue("name")}
+            </EllipsisTooltip>
+          </div>
         ),
       },
       {
@@ -23,7 +27,14 @@ export function StorePage() {
         header: () => <div className="text-center">Địa Chỉ</div>,
         cell: ({ row }) => {
           return (
-            <div className="text-center">{`${row.original.address || ""}`}</div>
+            <div className="text-center">
+              <EllipsisTooltip
+                type="vertical"
+                content={`${row.original.address || ""}`}
+              >
+                {`${row.original.address || ""}`}
+              </EllipsisTooltip>
+            </div>
           )
         },
       },
@@ -31,7 +42,14 @@ export function StorePage() {
         accessorKey: "email",
         header: () => <div className="text-center">Email</div>,
         cell: ({ row }) => (
-          <div className="text-center">{row.getValue("email")}</div>
+          <div className="text-center">
+            <EllipsisTooltip
+              type="vertical"
+              content={`${row.getValue("email") || ""}`}
+            >
+              {row.getValue("email")}
+            </EllipsisTooltip>
+          </div>
         ),
       },
       {
@@ -43,16 +61,31 @@ export function StorePage() {
       },
       {
         accessorKey: "branchName",
-        header: () => <div className="text-center">Chi Nhánh</div>,
-        cell: ({ row }) => (
-          <div className="text-center">{row.getValue("branchName")}</div>
-        ),
+        header: (header) => "Chi Nhánh",
+        cell: ({ row }) => {
+          const rowValue = row.original
+          return (
+            <div className="text-center">
+              <EllipsisTooltip type="vertical" content={rowValue.branchName}>
+                {rowValue.branchName}
+              </EllipsisTooltip>
+            </div>
+          )
+        },
       },
       {
         accessorKey: "companyName",
-        header: () => <div className="text-center">Công Ty</div>,
+        header: (header) => "Công Ty",
         cell: ({ row }) => {
-          return <div className="text-center">{row.getValue("companyName")}</div>
+          const rowValue = row.original
+
+          return (
+            <div className="text-center">
+              <EllipsisTooltip type="vertical" content={rowValue.companyName}>
+                {rowValue.companyName}
+              </EllipsisTooltip>
+            </div>
+          )
         },
       },
     ],

@@ -3,6 +3,7 @@ import { fetchAll, deleteCompany, restoreOne } from "actions/companyActions"
 import { PageList } from "components/layout/page-list"
 import { useMemo } from "react"
 import { initColumnVisibility, initFilter, initMeta } from "./initial"
+import EllipsisTooltip from "components/EllipsisTooltip"
 
 export function CompanyPage() {
   const columns = useMemo(
@@ -11,7 +12,11 @@ export function CompanyPage() {
         accessorKey: "name",
         header: () => <div className="text-center">Tên Công Ty</div>,
         cell: ({ row }) => (
-          <div className="text-center">{row.getValue("name")}</div>
+          <div className="text-center">
+            <EllipsisTooltip type="vertical" content={row.getValue("name") || ""}>
+              {row.getValue("name")}
+            </EllipsisTooltip>
+          </div>
         ),
       },
       {
@@ -26,7 +31,11 @@ export function CompanyPage() {
         header: () => <div className="text-center">Địa Chỉ</div>,
         cell: ({ row }) => {
           return (
-            <div className="text-center">{`${row.original.address || ""}`}</div>
+            <div className="text-center">
+            <EllipsisTooltip type="vertical" content={`${row.original.address || ""}`}>
+              {`${row.original.address || ""}`}
+            </EllipsisTooltip>
+          </div>
           )
         },
       },
@@ -34,7 +43,11 @@ export function CompanyPage() {
         accessorKey: "email",
         header: () => <div className="text-center">Email</div>,
         cell: ({ row }) => (
-          <div className="text-center">{row.getValue("email")}</div>
+          <div className="text-center">
+            <EllipsisTooltip type="vertical" content={row.getValue("email") || ""}>
+              {row.getValue("email")}
+            </EllipsisTooltip>
+          </div>
         ),
       },
       {

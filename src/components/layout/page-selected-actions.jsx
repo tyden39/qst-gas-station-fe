@@ -97,12 +97,12 @@ export default function SelectedActions({
   return (
     <Dialog {...{ open, onOpenChange }}>
       <div className="flex items-center gap-2">
-        <span className="mr-2">{`Đã chọn ${selected === 'all' ? meta.totalItems : selected.length}`}</span>
-        <div className="grid grid-cols-3 gap-2 w-[400px]">
+        <span className="mr-2 max-sm:text-sm max-sm:text-nowrap">{`Đã chọn ${selected === 'all' ? meta.totalItems : selected.length}`}</span>
+        <div className="flex gap-2 w-[400px] max-sm:w-fit">
           <DialogTrigger asChild>
             <Button
               variant="outline"
-              className="hover:bg-destructive hover:text-white"
+              className="hover:bg-destructive hover:text-white max-sm:w-fit"
             >
               Xóa
             </Button>
@@ -111,14 +111,7 @@ export default function SelectedActions({
             <>
               <Button
                 variant="outline"
-                className="hover:bg-destructive hover:text-white"
-                onClick={handleForceDelete}
-              >
-                Xóa vĩnh viễn
-              </Button>
-              <Button
-                variant="outline"
-                className="hover:bg-green-500 hover:text-white"
+                className="hover:bg-green-500 hover:text-white max-sm:w-fit"
                 onClick={handleForceRestore}
               >
                 Khôi phục

@@ -41,7 +41,7 @@ export default function PagePaginationNavigation({
 
   return (
     <ShadCNPagination>
-      <PaginationContent>
+      <PaginationContent className="max-sm:flex-wrap">
         <PaginationItem>
           <PaginationPrevious
             disabled={currentPage <= 1}

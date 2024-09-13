@@ -216,7 +216,6 @@ export default function FormCreate({
               placeholder: "Chọn công ty",
               name: "companyId",
               list: companyList,
-              disabled: isEdit,
               onChange: async (value) => {
                 await getBranchList(value)
                 form.resetField("branchId", { defaultValue: null })
@@ -236,7 +235,7 @@ export default function FormCreate({
               placeholder: "Chọn chi nhánh",
               name: "branchId",
               list: branchList,
-              disabled: !companyIdValue || isEdit,
+              disabled: !companyIdValue,
               onChange: async (value) => {
                 await getStoreList(value)
                 form.resetField("storeId", { defaultValue: null })
@@ -255,7 +254,7 @@ export default function FormCreate({
               placeholder: "Chọn cửa hàng",
               name: "storeId",
               list: storeList,
-              disabled: !branchIdValue || !companyIdValue || isEdit,
+              disabled: !branchIdValue || !companyIdValue,
               onChange: async (value) => {
                 await getLoggerList(value)
                 form.resetField("Logger_ID", { defaultValue: null })
@@ -274,7 +273,7 @@ export default function FormCreate({
               name: "Logger_ID",
               list: loggerList,
               disabled:
-                !branchIdValue || !companyIdValue || !storeIdValue || isEdit,
+                !branchIdValue || !companyIdValue || !storeIdValue,
             }}
           />
         </div>

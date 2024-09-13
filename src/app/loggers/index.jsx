@@ -3,6 +3,7 @@ import { PageList } from "components/layout/page-list"
 import { useMemo } from "react"
 import ExtendFilter from "./filter"
 import { initColumnVisibility, initFilter, initMeta } from "./initial"
+import EllipsisTooltip from "components/EllipsisTooltip"
 
 export function LoggerPage() {
   const columns = useMemo(
@@ -16,24 +17,44 @@ export function LoggerPage() {
       },
       {
         accessorKey: "storeName",
-        header: () => <div className="text-center">Cửa hàng</div>,
-        cell: ({ row }) => (
-          <div className="text-center">{row.getValue("storeName")}</div>
-        ),
+        header: (header) => "Cửa hàng",
+        cell: ({ row }) => {
+          const rowValue = row.original
+          return (
+            <div className="text-center">
+              <EllipsisTooltip type="vertical" content={rowValue.storeName}>
+                {rowValue.storeName}
+              </EllipsisTooltip>
+            </div>
+          )
+        },
       },
       {
         accessorKey: "branchName",
-        header: () => <div className="text-center">Chi Nhánh</div>,
-        cell: ({ row }) => (
-          <div className="text-center">{row.getValue("branchName")}</div>
-        ),
+        header: (header) => "Chi Nhánh",
+        cell: ({ row }) => {
+          const rowValue = row.original
+          return (
+            <div className="text-center">
+              <EllipsisTooltip type="vertical" content={rowValue.branchName}>
+                {rowValue.branchName}
+              </EllipsisTooltip>
+            </div>
+          )
+        },
       },
       {
         accessorKey: "companyName",
-        header: () => <div className="text-center">Công Ty</div>,
+        header: (header) => "Công Ty",
         cell: ({ row }) => {
+          const rowValue = row.original
+
           return (
-            <div className="text-center">{row.getValue("companyName")}</div>
+            <div className="text-center">
+              <EllipsisTooltip type="vertical" content={rowValue.companyName}>
+                {rowValue.companyName}
+              </EllipsisTooltip>
+            </div>
           )
         },
       },

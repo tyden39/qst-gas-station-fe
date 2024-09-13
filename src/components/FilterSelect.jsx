@@ -40,7 +40,7 @@ export function FilterSelect({
       }}
     >
       <SelectTrigger className={cn("w-full gap-2 hover:bg-accent", className)} value={value} onClose={handleClose}>
-        <Label>{label}</Label>
+        <Label className="max-sm:hidden">{label}</Label>
         <EllipsisTooltip
           className={"flex-1 text-left"}
           content={selectList.find((item) => item.value === value)?.label}
@@ -52,7 +52,7 @@ export function FilterSelect({
           )}
         </EllipsisTooltip>
       </SelectTrigger>
-      <SelectContent>
+      <SelectContent className="max-sm:max-w-[95vw]">
         <SelectGroup>
           {selectList.length > 0 ? (
             selectList.map((item) =>

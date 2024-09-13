@@ -77,7 +77,7 @@ const CloseConfirm = ({ form }) => {
             đã nhập vào biểu mẫu sẽ không được lưu.
           </DialogDescription>
         </DialogHeader>
-        <DialogFooter className="sm:justify-center items-center">
+        <DialogFooter className="sm:justify-center items-center max-sm:gap-2">
           <DialogClose asChild>
             <Button
               className="w-[150px]"

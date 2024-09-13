@@ -106,18 +106,18 @@ export default function ProfilesPage() {
   return (
     <div className="w-full p-4">
       <div className="">
-        <h1 className="text-4xl leading-normal mb-3">Hồ sơ người dùng</h1>
+        <h1 className="text-4xl leading-normal mb-3 max-sm:text-2xl max-sm:text-center max-sm:mt-2">Hồ sơ người dùng</h1>
       </div>
       <Form {...form}>
         {fetchInfoLoading ? (
           <SkeletonForm />
         ) : (
           <form
-            className="grid grid-cols-3 gap-8"
+            className="grid grid-cols-3 gap-8 max-sm:grid-cols-1"
             onSubmit={form.handleSubmit(onSubmit)}
             autoComplete="off"
           >
-            <div className="col-span-2 space-y-8">
+            <div className="sm:col-span-2 space-y-8">
               <UserInfo {...{ form }} />
               {isCompanyPermission ? <CompanyInfo {...{form}} /> : []}
 

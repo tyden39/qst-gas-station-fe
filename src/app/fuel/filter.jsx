@@ -6,7 +6,7 @@ export default function AdditionalFilter({ filter, onFieldChange }) {
   return (
     <>
       <DatePickerWithRange
-        className={"col-span-2"}
+        className={"sm:col-span-2"}
         name={"billDate"}
         label="Thời gian ghi log:"
         placeholder={"Chọn ngày"}

@@ -20,7 +20,7 @@ export default function Layout() {
   }, [])
   
   return (
-    <div className="h-screen flex flex-col bg-gray-50">
+    <div className="sm:h-screen flex flex-col bg-gray-50">
       {isOnline ? null : <div className="text-center py-1.5">Không có kết nối internet!</div>}
       <Header />
       <div className="flex" style={{height: viewportHeight - 57}}>

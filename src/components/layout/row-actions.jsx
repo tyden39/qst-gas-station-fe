@@ -36,7 +36,6 @@ const RowActions = ({
   const { toast } = useToast()
   const [open, setOpen] = useState(false)
   const [loading, setLoading] = useState(false)
-  const [forceDelete, setForceDelete] = useState()
   const isAdmin = userRole === USER_ROLE.ADMIN
 
   const onOpenChange = (open) => {
@@ -45,9 +44,7 @@ const RowActions = ({
 
   const onDelete = async () => {
     setLoading(true)
-    const force = forceDelete
-
-    const response = await deleteAction(id, force)
+    const response = await deleteAction(id)
 
     if (response.status === 200) {
       toast({
@@ -64,12 +61,6 @@ const RowActions = ({
 
     setOpen(false)
     setLoading(false)
-    setForceDelete(false)
-  }
-
-  const handleForceDelete = () => {
-    setOpen(true)
-    setForceDelete(true)
   }
 
   const handleRestore = async () => {
@@ -114,14 +105,6 @@ const RowActions = ({
           )}
           {isAdmin ? (
             <>
-              <DropdownMenuItem asChild>
-                <p
-                  className="focus:bg-destructive focus:text-destructive-foreground cursor-pointer"
-                  onClick={handleForceDelete}
-                >
-                  Xóa vĩnh viễn
-                </p>
-              </DropdownMenuItem>
               {isDeleted ? (
                 <DropdownMenuItem asChild>
                   <p
@@ -139,11 +122,10 @@ const RowActions = ({
       <DialogContent className="sm:max-w-[450px]">
         <DialogHeader>
           <DialogTitle>
-            Bạn có chắc muốn xóa {forceDelete ? " vĩnh viễn" : ""}?
+            Bạn có chắc muốn xóa?
           </DialogTitle>
           <DialogDescription>
-            Hành động này không thể được hoàn tác. Bạn có chắc chắn muốn xóa
-            {forceDelete ? " vĩnh viễn " : ""} {pageLabel.toLowerCase()} này ?
+            Hành động này không thể được hoàn tác. Bạn có chắc chắn muốn xóa này?
           </DialogDescription>
         </DialogHeader>
         <DialogFooter>
@@ -157,7 +139,7 @@ const RowActions = ({
               {loading ? (
                 <Loader2 className="animate-spin" />
               ) : (
-                `Xóa ${forceDelete ? "vĩnh viễn" : ""}`
+                `Xóa`
               )}
             </Button>
           </DialogClose>

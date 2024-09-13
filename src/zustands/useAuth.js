@@ -49,8 +49,8 @@ const handleLogout = async (set) => {
   } catch (error) {
     console.error(error)
   } finally {
-    // localStorage.removeItem(AUTH_CONFIG.ACCESS_TOKEN_STORAGE_NAME)
-    // localStorage.removeItem(AUTH_CONFIG.USER_STORAGE_NAME)
+    localStorage.removeItem(AUTH_CONFIG.ACCESS_TOKEN_STORAGE_NAME)
+    localStorage.removeItem(AUTH_CONFIG.USER_STORAGE_NAME)
     set({ loading: false, user: null })
   }
 }

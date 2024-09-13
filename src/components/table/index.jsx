@@ -16,7 +16,7 @@ export default function PageTable({ table, loading }) {
 
   return (
     <Table className="relative bg-white">
-      <TableHeader className="sticky top-0 z-50">
+      <TableHeader className="sticky top-0 z-40">
         {table.getHeaderGroups().map((headerGroup) => (
           <TableRow key={headerGroup.id} className="border-none">
             {headerGroup.headers.map((header) => {

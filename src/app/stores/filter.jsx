@@ -41,7 +41,7 @@ export default function InvoiceFilter({ authUser, filter, onFieldChange, initExt
   return (
     <>
       <DatePickerWithRange
-        className={"col-span-2"}
+        className={"sm:col-span-2"}
         name={"createdAt"}
         label="Ngày tạo:"
         date={filter?.createdAt}
