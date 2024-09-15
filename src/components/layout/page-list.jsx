@@ -65,10 +65,12 @@ export function PageList({
     onFieldChange,
     setMeta,
     setFilter,
+    setActivedFilter,
     refreshData,
     loading,
     initLoading,
     applyFilter,
+    resetData
   } = useFilter({
     initFilter,
     initMeta,
@@ -252,6 +254,8 @@ export function PageList({
             onFieldChange,
             initExtra,
             setFilter,
+            setActivedFilter,
+            applyFilter
           })}
         </div>
       ) : null}
@@ -301,6 +305,7 @@ export function PageList({
             {...{
               filter,
               setFilter,
+              resetData,
               initFilter,
               applyFilter,
               activedFilter,

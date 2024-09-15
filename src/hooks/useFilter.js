@@ -27,22 +27,22 @@ export default function useFilter({
   const handleRequest = useCallback(() => {
     setLoading(true)
 
-    const truthyFilter = Object.fromEntries(
-      Object.entries({
-        ...activedFilter,
-        pageSize: meta.pageSize,
-        currentPage: meta.currentPage,
-        sortBy: sorting.length > 0 ? JSON.stringify(sorting) : undefined,
-      }).filter(([key, value]) => value)
-    )
-    if (Object.keys(truthyFilter).length !== 0) setSearchParams(truthyFilter)
-
     action(activedFilter, meta, sorting)
       .then((response) => {
         if (response.status === 200) {
           const { data, meta: metaFeedback } = response.data
           setData(data)
           setMetaFeedback(metaFeedback)
+
+          const truthyFilter = Object.fromEntries(
+            Object.entries({
+              ...activedFilter,
+              pageSize: metaFeedback.pageSize,
+              currentPage: metaFeedback.currentPage,
+              sortBy: sorting.length > 0 ? JSON.stringify(sorting) : undefined,
+            }).filter(([key, value]) => value)
+          )
+          if (Object.keys(truthyFilter).length !== 0) setSearchParams(truthyFilter)
         } else {
           toast({
             variant: TOAST.DESTRUCTIVE,
@@ -57,8 +57,9 @@ export default function useFilter({
       })
   }, [action, toast, setSearchParams, sorting, activedFilter, meta])
 
-  const applyFilter = useCallback(() => {
-    setActivedFilter({ ...filter })
+  const applyFilter = useCallback(({forceFilter}) => {
+    setActivedFilter({ ...filter, ...forceFilter })
+    setMeta(prev => ({...prev, currentPage: 1}))
   }, [filter])
 
   useEffect(() => {
@@ -85,6 +86,7 @@ export default function useFilter({
     delete queryFilter.sortBy
 
     setActivedFilter({ ...initFilter, ...queryFilter })
+    setFilter({ ...initFilter, ...queryFilter })
     setMeta({ ...initMeta, ...queryMeta })
     setSorting(querySorting)
     setInitRender(false)
@@ -104,6 +106,11 @@ export default function useFilter({
     applyFilter()
   }, [applyFilter])
 
+  const resetData = useCallback(() => {
+    setActivedFilter(initFilter)
+    setFilter(initFilter)
+  }, [initFilter])
+
   return {
     loading,
     filter,
@@ -118,5 +125,6 @@ export default function useFilter({
     applyFilter,
     initLoading,
     metaFeedback,
+    resetData
   }
 }

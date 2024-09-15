@@ -19,6 +19,7 @@ export default function PageFilter({
   searchInputPlaceholder,
   additionalFilter,
   filtersNotCount = [],
+  resetData
 }) {
   const [openPopover, setOpenPopover] = useState()
   const onPopoverChange = (open) => {
@@ -58,9 +59,10 @@ export default function PageFilter({
       if (debounceRef.current) clearTimeout(debounceRef.current)
       debounceRef.current = setTimeout(() => {
         setFilter(prev => ({ ...prev, keyword: value }))
+        applyFilter({forceFilter: {keyword: value}})
       }, 300)
     },
-    [setFilter]
+    [setFilter, applyFilter]
   )
 
   const handleChangeKeyword = (e) => {
@@ -69,7 +71,7 @@ export default function PageFilter({
   }
 
   const resetFilter = () => {
-    setFilter(initFilter)
+    resetData()
   }
 
   return (

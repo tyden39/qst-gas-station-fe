@@ -80,7 +80,7 @@ const CloseConfirm = ({ form }) => {
         <DialogFooter className="sm:justify-center items-center max-sm:gap-2">
           <DialogClose asChild>
             <Button
-              className="w-[150px]"
+              className="max-sm:w-full w-[150px]"
               variant="outline"
               onClick={handleReturn}
             >
@@ -88,7 +88,7 @@ const CloseConfirm = ({ form }) => {
             </Button>
           </DialogClose>
           <DialogClose asChild>
-            <Button className="w-[150px]" onClick={handleSubmit}>
+            <Button className="max-sm:w-full w-[150px]" onClick={handleSubmit}>
               Trở lại
             </Button>
           </DialogClose>

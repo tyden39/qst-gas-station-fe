@@ -95,11 +95,11 @@ export default function ExportInvoice({ filter, meta, selected, unselected }) {
             </span>
           </p>
         </DialogDescription>
-        <DialogFooter>
+        <DialogFooter className="max-sm:gap-2">
           <DialogClose asChild disabled={loading}>
             <Button variant="outline">Hủy</Button>
           </DialogClose>
-          <Button onClick={onExport} disabled={loading} className="w-20">
+          <Button onClick={onExport} disabled={loading} className="sm:w-20">
             {loading ? <Loader2 className="animate-spin" /> : "Đồng Ý"}
           </Button>
         </DialogFooter>
