@@ -9,7 +9,7 @@ export const initFilter = {
   branchId: null,
   storeId: null,
   Logger_ID: null,
-  billDate: null, //{ from: moment().subtract(1, 'M').toDate(), to: new Date() }
+  billDate: null,
 }
 
 export const initMeta = {

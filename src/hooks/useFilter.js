@@ -34,9 +34,14 @@ export default function useFilter({
           setData(data)
           setMetaFeedback(metaFeedback)
 
+          const currActivedFilter = {...activedFilter}
+          delete currActivedFilter.billDate
+          
           const truthyFilter = Object.fromEntries(
             Object.entries({
-              ...activedFilter,
+              ...currActivedFilter,
+              startDate: activedFilter?.billDate?.start,
+              endDate: activedFilter?.billDate?.end,
               pageSize: metaFeedback.pageSize,
               currentPage: metaFeedback.currentPage,
               sortBy: sorting.length > 0 ? JSON.stringify(sorting) : undefined,
@@ -57,8 +62,11 @@ export default function useFilter({
       })
   }, [action, toast, setSearchParams, sorting, activedFilter, meta])
 
-  const applyFilter = useCallback(({forceFilter}) => {
+  const applyFilter = useCallback((options) => {
+    const forceFilter = options?.forceFilter
+    if (forceFilter)
     setActivedFilter({ ...filter, ...forceFilter })
+    else setActivedFilter({ ...filter })
     setMeta(prev => ({...prev, currentPage: 1}))
   }, [filter])
 

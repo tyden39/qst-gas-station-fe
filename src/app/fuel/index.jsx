@@ -74,7 +74,7 @@ export function FuelPage() {
         cell: ({ row }) => (
           <div className="text-center">
             {BILL_TYPES.find(
-              (item) => item.value === row.getValue("Bill_Type").toString()
+              (item) => item.value === row.getValue("Bill_Type")?.toString()
             )?.label || ""}
           </div>
         ),

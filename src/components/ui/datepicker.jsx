@@ -5,6 +5,7 @@ import EllipsisTooltip from "components/EllipsisTooltip"
 import { buttonVariants } from "components/ui/button"
 import { Popover, PopoverContent, PopoverTrigger } from "components/ui/popover"
 import { cn } from "lib/utils"
+import { useEffect, useState } from "react"
 import { Calendar } from "./calendar"
 import { Label } from "./label"
 
@@ -17,6 +18,19 @@ export function DatePickerWithRange({
   placeholder,
   disabled,
 }) {
+  const [viewportWidth, setViewportWidth] = useState(window.innerWidth)
+  
+  useEffect(() => {
+    const handleResize = () => {
+      setViewportWidth(window.innerWidth)
+    }
+    window.addEventListener('resize', handleResize)
+  
+    return () => {
+      window.removeEventListener('resize', handleResize)
+    }
+  }, [])
+
   const onSelect = (value) => {
     onChangeValue(value, name)
   }
@@ -66,14 +80,14 @@ export function DatePickerWithRange({
           )}
         </div>
       </PopoverTrigger>
-      <PopoverContent className="w-auto p-0" align="start">
+      <PopoverContent className="w-auto p-0 sm" align="start">
         <Calendar
           initialFocus
           mode="range"
           defaultMonth={date?.from}
           selected={date}
           onSelect={onSelect}
-          numberOfMonths={2}
+          numberOfMonths={viewportWidth < 640 ? 1 : 2}
         />
       </PopoverContent>
     </Popover>

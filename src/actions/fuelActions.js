@@ -18,8 +18,8 @@ export const fetchOneInvoice = async (id) => {
 
 export const fetchInvoices = async (filter, pageMeta, sorting) => {
   try {
-    const startDate = filter.billDate?.from
-    const endDate = filter.billDate?.to
+    const startDate = filter.billDate?.start
+    const endDate = filter.billDate?.end
     const sortBy = JSON.stringify(convertSorting(sorting))
     const newFilter = { ...filter }
     delete newFilter.billDate
@@ -42,8 +42,8 @@ export const fetchInvoices = async (filter, pageMeta, sorting) => {
 
 export const handleExport = async (filter, pageMeta, selected, unselected) => {
   try {
-    const startDate = filter.billDate?.from
-    const endDate = filter.billDate?.to
+    const startDate = filter.billDate?.start
+    const endDate = filter.billDate?.end
     const newFilter = { ...filter }
     delete newFilter.billDate
 
