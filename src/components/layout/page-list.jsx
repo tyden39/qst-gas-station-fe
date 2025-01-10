@@ -263,7 +263,7 @@ export function PageList({
       <div className="flex flex-wrap max-sm:justify-center justify-between items-center gap-2 flex-shrink-0 mt-3 mx-4">
         <h1 className="text-4xl leading-normal font-bold max-sm:text-2xl max-sm:w-full max-sm:text-center">{activeMenuName}</h1>
         <div className="space-x-2 flex">
-          {actions ? actions({ filter, meta: {...meta, ...metaFeedback}, selected, unselected }) : null}
+          {actions ? actions({ filter: activedFilter, meta: {...meta, ...metaFeedback}, selected, unselected }) : null}
           {allowCreate && (
             <Link
               className={cn(buttonVariants(), "max-sm:px-2 max-sm:py-1 max-sm:h-8")}

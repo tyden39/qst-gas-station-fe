@@ -27,21 +27,22 @@ export default function useFilter({
   const handleRequest = useCallback(() => {
     setLoading(true)
 
-    action(activedFilter, meta, sorting)
+
+    const currActivedFilter = {...activedFilter, 
+      startDate: activedFilter?.createdAt?.from,
+      endDate: activedFilter?.createdAt?.to,}
+    delete currActivedFilter.createdAt
+
+    action(currActivedFilter, meta, sorting)
       .then((response) => {
         if (response.status === 200) {
           const { data, meta: metaFeedback } = response.data
           setData(data)
           setMetaFeedback(metaFeedback)
-
-          const currActivedFilter = {...activedFilter}
-          delete currActivedFilter.billDate
           
           const truthyFilter = Object.fromEntries(
             Object.entries({
               ...currActivedFilter,
-              startDate: activedFilter?.billDate?.start,
-              endDate: activedFilter?.billDate?.end,
               pageSize: metaFeedback.pageSize,
               currentPage: metaFeedback.currentPage,
               sortBy: sorting.length > 0 ? JSON.stringify(sorting) : undefined,
@@ -87,11 +88,17 @@ export default function useFilter({
     }).filter(([key, value]) => value))
 
     const querySorting = queryParams?.sortBy ? JSON.parse(queryParams?.sortBy) : []
+    const createdAt = queryParams?.startDate && queryParams?.endDate ? {createdAt: {
+      from: queryParams?.startDate,
+      to: queryParams?.endDate
+    }} : {}
 
-    const queryFilter = { ...queryParams }
+    const queryFilter = { ...queryParams, ...createdAt}
     delete queryFilter.currentPage
     delete queryFilter.pageSize
     delete queryFilter.sortBy
+    delete queryFilter.startDate
+    delete queryFilter.endDate
 
     setActivedFilter({ ...initFilter, ...queryFilter })
     setFilter({ ...initFilter, ...queryFilter })

@@ -8,6 +8,7 @@ import { cn } from "lib/utils"
 import { useEffect, useState } from "react"
 import { Calendar } from "./calendar"
 import { Label } from "./label"
+import moment from "moment"
 
 export function DatePickerWithRange({
   className,
@@ -19,7 +20,7 @@ export function DatePickerWithRange({
   disabled,
 }) {
   const [viewportWidth, setViewportWidth] = useState(window.innerWidth)
-  
+
   useEffect(() => {
     const handleResize = () => {
       setViewportWidth(window.innerWidth)
@@ -32,7 +33,8 @@ export function DatePickerWithRange({
   }, [])
 
   const onSelect = (value) => {
-    onChangeValue(value, name)
+    const val = {from: value?.from ? moment(value?.from).toISOString() : null, to: value?.to ? moment(value?.to).toISOString() : null}
+    onChangeValue(val, name)
   }
 
   const handleClear = (event) => {
@@ -54,11 +56,11 @@ export function DatePickerWithRange({
             {date?.from ? (
               date?.to ? (
                 <>
-                  {format(date?.from, "dd-MM-yyyy hh:mm:ss")} -{" "}
-                  {format(date?.to, "dd-MM-yyyy hh:mm:ss")}
+                  {date?.from ? moment(date?.from).format("DD-MM-yyyy HH:mm:ss") : null} -{" "}
+                  {date?.to ? moment(date?.to).format("DD-MM-yyyy HH:mm:ss") : null}
                 </>
               ) : (
-                format(date?.from, "dd-MM-yyyy hh:mm:ss")
+                moment(date?.from).format("DD-MM-yyyy HH:mm:ss")
               )
             ) : (
               <span className="text-muted-foreground">{placeholder}</span>

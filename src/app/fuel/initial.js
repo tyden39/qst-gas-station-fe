@@ -9,7 +9,7 @@ export const initFilter = {
   branchId: null,
   storeId: null,
   Logger_ID: null,
-  billDate: null,
+  createdAt: null,
 }
 
 export const initMeta = {

@@ -42,10 +42,10 @@ export const fetchInvoices = async (filter, pageMeta, sorting) => {
 
 export const handleExport = async (filter, pageMeta, selected, unselected) => {
   try {
-    const startDate = filter.billDate?.start
-    const endDate = filter.billDate?.end
+    const startDate = filter.createdAt?.from
+    const endDate = filter.createdAt?.to
     const newFilter = { ...filter }
-    delete newFilter.billDate
+    delete newFilter.createdAt
 
     const { pageSize } = pageMeta
     const page = pageMeta.currentPage

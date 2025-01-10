@@ -20,8 +20,8 @@ export default function ExportInvoice({ filter, meta, selected, unselected }) {
   const { toast } = useToast()
   const [open, setOpen] = useState(false)
   const [loading, setLoading] = useState(false)
-  const { billDate, billType, fuelType, keyword, pumpId } = filter
-
+  const { createdAt, billType, fuelType, keyword, pumpId } = filter
+console.log(filter)
   const onExport = async (event) => {
     event.preventDefault()
     setLoading(true)
@@ -61,10 +61,10 @@ export default function ExportInvoice({ filter, meta, selected, unselected }) {
           </p>
           <p>
             - Thời gian ghi Log:{" "}
-            <span className="font-bold">{`${moment(billDate?.from).format(
+            <span className="font-bold">{`${moment(createdAt?.from).format(
               "DD-MM-YYYY HH:mm:ss"
             )} 
-            - ${moment(billDate?.to).format("DD-MM-YYYY HH:mm:ss")}`}</span>
+            - ${moment(createdAt?.to).format("DD-MM-YYYY HH:mm:ss")}`}</span>
           </p>
           <p>
             - Loại hóa đơn:{" "}
